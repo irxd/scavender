@@ -30,6 +30,11 @@ export function useKeyboard(): React.MutableRefObject<KeyState> {
 
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
+      // Don't capture keys while the user is typing in any input/textarea
+      const tag = (document.activeElement as HTMLElement)?.tagName
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return
+      if ((document.activeElement as HTMLElement)?.isContentEditable) return
+
       if (e.code === 'ShiftLeft' || e.code === 'ShiftRight') {
         keys.current.run = true
         return
@@ -42,6 +47,11 @@ export function useKeyboard(): React.MutableRefObject<KeyState> {
     }
 
     function onKeyUp(e: KeyboardEvent) {
+      // Don't capture keys while the user is typing in any input/textarea
+      const tag = (document.activeElement as HTMLElement)?.tagName
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return
+      if ((document.activeElement as HTMLElement)?.isContentEditable) return
+
       if (e.code === 'ShiftLeft' || e.code === 'ShiftRight') {
         keys.current.run = false
         return
@@ -52,12 +62,26 @@ export function useKeyboard(): React.MutableRefObject<KeyState> {
       }
     }
 
+    function onFocusIn(e: FocusEvent) {
+      const tag = (e.target as HTMLElement)?.tagName
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') {
+        // Release all movement keys so character stops when user starts typing
+        keys.current.forward = false
+        keys.current.backward = false
+        keys.current.left = false
+        keys.current.right = false
+        keys.current.run = false
+      }
+    }
+
     window.addEventListener('keydown', onKeyDown)
     window.addEventListener('keyup', onKeyUp)
+    window.addEventListener('focusin', onFocusIn)
 
     return () => {
       window.removeEventListener('keydown', onKeyDown)
       window.removeEventListener('keyup', onKeyUp)
+      window.removeEventListener('focusin', onFocusIn)
     }
   }, [])
 

@@ -1,0 +1,340 @@
+import { useRef, useState } from 'react'
+import type { InteractiveZone, ZonePolygon } from '../hooks/useInteractiveZones'
+
+// Distinct accent colors cycling per zone index
+const ZONE_COLORS = [
+  '#ff6b6b', // red
+  '#ffd93d', // yellow
+  '#6bcb77', // green
+  '#4d96ff', // blue
+  '#c77dff', // purple
+  '#ff9f1c', // orange
+  '#2ec4b6', // teal
+]
+
+interface InteractiveZoneEditorProps {
+  zones: InteractiveZone[]
+  onUpdateZone: (id: string, patch: Partial<Omit<InteractiveZone, 'id'>>) => void
+  onAddZone: () => string
+  onRemoveZone: (id: string) => void
+  visible: boolean
+}
+
+export function InteractiveZoneEditor({
+  zones,
+  onUpdateZone,
+  onAddZone,
+  onRemoveZone,
+  visible,
+}: InteractiveZoneEditorProps) {
+  const svgRef = useRef<SVGSVGElement>(null)
+  const dragging = useRef<{ zoneId: string; nodeIdx: number } | null>(null)
+  const [selectedZoneId, setSelectedZoneId] = useState<string | null>(
+    zones.length > 0 ? zones[0].id : null
+  )
+  const [editingLabelId, setEditingLabelId] = useState<string | null>(null)
+
+  if (!visible) return null
+
+  // ── pointer handlers ──────────────────────────────────────────────────
+
+  const handlePointerDown = (zoneId: string, nodeIdx: number, e: React.PointerEvent) => {
+    e.stopPropagation()
+    setSelectedZoneId(zoneId)
+    dragging.current = { zoneId, nodeIdx }
+    e.currentTarget.setPointerCapture(e.pointerId)
+  }
+
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (!dragging.current || !svgRef.current) return
+    const rect = svgRef.current.getBoundingClientRect()
+    const x = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width))
+    const y = Math.max(0, Math.min(1, (e.clientY - rect.top) / rect.height))
+    const { zoneId, nodeIdx } = dragging.current
+
+    const zone = zones.find(z => z.id === zoneId)
+    if (!zone) return
+    const next: ZonePolygon = zone.polygon.map((p, i) => (i === nodeIdx ? { x, y } : p))
+    onUpdateZone(zoneId, { polygon: next })
+  }
+
+  const handlePointerUp = (e: React.PointerEvent) => {
+    if (dragging.current !== null) {
+      e.currentTarget.releasePointerCapture(e.pointerId)
+      dragging.current = null
+    }
+  }
+
+  const handleEdgeClick = (zoneId: string, edgeIdx: number) => {
+    const zone = zones.find(z => z.id === zoneId)
+    if (!zone) return
+    const p1 = zone.polygon[edgeIdx]
+    const p2 = zone.polygon[(edgeIdx + 1) % zone.polygon.length]
+    const mid = { x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2 }
+    const next = [...zone.polygon]
+    next.splice(edgeIdx + 1, 0, mid)
+    onUpdateZone(zoneId, { polygon: next })
+  }
+
+  const handleRightClickNode = (zoneId: string, nodeIdx: number, e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    const zone = zones.find(z => z.id === zoneId)
+    if (!zone || zone.polygon.length <= 3) return
+    const next = zone.polygon.filter((_, i) => i !== nodeIdx)
+    onUpdateZone(zoneId, { polygon: next })
+  }
+
+  // ── render ────────────────────────────────────────────────────────────
+
+  return (
+    <div
+      id="zone-editor-overlay"
+      style={{
+        position: 'absolute',
+        inset: 0,
+        pointerEvents: 'auto',
+        zIndex: 20,
+      }}
+    >
+      {/* SVG canvas */}
+      <svg
+        ref={svgRef}
+        style={{ width: '100%', height: '100%', display: 'block' }}
+        viewBox="0 0 100 100"
+        preserveAspectRatio="none"
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+      >
+        {zones.map((zone, zIdx) => {
+          const color = ZONE_COLORS[zIdx % ZONE_COLORS.length]
+          const isSelected = zone.id === selectedZoneId
+          const pointsStr = zone.polygon.map(p => `${p.x * 100},${p.y * 100}`).join(' ')
+
+          // centroid for label placement
+          const cx = zone.polygon.reduce((s, p) => s + p.x, 0) / zone.polygon.length * 100
+          const cy = zone.polygon.reduce((s, p) => s + p.y, 0) / zone.polygon.length * 100
+
+          return (
+            <g key={zone.id} onClick={() => setSelectedZoneId(zone.id)}>
+              {/* Fill polygon */}
+              <polygon
+                points={pointsStr}
+                fill={`${color}26`}
+                stroke={color}
+                strokeWidth={isSelected ? 0.35 : 0.2}
+                strokeDasharray={isSelected ? undefined : '1,0.5'}
+                style={{ cursor: 'pointer' }}
+              />
+
+              {/* Zone label (SVG text, not editable — editable label is in sidebar) */}
+              <text
+                x={cx}
+                y={cy}
+                textAnchor="middle"
+                dominantBaseline="middle"
+                fontSize="2.5"
+                fill={color}
+                style={{ pointerEvents: 'none', userSelect: 'none', fontWeight: 600 }}
+              >
+                {zone.label}
+              </text>
+
+              {/* Edge midpoints (click to split) */}
+              {zone.polygon.map((p, i) => {
+                const nextP = zone.polygon[(i + 1) % zone.polygon.length]
+                const midX = (p.x + nextP.x) / 2 * 100
+                const midY = (p.y + nextP.y) / 2 * 100
+                return (
+                  <circle
+                    key={`edge-${i}`}
+                    cx={midX}
+                    cy={midY}
+                    r="0.5"
+                    fill="rgba(255,255,255,0.4)"
+                    stroke={color}
+                    strokeWidth="0.15"
+                    style={{ cursor: 'pointer' }}
+                    onClick={(e) => { e.stopPropagation(); handleEdgeClick(zone.id, i) }}
+                  >
+                    <title>Click to add point</title>
+                  </circle>
+                )
+              })}
+
+              {/* Corner nodes (drag to reshape) */}
+              {zone.polygon.map((p, i) => (
+                <circle
+                  key={`node-${i}`}
+                  cx={p.x * 100}
+                  cy={p.y * 100}
+                  r="0.9"
+                  fill={color}
+                  stroke="#fff"
+                  strokeWidth="0.15"
+                  style={{ cursor: 'grab' }}
+                  onPointerDown={(e) => handlePointerDown(zone.id, i, e)}
+                  onContextMenu={(e) => handleRightClickNode(zone.id, i, e)}
+                >
+                  <title>Drag to move. Right-click to delete.</title>
+                </circle>
+              ))}
+            </g>
+          )
+        })}
+      </svg>
+
+      {/* Sidebar panel */}
+      <div
+        style={{
+          position: 'absolute',
+          top: '14px',
+          left: '14px',
+          background: 'rgba(10,10,10,0.85)',
+          border: '1px solid rgba(255,255,255,0.12)',
+          borderRadius: '10px',
+          padding: '12px 14px',
+          color: '#fff',
+          fontSize: '12px',
+          width: '200px',
+          backdropFilter: 'blur(8px)',
+        }}
+      >
+        <div style={{ fontWeight: 700, marginBottom: '8px', fontSize: '13px', letterSpacing: '0.02em' }}>
+          👁 Interactive Zones
+        </div>
+
+        {/* Zone list */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '10px' }}>
+          {zones.map((zone, zIdx) => {
+            const color = ZONE_COLORS[zIdx % ZONE_COLORS.length]
+            const isSelected = zone.id === selectedZoneId
+            const isEditingLabel = editingLabelId === zone.id
+
+            return (
+              <div
+                key={zone.id}
+                onClick={() => setSelectedZoneId(zone.id)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '7px',
+                  padding: '5px 8px',
+                  borderRadius: '6px',
+                  background: isSelected ? 'rgba(255,255,255,0.08)' : 'transparent',
+                  border: `1px solid ${isSelected ? color : 'transparent'}`,
+                  cursor: 'pointer',
+                }}
+              >
+                {/* Color dot */}
+                <div style={{
+                  width: '10px', height: '10px', borderRadius: '50%',
+                  background: color, flexShrink: 0,
+                }} />
+
+                {/* Label input / display */}
+                {isEditingLabel ? (
+                  <input
+                    autoFocus
+                    value={zone.label}
+                    onChange={e => onUpdateZone(zone.id, { label: e.target.value })}
+                    onBlur={() => setEditingLabelId(null)}
+                    onKeyDown={e => { if (e.key === 'Enter' || e.key === 'Escape') setEditingLabelId(null) }}
+                    style={{
+                      flex: 1, background: 'transparent', border: 'none',
+                      borderBottom: `1px solid ${color}`, color: '#fff', fontSize: '12px',
+                      outline: 'none', padding: '0 2px',
+                    }}
+                    onClick={e => e.stopPropagation()}
+                  />
+                ) : (
+                  <span
+                    onDoubleClick={(e) => { e.stopPropagation(); setEditingLabelId(zone.id) }}
+                    style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                    title="Double-click to rename"
+                  >
+                    {zone.label}
+                  </span>
+                )}
+
+                {/* Delete button */}
+                {zones.length > 1 && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); onRemoveZone(zone.id); if (selectedZoneId === zone.id) setSelectedZoneId(zones.find(z => z.id !== zone.id)?.id ?? null) }}
+                    title="Delete zone"
+                    style={{
+                      background: 'none', border: 'none', color: '#ff6b6b',
+                      cursor: 'pointer', padding: '0', lineHeight: 1, fontSize: '14px', flexShrink: 0,
+                    }}
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
+            )
+          })}
+        </div>
+
+        {/* Add zone button */}
+        <button
+          onClick={() => { const id = onAddZone(); setSelectedZoneId(id) }}
+          style={{
+            width: '100%', padding: '6px', background: 'rgba(255,255,255,0.07)',
+            border: '1px dashed rgba(255,255,255,0.25)', borderRadius: '6px',
+            color: '#ccc', cursor: 'pointer', fontSize: '12px',
+          }}
+        >
+          + Add Zone
+        </button>
+
+        {/* Dialog editor for selected zone */}
+        {selectedZoneId && (() => {
+          const sel = zones.find(z => z.id === selectedZoneId)
+          if (!sel) return null
+          return (
+            <div style={{ marginTop: '12px' }}>
+              <div style={{
+                fontSize: '11px', fontWeight: 600, color: 'rgba(255,255,255,0.6)',
+                marginBottom: '5px', textTransform: 'uppercase', letterSpacing: '0.06em',
+              }}>
+                💬 Dialog Text
+              </div>
+              <textarea
+                value={sel.dialog ?? ''}
+                onChange={e => onUpdateZone(sel.id, { dialog: e.target.value })}
+                placeholder="Enter dialog text for this zone…"
+                rows={4}
+                style={{
+                  width: '100%',
+                  background: 'rgba(255,255,255,0.06)',
+                  border: '1px solid rgba(255,255,255,0.15)',
+                  borderRadius: '6px',
+                  color: '#fff',
+                  fontSize: '11px',
+                  lineHeight: 1.5,
+                  padding: '7px 9px',
+                  resize: 'vertical',
+                  outline: 'none',
+                  fontFamily: 'inherit',
+                  boxSizing: 'border-box',
+                }}
+                onClick={e => e.stopPropagation()}
+              />
+              <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', marginTop: '3px' }}>
+                Shown when player clicks this zone.
+              </div>
+            </div>
+          )
+        })()}
+
+        {/* Help text */}
+        <div style={{ marginTop: '10px', color: 'rgba(255,255,255,0.4)', fontSize: '11px', lineHeight: 1.5 }}>
+          • Drag nodes to reshape.<br />
+          • Click edge midpoints to split.<br />
+          • Right-click a node to delete.<br />
+          • Double-click label to rename.
+        </div>
+      </div>
+    </div>
+  )
+}
