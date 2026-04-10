@@ -22,7 +22,7 @@ function DebugOverlay({
       editable: false,
       label: 'World Position',
     },
-  }, [anim, pos])
+  }, { collapsed: true }, [anim, pos])
 
   return null
 }
@@ -36,14 +36,6 @@ export default function App() {
   const [editorVisible, setEditorVisible] = useState(false)
   const [currentAnim, setCurrentAnim] = useState('idle')
   const [charPos, setCharPos] = useState<[number, number, number]>(SPAWN_POS)
-
-  useControls('Boundary Editor', {
-    showBoundaryEditor: {
-      value: false,
-      label: 'Show Editor',
-      onChange: (v: boolean) => setEditorVisible(v),
-    },
-  })
 
   const handleAnimChange = useCallback((anim: string) => {
     setCurrentAnim(anim)

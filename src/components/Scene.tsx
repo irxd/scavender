@@ -22,7 +22,7 @@ function Lights() {
     dirX: { value: 5, min: -20, max: 20, step: 0.5 },
     dirY: { value: 10, min: 0, max: 30, step: 0.5 },
     dirZ: { value: 5, min: -20, max: 20, step: 0.5 },
-  })
+  }, { collapsed: true })
 
   return (
     <>
@@ -44,7 +44,7 @@ function Ground() {
     color: '#1a1a1a',
     wireframe: false,
     size: { value: 40, min: 10, max: 200, step: 1 },
-  })
+  }, { collapsed: true })
 
   return (
     <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.01, 0]} receiveShadow>
@@ -69,7 +69,7 @@ function FixedCamera() {
     lookAtX: { value: 0.0, min: -10, max: 10, step: 0.5 },
     lookAtY: { value: 2.0, min: -10, max: 10, step: 0.5 },
     lookAtZ: { value: 0.0, min: -10, max: 10, step: 0.5 },
-  })
+  }, { collapsed: true })
 
   useFrame(({ camera }) => {
     camera.position.set(camX, camY, camZ)
