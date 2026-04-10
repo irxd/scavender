@@ -15,15 +15,19 @@ function DebugOverlay({
   anim: string
   pos: [number, number, number]
 }) {
-  useControls('Debug (Read-only)', {
-    animation: { value: anim, editable: false },
-    posX: { value: parseFloat(pos[0].toFixed(2)), editable: false },
-    posY: { value: parseFloat(pos[1].toFixed(2)), editable: false },
-    posZ: { value: parseFloat(pos[2].toFixed(2)), editable: false },
+  useControls('Character', {
+    status: { value: anim, editable: false, label: 'Current State' },
+    position: {
+      value: { x: pos[0], y: pos[1], z: pos[2] },
+      editable: false,
+      label: 'World Position',
+    },
   }, [anim, pos])
 
   return null
 }
+
+const SPAWN_POS: [number, number, number] = [3.29, 0, 9.7]
 
 export default function App() {
   const keys = useKeyboard()
@@ -31,7 +35,7 @@ export default function App() {
 
   const [editorVisible, setEditorVisible] = useState(false)
   const [currentAnim, setCurrentAnim] = useState('idle')
-  const [charPos, setCharPos] = useState<[number, number, number]>([0, 0, 0])
+  const [charPos, setCharPos] = useState<[number, number, number]>(SPAWN_POS)
 
   useControls('Boundary Editor', {
     showBoundaryEditor: {
@@ -64,13 +68,14 @@ export default function App() {
         <Canvas
           shadows
           style={{ background: 'transparent' }}
-          camera={{ position: [0, 8, 12], fov: 50 }}
+          camera={{ position: [3.29, 8, 22], fov: 50 }}
           gl={{ alpha: true, antialias: true }}
         >
           <DebugOverlay anim={currentAnim} pos={charPos} />
           <Scene
             keys={keys}
             boundary={boundary}
+            initialPosition={SPAWN_POS}
             onAnimChange={handleAnimChange}
             onPositionChange={handlePositionChange}
           />

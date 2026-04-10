@@ -1,6 +1,7 @@
 import { useRef, useEffect } from 'react'
-import { useGLTF, useAnimations } from '@react-three/drei'
+import { useGLTF, useAnimations, Html } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
+import { useControls, button } from 'leva'
 import * as THREE from 'three'
 import type { KeyState } from '../hooks/useKeyboard'
 import type { BoundaryPolygon } from '../hooks/useBoundary'
@@ -21,6 +22,7 @@ type AnimState = 'idle' | 'walk' | 'run'
 interface CharacterProps {
   keys: React.MutableRefObject<KeyState>
   boundary: BoundaryPolygon
+  initialPosition?: [number, number, number]
   walkSpeed?: number
   runSpeed?: number
   onAnimChange?: (anim: AnimState) => void
@@ -30,6 +32,7 @@ interface CharacterProps {
 export function Character({
   keys,
   boundary,
+  initialPosition = [3.29, 0, 9.7],
   walkSpeed = 2,
   runSpeed = 5,
   onAnimChange,
@@ -38,6 +41,16 @@ export function Character({
   const group = useRef<THREE.Group>(null!)
   const { scene, animations } = useGLTF('/assets/glb/jace-miller.glb')
   const { actions, mixer } = useAnimations(animations, group)
+
+  const { showPositionHelper } = useControls('Character', {
+    showPositionHelper: { value: false, label: '🛠️ Show Pos Debug' },
+    'Teleport to Start': button(() => {
+      if (group.current) {
+        group.current.position.set(initialPosition[0], initialPosition[1], initialPosition[2])
+        onPositionChange?.(initialPosition)
+      }
+    }),
+  })
 
   const currentAnim = useRef<AnimState>('idle')
   const velocity = useRef(new THREE.Vector3())
@@ -178,8 +191,31 @@ export function Character({
   })
 
   return (
-    <group ref={group} position={[0, 0, 0]}>
+    <group ref={group} position={initialPosition}>
       <primitive object={scene} scale={1} />
+      
+      {showPositionHelper && (
+        <>
+          <axesHelper args={[2]} />
+          <Html position={[0, 2.5, 0]} center>
+            <div style={{
+              background: 'rgba(0,0,0,0.8)',
+              color: '#00ff00',
+              padding: '4px 8px',
+              borderRadius: '4px',
+              fontSize: '10px',
+              fontFamily: 'monospace',
+              whiteSpace: 'nowrap',
+              pointerEvents: 'none',
+              border: '1px solid #00ff00'
+            }}>
+              X: {group.current.position.x.toFixed(2)}<br/>
+              Y: {group.current.position.y.toFixed(2)}<br/>
+              Z: {group.current.position.z.toFixed(2)}
+            </div>
+          </Html>
+        </>
+      )}
     </group>
   )
 }

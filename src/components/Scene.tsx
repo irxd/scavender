@@ -10,6 +10,7 @@ import type { BoundaryPolygon } from '../hooks/useBoundary'
 interface SceneProps {
   keys: React.MutableRefObject<KeyState>
   boundary: BoundaryPolygon
+  initialPosition?: [number, number, number]
   onAnimChange: (anim: string) => void
   onPositionChange: (pos: [number, number, number]) => void
 }
@@ -82,7 +83,7 @@ function FixedCamera() {
   return null
 }
 
-export function Scene({ keys, boundary, onAnimChange, onPositionChange }: SceneProps) {
+export function Scene({ keys, boundary, initialPosition, onAnimChange, onPositionChange }: SceneProps) {
   const { walkSpeed, runSpeed } = useControls('Character', {
     walkSpeed: { value: 2, min: 0.5, max: 10, step: 0.1 },
     runSpeed: { value: 5, min: 1, max: 20, step: 0.1 },
@@ -97,6 +98,7 @@ export function Scene({ keys, boundary, onAnimChange, onPositionChange }: SceneP
         <Character
           keys={keys}
           boundary={boundary}
+          initialPosition={initialPosition}
           walkSpeed={walkSpeed}
           runSpeed={runSpeed}
           onAnimChange={onAnimChange}
