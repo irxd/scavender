@@ -62,12 +62,12 @@ function Ground() {
 function FixedCamera() {
   const { camX, camY, camZ, fov, lookAtX, lookAtY, lookAtZ } = useControls('Camera', {
     camX: { value: 0, min: -20, max: 20, step: 0.5 },
-    camY: { value: 4, min: 0.1, max: 30, step: 0.5 },
-    camZ: { value: 15, min: 1, max: 40, step: 0.5 },
+    camY: { value: 2.0, min: 0.1, max: 30, step: 0.5 },
+    camZ: { value: 15.0, min: 1, max: 40, step: 0.5 },
     fov: { value: 50, min: 10, max: 120, step: 1 },
-    lookAtX: { value: 0, min: -10, max: 10, step: 0.5 },
-    lookAtY: { value: 2, min: -10, max: 10, step: 0.5 },
-    lookAtZ: { value: 0, min: -10, max: 10, step: 0.5 },
+    lookAtX: { value: 0.0, min: -10, max: 10, step: 0.5 },
+    lookAtY: { value: 2.0, min: -10, max: 10, step: 0.5 },
+    lookAtZ: { value: 0.0, min: -10, max: 10, step: 0.5 },
   })
 
   useFrame(({ camera }) => {
