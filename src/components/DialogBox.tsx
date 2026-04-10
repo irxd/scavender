@@ -30,11 +30,11 @@ export function DialogBox({ zone, onClose }: DialogBoxProps) {
         justifyContent: 'center',
         paddingBottom: '48px',
         cursor: 'default',
+        userSelect: 'none',
       }}
     >
       {/* Dialog container */}
       <div
-        onClick={e => e.stopPropagation()}
         style={{
           position: 'relative',
           display: 'flex',
@@ -48,17 +48,18 @@ export function DialogBox({ zone, onClose }: DialogBoxProps) {
           style={{
             position: 'relative',
             flexShrink: 0,
-            width: '200px',
-            marginBottom: 0,
+            width: '320px',
+            marginBottom: '-48px',
             zIndex: 2,
             // Pull portrait up so it sticks above the box
-            marginTop: '-80px',
+            marginTop: '-120px',
             alignSelf: 'flex-end',
           }}
         >
           <img
             src="/assets/images/jace-miller-portrait.png"
             alt="Character portrait"
+            draggable="false"
             style={{
               width: '100%',
               display: 'block',
@@ -73,11 +74,11 @@ export function DialogBox({ zone, onClose }: DialogBoxProps) {
         <div
           style={{
             flex: 1,
-            background: 'rgba(255, 255, 255, 0.50)',
+            background: 'rgba(0, 0, 0, 0.5)',
             backdropFilter: 'blur(4px)',
             borderRadius: '8px',
-            padding: '28px 32px',
-            marginLeft: '-12px',
+            padding: '28px 32px 28px 140px',
+            marginLeft: '-140px',
             zIndex: 1,
             minHeight: '120px',
             display: 'flex',
@@ -90,7 +91,7 @@ export function DialogBox({ zone, onClose }: DialogBoxProps) {
               margin: 0,
               fontSize: '18px',
               lineHeight: 1.6,
-              color: '#1a1a1a',
+              color: '#ffffff',
               fontFamily: "'Inter', system-ui, sans-serif",
               fontWeight: 400,
             }}
@@ -103,7 +104,7 @@ export function DialogBox({ zone, onClose }: DialogBoxProps) {
             style={{
               marginTop: '16px',
               fontSize: '11px',
-              color: 'rgba(0,0,0,0.4)',
+              color: 'rgba(255, 255, 255, 0.5)',
               alignSelf: 'flex-end',
               letterSpacing: '0.05em',
             }}
