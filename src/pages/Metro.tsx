@@ -20,26 +20,37 @@ type LevelConfig = {
     lookAtY: number
     lookAtX: number
   }
-  defaultSpawn: [number, number, number]
+  spawns: Record<string, [number, number, number]>
 }
 
 const LEVELS: Record<string, LevelConfig> = {
   'level1.1': {
     background: '/assets/images/background/level1.1.jpg',
     cameraConfig: { camY: 2.0, camZ: 15.0, fov: 50, lookAtY: 2.0, lookAtX: 0.0 },
-    defaultSpawn: [4.46, 0, 7.35],
+    spawns: {
+      default: [4.46, 0, 7.35],
+      'level1.2': [7.21, 0, 6.11],
+      'level1.3': [-1.58, 0, 8.80],
+    },
   },
   'level1.2': {
     background: '/assets/images/background/level1.2.jpg',
     cameraConfig: { camY: 1.5, camZ: 1.0, fov: 24, lookAtY: 1.5, lookAtX: -0.5 },
-    defaultSpawn: [-11.65, 0, -10.99],
+    spawns: {
+      default: [-10.99, 0, -9.38],
+      'level1.1': [-10.99, 0, -9.38],
+    },
   },
 }
 
 export default function Metro() {
   const keys = useKeyboard()
-  const [currentLevelId, setCurrentLevelId] = useState('level1.1')
+  const [levelState, setLevelState] = useState({ id: 'level1.1', from: 'default' })
+  const currentLevelId = levelState.id
+  const previousLevelId = levelState.from
+
   const level = LEVELS[currentLevelId] || LEVELS['level1.1']
+  const spawnPos = level.spawns[previousLevelId] || level.spawns['default'] || [0, 0, 0]
 
   const { boundary, setBoundary, reset } = useBoundary(currentLevelId)
   const { zones, addZone, removeZone, updateZone } = useInteractiveZones(currentLevelId)
@@ -52,14 +63,14 @@ export default function Metro() {
   const [activeDialog, setActiveDialog] = useState<InteractiveZone | null>(null)
 
   const [currentAnim, setCurrentAnim] = useState('idle')
-  const [charPos, setCharPos] = useState<[number, number, number]>(level.defaultSpawn)
+  const [charPos, setCharPos] = useState<[number, number, number]>(spawnPos)
   const [autoWalkTarget, setAutoWalkTarget] = useState<[number, number, number] | null>(null)
   const [pendingZone, setPendingZone] = useState<InteractiveZone | null>(null)
 
-  // Reset character position immediately upon level change
+  // Reset character position immediately upon level change or spawn change
   useEffect(() => {
-    setCharPos(level.defaultSpawn)
-  }, [level.defaultSpawn])
+    setCharPos(spawnPos)
+  }, [spawnPos])
 
   const handleAnimChange = useCallback((anim: string) => {
     setCurrentAnim(anim)
@@ -104,7 +115,8 @@ export default function Metro() {
     // Interaction distance threshold: 1.5 units
     if (dist < 1.5) {
       if (zone.transitionTo?.trim()) {
-        setCurrentLevelId(zone.transitionTo.trim())
+        const nextId = zone.transitionTo.trim()
+        setLevelState({ id: nextId, from: currentLevelId })
       } else {
         setActiveDialog(zone)
       }
@@ -114,19 +126,20 @@ export default function Metro() {
       setAutoWalkTarget(targetPos)
       setPendingZone(zone)
     }
-  }, [charPos])
+  }, [charPos, currentLevelId])
 
   const handleDestinationReached = useCallback(() => {
     if (pendingZone) {
       if (pendingZone.transitionTo?.trim()) {
-        setCurrentLevelId(pendingZone.transitionTo.trim())
+        const nextId = pendingZone.transitionTo.trim()
+        setLevelState({ id: nextId, from: currentLevelId })
       } else {
         setActiveDialog(pendingZone)
       }
     }
     setAutoWalkTarget(null)
     setPendingZone(null)
-  }, [pendingZone])
+  }, [pendingZone, currentLevelId])
 
   const handleCloseDialog = useCallback(() => {
     setActiveDialog(null)
