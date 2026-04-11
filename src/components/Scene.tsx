@@ -85,7 +85,7 @@ function FixedCamera() {
 
 export function Scene({ keys, boundary, initialPosition, onAnimChange, onPositionChange }: SceneProps) {
   const { walkSpeed, runSpeed } = useControls('Character', {
-    walkSpeed: { value: 2, min: 0.5, max: 10, step: 0.1 },
+    walkSpeed: { value: 1.5, min: 0.5, max: 10, step: 0.1 },
     runSpeed: { value: 5, min: 1, max: 20, step: 0.1 },
   })
 

@@ -33,7 +33,7 @@ export function Character({
   keys,
   boundary,
   initialPosition = [3.29, 0, 9.7],
-  walkSpeed = 2,
+  walkSpeed = 1.5,
   runSpeed = 5,
   onAnimChange,
   onPositionChange,
@@ -193,7 +193,7 @@ export function Character({
   return (
     <group ref={group} position={initialPosition}>
       <primitive object={scene} scale={1} />
-      
+
       {showPositionHelper && (
         <>
           <axesHelper args={[2]} />
@@ -209,8 +209,8 @@ export function Character({
               pointerEvents: 'none',
               border: '1px solid #00ff00'
             }}>
-              X: {group.current.position.x.toFixed(2)}<br/>
-              Y: {group.current.position.y.toFixed(2)}<br/>
+              X: {group.current.position.x.toFixed(2)}<br />
+              Y: {group.current.position.y.toFixed(2)}<br />
               Z: {group.current.position.z.toFixed(2)}
             </div>
           </Html>
