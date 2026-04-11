@@ -1,4 +1,4 @@
-import { Suspense } from 'react'
+import { Suspense, useEffect } from 'react'
 import { Environment } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { useControls } from 'leva'
@@ -71,7 +71,7 @@ function Ground() {
 
 // A camera rig that follows character Y position only (tracking removed — fixed cam)
 function FixedCamera({ config }: { config?: SceneProps['cameraConfig'] }) {
-  const { camX, camY, camZ, fov, lookAtX, lookAtY, lookAtZ } = useControls('Camera', {
+  const [controls, set] = useControls('Camera', () => ({
     camX: { value: config?.camX ?? 0, min: -20, max: 20, step: 0.5 },
     camY: { value: config?.camY ?? 2.0, min: 0.1, max: 30, step: 0.5 },
     camZ: { value: config?.camZ ?? 15.0, min: 1, max: 40, step: 0.5 },
@@ -79,13 +79,27 @@ function FixedCamera({ config }: { config?: SceneProps['cameraConfig'] }) {
     lookAtX: { value: config?.lookAtX ?? 0.0, min: -10, max: 10, step: 0.5 },
     lookAtY: { value: config?.lookAtY ?? 2.0, min: -10, max: 10, step: 0.5 },
     lookAtZ: { value: config?.lookAtZ ?? 0.0, min: -10, max: 10, step: 0.5 },
-  }, { collapsed: true })
+  }), { collapsed: true })
+
+  useEffect(() => {
+    if (config) {
+      set({
+        camX: config.camX ?? 0,
+        camY: config.camY ?? 2.0,
+        camZ: config.camZ ?? 15.0,
+        fov: config.fov ?? 50,
+        lookAtX: config.lookAtX ?? 0.0,
+        lookAtY: config.lookAtY ?? 2.0,
+        lookAtZ: config.lookAtZ ?? 0.0,
+      })
+    }
+  }, [config, set])
 
   useFrame(({ camera }) => {
-    camera.position.set(camX, camY, camZ)
-    camera.lookAt(lookAtX, lookAtY, lookAtZ)
+    camera.position.set(controls.camX, controls.camY, controls.camZ)
+    camera.lookAt(controls.lookAtX, controls.lookAtY, controls.lookAtZ)
     if (camera instanceof THREE.PerspectiveCamera) {
-      camera.fov = fov
+      camera.fov = controls.fov
       camera.updateProjectionMatrix()
     }
   })

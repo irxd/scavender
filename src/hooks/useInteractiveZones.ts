@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 
 export type ZonePoint = {
   /** Fraction of viewport width/height: 0–1 */
@@ -12,30 +12,18 @@ export type InteractiveZone = {
   id: string
   label: string
   dialog?: string
+  transitionTo?: string
   targetPos?: [number, number, number]
   polygon: ZonePolygon
 }
 
-const STORAGE_KEY = 'scavender_interactive_zones'
+const STORAGE_KEY_PREFIX = 'scavender_interactive_zones_'
 
-const DEFAULT_ZONES: InteractiveZone[] = [
-  {
-    id: 'zone-1',
-    label: 'Zone 1',
-    dialog: '',
-    polygon: [
-      { x: 0.3, y: 0.3 },
-      { x: 0.5, y: 0.3 },
-      { x: 0.5, y: 0.5 },
-      { x: 0.3, y: 0.5 },
-    ],
-    targetPos: [0, 0, 10],
-  },
-]
+const DEFAULT_ZONES: InteractiveZone[] = []
 
-function load(): InteractiveZone[] {
+function load(levelId: string): InteractiveZone[] {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY)
+    const raw = localStorage.getItem(STORAGE_KEY_PREFIX + levelId)
     if (raw) return JSON.parse(raw) as InteractiveZone[]
   } catch {
     // ignore
@@ -43,25 +31,29 @@ function load(): InteractiveZone[] {
   return DEFAULT_ZONES.map(z => ({ ...z, polygon: [...z.polygon] }))
 }
 
-function save(zones: InteractiveZone[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(zones))
+function save(levelId: string, zones: InteractiveZone[]) {
+  localStorage.setItem(STORAGE_KEY_PREFIX + levelId, JSON.stringify(zones))
 }
 
 let nextIdCounter = Date.now()
-let nextLabelNum = 2 // Zone 1 already exists in defaults
+let nextLabelNum = 1
 
-export function useInteractiveZones() {
-  const [zones, setZonesState] = useState<InteractiveZone[]>(load)
+export function useInteractiveZones(levelId: string = 'global') {
+  const [zones, setZonesState] = useState<InteractiveZone[]>(() => load(levelId))
 
+  useEffect(() => {
+    setZonesState(load(levelId))
+  }, [levelId])
+  
   const setZones = useCallback(
     (next: InteractiveZone[] | ((prev: InteractiveZone[]) => InteractiveZone[])) => {
       setZonesState(prev => {
         const resolved = typeof next === 'function' ? next(prev) : next
-        save(resolved)
+        save(levelId, resolved)
         return resolved
       })
     },
-    []
+    [levelId]
   )
 
   const addZone = useCallback(() => {
@@ -100,9 +92,9 @@ export function useInteractiveZones() {
 
   const resetZones = useCallback(() => {
     const fresh = DEFAULT_ZONES.map(z => ({ ...z, polygon: [...z.polygon] }))
-    save(fresh)
+    save(levelId, fresh)
     setZonesState(fresh)
-  }, [])
+  }, [levelId])
 
   return { zones, setZones, addZone, removeZone, updateZone, resetZones }
 }

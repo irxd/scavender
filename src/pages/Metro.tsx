@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { Background } from '../components/Background'
 import { BoundaryEditor } from '../components/BoundaryEditor'
@@ -11,12 +11,38 @@ import { useBoundary } from '../hooks/useBoundary'
 import { useInteractiveZones } from '../hooks/useInteractiveZones'
 import type { InteractiveZone } from '../hooks/useInteractiveZones'
 
-const SPAWN_POS: [number, number, number] = [4.46, 0, 7.35]
+type LevelConfig = {
+  background: string
+  cameraConfig: {
+    camY: number
+    camZ: number
+    fov: number
+    lookAtY: number
+    lookAtX: number
+  }
+  defaultSpawn: [number, number, number]
+}
+
+const LEVELS: Record<string, LevelConfig> = {
+  'level1.1': {
+    background: '/assets/images/background/level1.1.jpg',
+    cameraConfig: { camY: 2.0, camZ: 15.0, fov: 50, lookAtY: 2.0, lookAtX: 0.0 },
+    defaultSpawn: [4.46, 0, 7.35],
+  },
+  'level1.2': {
+    background: '/assets/images/background/level1.2.jpg',
+    cameraConfig: { camY: 1.5, camZ: 1.0, fov: 24, lookAtY: 1.5, lookAtX: -0.5 },
+    defaultSpawn: [-11.65, 0, -10.99],
+  },
+}
 
 export default function Metro() {
   const keys = useKeyboard()
-  const { boundary, setBoundary, reset } = useBoundary()
-  const { zones, addZone, removeZone, updateZone } = useInteractiveZones()
+  const [currentLevelId, setCurrentLevelId] = useState('level1.1')
+  const level = LEVELS[currentLevelId] || LEVELS['level1.1']
+
+  const { boundary, setBoundary, reset } = useBoundary(currentLevelId)
+  const { zones, addZone, removeZone, updateZone } = useInteractiveZones(currentLevelId)
 
   const gameRootRef = useRef<HTMLDivElement>(null)
 
@@ -26,9 +52,14 @@ export default function Metro() {
   const [activeDialog, setActiveDialog] = useState<InteractiveZone | null>(null)
 
   const [currentAnim, setCurrentAnim] = useState('idle')
-  const [charPos, setCharPos] = useState<[number, number, number]>(SPAWN_POS)
+  const [charPos, setCharPos] = useState<[number, number, number]>(level.defaultSpawn)
   const [autoWalkTarget, setAutoWalkTarget] = useState<[number, number, number] | null>(null)
   const [pendingZone, setPendingZone] = useState<InteractiveZone | null>(null)
+
+  // Reset character position immediately upon level change
+  useEffect(() => {
+    setCharPos(level.defaultSpawn)
+  }, [level.defaultSpawn])
 
   const handleAnimChange = useCallback((anim: string) => {
     setCurrentAnim(anim)
@@ -46,14 +77,23 @@ export default function Metro() {
 
   const handleZoneHover = useCallback((zoneId: string | null) => {
     if (!gameRootRef.current) return
-    // Don't change cursor while dialog is open
+
+    let cursorUrl = '/eye-white.svg'
+    if (zoneId) {
+      const zone = zones.find(z => z.id === zoneId)
+      if (zone?.transitionTo?.trim()) {
+        cursorUrl = '/door-white.svg'
+      }
+    }
+
+    // Update cursor icon appropriately
     gameRootRef.current.style.cursor = zoneId
-      ? `url('/eye-white.svg') 16 16, crosshair`
+      ? `url('${cursorUrl}') 16 16, crosshair`
       : 'default'
-  }, [])
+  }, [zones])
 
   const handleZoneClick = useCallback((zone: InteractiveZone) => {
-    if (!zone.dialog?.trim()) return
+    if (!zone.dialog?.trim() && !zone.transitionTo?.trim()) return
 
     const targetPos = zone.targetPos || [charPos[0], charPos[1], charPos[2]]
     const dist = Math.sqrt(
@@ -63,7 +103,11 @@ export default function Metro() {
 
     // Interaction distance threshold: 1.5 units
     if (dist < 1.5) {
-      setActiveDialog(zone)
+      if (zone.transitionTo?.trim()) {
+        setCurrentLevelId(zone.transitionTo.trim())
+      } else {
+        setActiveDialog(zone)
+      }
       setAutoWalkTarget(null)
       setPendingZone(null)
     } else {
@@ -74,7 +118,11 @@ export default function Metro() {
 
   const handleDestinationReached = useCallback(() => {
     if (pendingZone) {
-      setActiveDialog(pendingZone)
+      if (pendingZone.transitionTo?.trim()) {
+        setCurrentLevelId(pendingZone.transitionTo.trim())
+      } else {
+        setActiveDialog(pendingZone)
+      }
     }
     setAutoWalkTarget(null)
     setPendingZone(null)
@@ -91,10 +139,9 @@ export default function Metro() {
     <div id="game-root" ref={gameRootRef}>
       {/* 
         This is a real stage.
-        Background corresponds to level 1.1 right now.
-        Later we can dynamically swap this.
+        Background dynamically swaps based on currentLevelId.
       */}
-      <Background src="/assets/images/background/level1.1.jpg" />
+      <Background src={level.background} />
 
       {/* R3F Canvas */}
       <div id="canvas-layer">
@@ -107,18 +154,12 @@ export default function Metro() {
           <Scene
             keys={keys}
             boundary={boundary}
-            initialPosition={SPAWN_POS}
+            initialPosition={charPos}
             autoWalkTarget={autoWalkTarget}
             onAnimChange={handleAnimChange}
             onPositionChange={handlePositionChange}
             onDestinationReached={handleDestinationReached}
-            cameraConfig={{
-              camY: 2.0,
-              camZ: 15.0,
-              fov: 50,
-              lookAtY: 2.0,
-              lookAtX: 0.0
-            }}
+            cameraConfig={level.cameraConfig}
           />
         </Canvas>
       </div>

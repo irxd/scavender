@@ -91,11 +91,16 @@ export function InteractiveZoneEditor({
   visible,
 }: InteractiveZoneEditorProps) {
   const svgRef = useRef<SVGSVGElement>(null)
-  const dragging = useRef<{ zoneId: string; nodeIdx: number } | null>(null)
+  const draggingNode = useRef<{ zoneId: string; nodeIdx: number } | null>(null)
+  const draggingZone = useRef<{ zoneId: string; startX: number; startY: number; startPoly: ZonePolygon } | null>(null)
   const [selectedZoneId, setSelectedZoneId] = useState<string | null>(
     zones.length > 0 ? zones[0].id : null
   )
   const [editingLabelId, setEditingLabelId] = useState<string | null>(null)
+
+  // Floating panel state
+  const [panelPos, setPanelPos] = useState({ x: 14, y: 14 })
+  const panelDragRef = useRef<{ startX: number; startY: number; initX: number; initY: number } | null>(null)
 
   if (!visible) return null
 
@@ -104,27 +109,47 @@ export function InteractiveZoneEditor({
   const handlePointerDown = (zoneId: string, nodeIdx: number, e: React.PointerEvent) => {
     e.stopPropagation()
     setSelectedZoneId(zoneId)
-    dragging.current = { zoneId, nodeIdx }
+    draggingNode.current = { zoneId, nodeIdx }
     e.currentTarget.setPointerCapture(e.pointerId)
   }
 
   const handlePointerMove = (e: React.PointerEvent) => {
-    if (!dragging.current || !svgRef.current) return
+    if (!svgRef.current) return
     const rect = svgRef.current.getBoundingClientRect()
     const x = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width))
     const y = Math.max(0, Math.min(1, (e.clientY - rect.top) / rect.height))
-    const { zoneId, nodeIdx } = dragging.current
 
-    const zone = zones.find(z => z.id === zoneId)
-    if (!zone) return
-    const next: ZonePolygon = zone.polygon.map((p, i) => (i === nodeIdx ? { x, y } : p))
-    onUpdateZone(zoneId, { polygon: next })
+    if (draggingNode.current) {
+      const { zoneId, nodeIdx } = draggingNode.current
+      const zone = zones.find(z => z.id === zoneId)
+      if (!zone) return
+      const next: ZonePolygon = zone.polygon.map((p, i) => (i === nodeIdx ? { x, y } : p))
+      onUpdateZone(zoneId, { polygon: next })
+      return
+    }
+
+    if (draggingZone.current) {
+      const { zoneId, startX, startY, startPoly } = draggingZone.current
+      const rawX = (e.clientX - rect.left) / rect.width
+      const rawY = (e.clientY - rect.top) / rect.height
+      const dx = rawX - startX
+      const dy = rawY - startY
+
+      const next: ZonePolygon = startPoly.map(p => ({
+        // Using clamp here enforces boundaries but can deform shape if dragged hard against the edge.
+        // For simple dragging, a simple clamp is fine.
+        x: Math.max(0, Math.min(1, p.x + dx)),
+        y: Math.max(0, Math.min(1, p.y + dy)),
+      }))
+      onUpdateZone(zoneId, { polygon: next })
+    }
   }
 
   const handlePointerUp = (e: React.PointerEvent) => {
-    if (dragging.current !== null) {
+    if (draggingNode.current || draggingZone.current) {
       e.currentTarget.releasePointerCapture(e.pointerId)
-      dragging.current = null
+      draggingNode.current = null
+      draggingZone.current = null
     }
   }
 
@@ -187,7 +212,17 @@ export function InteractiveZoneEditor({
                 stroke={color}
                 strokeWidth={isSelected ? 0.35 : 0.2}
                 strokeDasharray={isSelected ? undefined : '1,0.5'}
-                style={{ cursor: 'pointer' }}
+                style={{ cursor: 'move' }}
+                onPointerDown={(e) => {
+                  e.stopPropagation()
+                  setSelectedZoneId(zone.id)
+                  if (!svgRef.current) return
+                  const rect = svgRef.current.getBoundingClientRect()
+                  const startX = (e.clientX - rect.left) / rect.width
+                  const startY = (e.clientY - rect.top) / rect.height
+                  draggingZone.current = { zoneId: zone.id, startX, startY, startPoly: zone.polygon }
+                  e.currentTarget.setPointerCapture(e.pointerId)
+                }}
               />
 
               {/* Zone label (SVG text, not editable — editable label is in sidebar) */}
@@ -251,8 +286,8 @@ export function InteractiveZoneEditor({
       <div
         style={{
           position: 'absolute',
-          top: '14px',
-          left: '14px',
+          top: `${panelPos.y}px`,
+          left: `${panelPos.x}px`,
           background: 'rgba(10,10,10,0.85)',
           border: '1px solid rgba(255,255,255,0.12)',
           borderRadius: '10px',
@@ -262,8 +297,38 @@ export function InteractiveZoneEditor({
           width: '200px',
           backdropFilter: 'blur(8px)',
         }}
+        onPointerDown={(e) => e.stopPropagation()} // Prevent touches on panel from leaking to svg underlying
       >
-        <div style={{ fontWeight: 700, marginBottom: '8px', fontSize: '13px', letterSpacing: '0.02em' }}>
+        <div 
+          onPointerDown={(e) => {
+            e.stopPropagation()
+            panelDragRef.current = { startX: e.clientX, startY: e.clientY, initX: panelPos.x, initY: panelPos.y }
+            e.currentTarget.setPointerCapture(e.pointerId)
+          }}
+          onPointerMove={(e) => {
+            if (!panelDragRef.current) return
+            const dx = e.clientX - panelDragRef.current.startX
+            const dy = e.clientY - panelDragRef.current.startY
+            setPanelPos({ 
+              x: panelDragRef.current.initX + dx, 
+              y: Math.max(0, panelDragRef.current.initY + dy) // Ensure it doesn't get dragged above top of screen 
+            })
+          }}
+          onPointerUp={(e) => {
+            if (panelDragRef.current) {
+              e.currentTarget.releasePointerCapture(e.pointerId)
+              panelDragRef.current = null
+            }
+          }}
+          style={{ 
+            fontWeight: 700, 
+            marginBottom: '8px', 
+            fontSize: '13px', 
+            letterSpacing: '0.02em',
+            cursor: 'grab',
+            userSelect: 'none'
+          }}
+        >
           👁 Interactive Zones
         </div>
 
@@ -321,18 +386,16 @@ export function InteractiveZoneEditor({
                 )}
 
                 {/* Delete button */}
-                {zones.length > 1 && (
-                  <button
-                    onClick={(e) => { e.stopPropagation(); onRemoveZone(zone.id); if (selectedZoneId === zone.id) setSelectedZoneId(zones.find(z => z.id !== zone.id)?.id ?? null) }}
-                    title="Delete zone"
-                    style={{
-                      background: 'none', border: 'none', color: '#ff6b6b',
-                      cursor: 'pointer', padding: '0', lineHeight: 1, fontSize: '14px', flexShrink: 0,
-                    }}
-                  >
-                    ×
-                  </button>
-                )}
+                <button
+                  onClick={(e) => { e.stopPropagation(); onRemoveZone(zone.id); if (selectedZoneId === zone.id) setSelectedZoneId(zones.find(z => z.id !== zone.id)?.id ?? null) }}
+                  title="Delete zone"
+                  style={{
+                    background: 'none', border: 'none', color: '#ff6b6b',
+                    cursor: 'pointer', padding: '0', lineHeight: 1, fontSize: '14px', flexShrink: 0,
+                  }}
+                >
+                  ×
+                </button>
               </div>
             )
           })}
@@ -388,6 +451,34 @@ export function InteractiveZoneEditor({
               </div>
 
               <div style={{
+                marginTop: '16px', fontSize: '11px', fontWeight: 600, color: 'rgba(255,255,255,0.6)',
+                marginBottom: '5px', textTransform: 'uppercase', letterSpacing: '0.06em',
+              }}>
+                🚪 Level Transition
+              </div>
+              <input
+                type="text"
+                value={sel.transitionTo ?? ''}
+                onChange={e => onUpdateZone(sel.id, { transitionTo: e.target.value })}
+                placeholder="Next level ID (e.g. level1.2)"
+                style={{
+                  width: '100%',
+                  background: 'rgba(255,255,255,0.06)',
+                  border: '1px solid rgba(255,255,255,0.15)',
+                  borderRadius: '6px',
+                  color: '#fff',
+                  fontSize: '11px',
+                  padding: '5px 9px',
+                  outline: 'none',
+                  boxSizing: 'border-box'
+                }}
+                onClick={e => e.stopPropagation()}
+              />
+              <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', marginTop: '3px' }}>
+                If set, reaching this zone seamlessly loads the target level ID instead of showing dialog.
+              </div>
+
+              <div style={{
                 marginTop: '16px', fontSize: '11px', fontWeight: 600,
                 color: 'rgba(255,255,255,0.6)', marginBottom: '8px',
                 textTransform: 'uppercase', letterSpacing: '0.06em',
@@ -417,6 +508,7 @@ export function InteractiveZoneEditor({
 
         {/* Help text */}
         <div style={{ marginTop: '10px', color: 'rgba(255,255,255,0.4)', fontSize: '11px', lineHeight: 1.5 }}>
+          • Drag the center to move the zone.<br />
           • Drag nodes to reshape.<br />
           • Click edge midpoints to split.<br />
           • Right-click a node to delete.<br />
