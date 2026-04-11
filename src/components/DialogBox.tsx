@@ -98,19 +98,6 @@ export function DialogBox({ zone, onClose }: DialogBoxProps) {
           >
             {text}
           </p>
-
-          {/* Click-to-close hint */}
-          <span
-            style={{
-              marginTop: '16px',
-              fontSize: '11px',
-              color: 'rgba(255, 255, 255, 0.5)',
-              alignSelf: 'flex-end',
-              letterSpacing: '0.05em',
-            }}
-          >
-            Click anywhere or press Esc to close
-          </span>
         </div>
       </div>
     </div>

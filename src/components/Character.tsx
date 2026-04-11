@@ -25,8 +25,10 @@ interface CharacterProps {
   initialPosition?: [number, number, number]
   walkSpeed?: number
   runSpeed?: number
+  autoWalkTarget?: [number, number, number] | null
   onAnimChange?: (anim: AnimState) => void
   onPositionChange?: (pos: [number, number, number]) => void
+  onDestinationReached?: () => void
 }
 
 export function Character({
@@ -35,8 +37,10 @@ export function Character({
   initialPosition = [3.29, 0, 9.7],
   walkSpeed = 1.5,
   runSpeed = 5,
+  autoWalkTarget = null,
   onAnimChange,
   onPositionChange,
+  onDestinationReached,
 }: CharacterProps) {
   const group = useRef<THREE.Group>(null!)
   const { scene, animations } = useGLTF('/assets/glb/jace-miller.glb')
@@ -82,25 +86,47 @@ export function Character({
     const isMoving = k.forward || k.backward || k.left || k.right
     const isRunning = isMoving && k.run
 
-    // Determine animation state
-    if (!isMoving) {
-      transitionTo('idle')
-    } else if (isRunning) {
-      transitionTo('run')
+    // Build movement direction (XZ plane)
+    let speed = isRunning ? runSpeed : walkSpeed
+    const dir = new THREE.Vector3()
+
+    if (isMoving) {
+      if (k.forward) dir.z -= 1
+      if (k.backward) dir.z += 1
+      if (k.left) dir.x -= 1
+      if (k.right) dir.x += 1
+      dir.normalize()
+    } else if (autoWalkTarget) {
+      // Auto-walk logic
+      const target = new THREE.Vector3(...autoWalkTarget)
+      const toTarget = target.clone().sub(group.current.position)
+      toTarget.y = 0 // ignore vertical
+      const dist = toTarget.length()
+
+      if (dist < 0.1) {
+        // Reached destination
+        velocity.current.set(0, 0, 0)
+        transitionTo('idle')
+        onDestinationReached?.()
+        return
+      }
+
+      dir.copy(toTarget.normalize())
+      // Use walk speed for auto-walk
+      speed = walkSpeed
     } else {
-      transitionTo('walk')
+      // No movement
+      transitionTo('idle')
+      return
     }
 
-    if (!isMoving) return
-
-    // Build movement direction (XZ plane)
-    const speed = isRunning ? runSpeed : walkSpeed
-    const dir = new THREE.Vector3()
-    if (k.forward) dir.z -= 1
-    if (k.backward) dir.z += 1
-    if (k.left) dir.x -= 1
-    if (k.right) dir.x += 1
-    dir.normalize()
+    // Determine animation state
+    if (isMoving) {
+      if (isRunning) transitionTo('run')
+      else transitionTo('walk')
+    } else if (autoWalkTarget) {
+      transitionTo('walk')
+    }
 
     // Smooth velocity
     velocity.current.lerp(dir.clone().multiplyScalar(speed), 0.15)

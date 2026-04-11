@@ -11,8 +11,10 @@ interface SceneProps {
   keys: React.MutableRefObject<KeyState>
   boundary: BoundaryPolygon
   initialPosition?: [number, number, number]
+  autoWalkTarget?: [number, number, number] | null
   onAnimChange: (anim: string) => void
   onPositionChange: (pos: [number, number, number]) => void
+  onDestinationReached?: () => void
 }
 
 function Lights() {
@@ -83,7 +85,15 @@ function FixedCamera() {
   return null
 }
 
-export function Scene({ keys, boundary, initialPosition, onAnimChange, onPositionChange }: SceneProps) {
+export function Scene({
+  keys,
+  boundary,
+  initialPosition,
+  autoWalkTarget,
+  onAnimChange,
+  onPositionChange,
+  onDestinationReached,
+}: SceneProps) {
   const { walkSpeed, runSpeed } = useControls('Character', {
     walkSpeed: { value: 1.5, min: 0.5, max: 10, step: 0.1 },
     runSpeed: { value: 5, min: 1, max: 20, step: 0.1 },
@@ -101,8 +111,10 @@ export function Scene({ keys, boundary, initialPosition, onAnimChange, onPositio
           initialPosition={initialPosition}
           walkSpeed={walkSpeed}
           runSpeed={runSpeed}
+          autoWalkTarget={autoWalkTarget}
           onAnimChange={onAnimChange}
           onPositionChange={onPositionChange}
+          onDestinationReached={onDestinationReached}
         />
       </Suspense>
       <Environment preset="city" />

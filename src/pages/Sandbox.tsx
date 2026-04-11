@@ -45,6 +45,8 @@ export default function Sandbox() {
   const [activeDialog, setActiveDialog] = useState<InteractiveZone | null>(null)
   const [currentAnim, setCurrentAnim] = useState('idle')
   const [charPos, setCharPos] = useState<[number, number, number]>(SPAWN_POS)
+  const [autoWalkTarget, setAutoWalkTarget] = useState<[number, number, number] | null>(null)
+  const [pendingZone, setPendingZone] = useState<InteractiveZone | null>(null)
 
   const handleAnimChange = useCallback((anim: string) => {
     setCurrentAnim(anim)
@@ -52,7 +54,13 @@ export default function Sandbox() {
 
   const handlePositionChange = useCallback((pos: [number, number, number]) => {
     setCharPos(pos)
-  }, [])
+    // If movement is manual (keys pressed), cancel auto-walk
+    const isManual = keys.current.forward || keys.current.backward || keys.current.left || keys.current.right
+    if (isManual && autoWalkTarget) {
+      setAutoWalkTarget(null)
+      setPendingZone(null)
+    }
+  }, [keys, autoWalkTarget])
 
   const handleZoneHover = useCallback((zoneId: string | null) => {
     if (!gameRootRef.current) return
@@ -63,11 +71,32 @@ export default function Sandbox() {
   }, [])
 
   const handleZoneClick = useCallback((zone: InteractiveZone) => {
-    // Only open dialog if zone has dialog text configured
-    if (zone.dialog?.trim()) {
+    if (!zone.dialog?.trim()) return
+
+    const targetPos = zone.targetPos || [charPos[0], charPos[1], charPos[2]]
+    const dist = Math.sqrt(
+      Math.pow(charPos[0] - targetPos[0], 2) +
+      Math.pow(charPos[2] - targetPos[2], 2)
+    )
+
+    // Interaction distance threshold: 1.5 units
+    if (dist < 1.5) {
       setActiveDialog(zone)
+      setAutoWalkTarget(null)
+      setPendingZone(null)
+    } else {
+      setAutoWalkTarget(targetPos)
+      setPendingZone(zone)
     }
-  }, [])
+  }, [charPos])
+
+  const handleDestinationReached = useCallback(() => {
+    if (pendingZone) {
+      setActiveDialog(pendingZone)
+    }
+    setAutoWalkTarget(null)
+    setPendingZone(null)
+  }, [pendingZone])
 
   const handleCloseDialog = useCallback(() => {
     setActiveDialog(null)
@@ -97,8 +126,10 @@ export default function Sandbox() {
             keys={keys}
             boundary={boundary}
             initialPosition={SPAWN_POS}
+            autoWalkTarget={autoWalkTarget}
             onAnimChange={handleAnimChange}
             onPositionChange={handlePositionChange}
+            onDestinationReached={handleDestinationReached}
           />
         </Canvas>
       </div>

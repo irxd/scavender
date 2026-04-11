@@ -12,6 +12,7 @@ export type InteractiveZone = {
   id: string
   label: string
   dialog?: string
+  targetPos?: [number, number, number]
   polygon: ZonePolygon
 }
 
@@ -28,6 +29,7 @@ const DEFAULT_ZONES: InteractiveZone[] = [
       { x: 0.5, y: 0.5 },
       { x: 0.3, y: 0.5 },
     ],
+    targetPos: [0, 0, 10],
   },
 ]
 
@@ -74,6 +76,7 @@ export function useInteractiveZones() {
         { x: 0.6, y: 0.6 },
         { x: 0.4, y: 0.6 },
       ],
+      targetPos: [0, 0, 10],
     }
     setZones(prev => [...prev, newZone])
     return id

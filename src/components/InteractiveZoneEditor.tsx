@@ -20,6 +20,69 @@ interface InteractiveZoneEditorProps {
   visible: boolean
 }
 
+function CoordInput({
+  value,
+  onChange,
+  label,
+}: {
+  value: number
+  onChange: (v: number) => void
+  label: string
+}) {
+  const [local, setLocal] = useState(value.toString())
+
+  // Sync if value changed externally (e.g. from state reset)
+  const lastBaseValue = useRef(value)
+  if (value !== lastBaseValue.current) {
+    setLocal(value.toString())
+    lastBaseValue.current = value
+  }
+
+  return (
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '4px' }}>
+      <span style={{ fontSize: '9px', color: 'rgba(255,255,255,0.4)', fontWeight: 600 }}>
+        {label}
+      </span>
+      <input
+        type="text"
+        value={local}
+        onChange={e => {
+          const val = e.target.value
+          setLocal(val)
+          // Only propagate if it's a valid floating number
+          const parsed = parseFloat(val)
+          if (!isNaN(parsed) && val !== '' && val !== '-' && val !== '.' && val !== '-.') {
+            onChange(parsed)
+          }
+        }}
+        onBlur={() => {
+          // Cleanup on blur
+          const parsed = parseFloat(local)
+          if (isNaN(parsed)) {
+            setLocal(value.toString())
+          } else {
+            setLocal(parsed.toString())
+            onChange(parsed)
+          }
+        }}
+        style={{
+          width: '100%',
+          background: 'rgba(255,255,255,0.06)',
+          border: '1px solid rgba(255,255,255,0.15)',
+          borderRadius: '4px',
+          color: '#fff',
+          fontSize: '11px',
+          padding: '4px 6px',
+          outline: 'none',
+          textAlign: 'center',
+          fontFamily: 'inherit',
+        }}
+        onClick={e => e.stopPropagation()}
+      />
+    </div>
+  )
+}
+
 export function InteractiveZoneEditor({
   zones,
   onUpdateZone,
@@ -322,6 +385,31 @@ export function InteractiveZoneEditor({
               />
               <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', marginTop: '3px' }}>
                 Shown when player clicks this zone.
+              </div>
+
+              <div style={{
+                marginTop: '16px', fontSize: '11px', fontWeight: 600,
+                color: 'rgba(255,255,255,0.6)', marginBottom: '8px',
+                textTransform: 'uppercase', letterSpacing: '0.06em',
+              }}>
+                📍 Target Position (X, Y, Z)
+              </div>
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                {[0, 1, 2].map((i) => (
+                  <CoordInput
+                    key={i}
+                    label={['X', 'Y', 'Z'][i]}
+                    value={sel.targetPos?.[i] ?? 0}
+                    onChange={val => {
+                      const next = [...(sel.targetPos ?? [0, 0, 0])] as [number, number, number]
+                      next[i] = val
+                      onUpdateZone(sel.id, { targetPos: next })
+                    }}
+                  />
+                ))}
+              </div>
+              <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', marginTop: '5px' }}>
+                Character will walk here before dialog opens.
               </div>
             </div>
           )
