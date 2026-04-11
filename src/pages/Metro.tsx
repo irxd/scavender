@@ -10,6 +10,7 @@ import { useKeyboard } from '../hooks/useKeyboard'
 import { useBoundary } from '../hooks/useBoundary'
 import { useInteractiveZones } from '../hooks/useInteractiveZones'
 import type { InteractiveZone } from '../hooks/useInteractiveZones'
+import { useControls } from 'leva'
 
 type LevelConfig = {
   background: string
@@ -41,6 +42,25 @@ const LEVELS: Record<string, LevelConfig> = {
       'level1.1': [-10.99, 0, -9.38],
     },
   },
+}
+
+function DebugOverlay({
+  anim,
+  pos,
+}: {
+  anim: string
+  pos: [number, number, number]
+}) {
+  useControls('Character', {
+    status: { value: anim, editable: false, label: 'Current State' },
+    position: {
+      value: { x: pos[0], y: pos[1], z: pos[2] },
+      editable: false,
+      label: 'World Position',
+    },
+  }, { collapsed: true }, [anim, pos])
+
+  return null
 }
 
 export default function Metro() {
@@ -164,6 +184,7 @@ export default function Metro() {
           camera={{ position: [3.29, 8, 22], fov: 50 }}
           gl={{ alpha: true, antialias: true }}
         >
+          <DebugOverlay anim={currentAnim} pos={charPos} />
           <Scene
             keys={keys}
             boundary={boundary}
