@@ -15,6 +15,11 @@ interface SceneProps {
   onAnimChange: (anim: string) => void
   onPositionChange: (pos: [number, number, number]) => void
   onDestinationReached?: () => void
+  cameraConfig?: {
+    camX?: number, camY?: number, camZ?: number,
+    fov?: number,
+    lookAtX?: number, lookAtY?: number, lookAtZ?: number
+  }
 }
 
 function Lights() {
@@ -40,37 +45,40 @@ function Lights() {
 }
 
 function Ground() {
-  const { showGround, opacity, color, wireframe, size } = useControls('Ground', {
-    showGround: { value: false, label: 'Show Ground' },
-    opacity: { value: 0.5, min: 0, max: 1, step: 0.1 },
-    color: '#1a1a1a',
-    wireframe: false,
+  const { showGround, size } = useControls('Ground', {
+    showGround: { value: false, label: 'Show White Grid' },
     size: { value: 40, min: 10, max: 200, step: 1 },
   }, { collapsed: true })
 
   return (
-    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.01, 0]} receiveShadow>
-      <planeGeometry args={[size, size]} />
-      <meshStandardMaterial
-        color={color}
-        transparent
-        opacity={showGround ? opacity : 0}
-        wireframe={wireframe}
-      />
-    </mesh>
+    <group>
+      {/* Invisible plane to magically catch character shadows and blend them with the background image! */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.02, 0]} receiveShadow>
+        <planeGeometry args={[size * 2, size * 2]} />
+        <shadowMaterial transparent opacity={0.5} />
+      </mesh>
+
+      {/* The crisp white grid for aligning perspective */}
+      {showGround && (
+        <gridHelper 
+          args={[size, size, '#ffffff', 'rgba(255, 255, 255, 0.4)']} 
+          position={[0, -0.01, 0]} 
+        />
+      )}
+    </group>
   )
 }
 
 // A camera rig that follows character Y position only (tracking removed — fixed cam)
-function FixedCamera() {
+function FixedCamera({ config }: { config?: SceneProps['cameraConfig'] }) {
   const { camX, camY, camZ, fov, lookAtX, lookAtY, lookAtZ } = useControls('Camera', {
-    camX: { value: 0, min: -20, max: 20, step: 0.5 },
-    camY: { value: 2.0, min: 0.1, max: 30, step: 0.5 },
-    camZ: { value: 15.0, min: 1, max: 40, step: 0.5 },
-    fov: { value: 50, min: 10, max: 120, step: 1 },
-    lookAtX: { value: 0.0, min: -10, max: 10, step: 0.5 },
-    lookAtY: { value: 2.0, min: -10, max: 10, step: 0.5 },
-    lookAtZ: { value: 0.0, min: -10, max: 10, step: 0.5 },
+    camX: { value: config?.camX ?? 0, min: -20, max: 20, step: 0.5 },
+    camY: { value: config?.camY ?? 2.0, min: 0.1, max: 30, step: 0.5 },
+    camZ: { value: config?.camZ ?? 15.0, min: 1, max: 40, step: 0.5 },
+    fov: { value: config?.fov ?? 50, min: 10, max: 120, step: 1 },
+    lookAtX: { value: config?.lookAtX ?? 0.0, min: -10, max: 10, step: 0.5 },
+    lookAtY: { value: config?.lookAtY ?? 2.0, min: -10, max: 10, step: 0.5 },
+    lookAtZ: { value: config?.lookAtZ ?? 0.0, min: -10, max: 10, step: 0.5 },
   }, { collapsed: true })
 
   useFrame(({ camera }) => {
@@ -93,6 +101,7 @@ export function Scene({
   onAnimChange,
   onPositionChange,
   onDestinationReached,
+  cameraConfig,
 }: SceneProps) {
   const { walkSpeed, runSpeed } = useControls('Character', {
     walkSpeed: { value: 1.5, min: 0.5, max: 10, step: 0.1 },
@@ -101,7 +110,7 @@ export function Scene({
 
   return (
     <>
-      <FixedCamera />
+      <FixedCamera config={cameraConfig} />
       <Lights />
       <Ground />
       <Suspense fallback={null}>
