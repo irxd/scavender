@@ -92,7 +92,7 @@ export function DialogBox({ zone, onClose }: DialogBoxProps) {
               fontSize: '18px',
               lineHeight: 1.6,
               color: '#ffffff',
-              fontFamily: "'Inter', system-ui, sans-serif",
+              fontFamily: "'Coming Soon', cursive",
               fontWeight: 400,
             }}
           >
