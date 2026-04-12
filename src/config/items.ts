@@ -24,4 +24,10 @@ export const ITEMS: Record<string, ItemData> = {
     description: 'A rusted but extremely solid pipe wrench. Suitable for tightening enormous valves or perhaps cracking open something heavily armored.',
     image: '/assets/images/item/wrench.png',
   },
+  watch: {
+    id: 'watch',
+    name: 'CHRONOS WATCH',
+    description: "A rugged timepiece with a worn leather strap, remarkably still ticking. The back is engraved with the initials '彡M'.",
+    image: '/assets/images/item/watch.png',
+  }
 }

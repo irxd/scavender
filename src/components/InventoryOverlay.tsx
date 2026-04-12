@@ -37,7 +37,6 @@ export function InventoryOverlay({ onClose }: Props) {
         <div className="inventory-grid">
           {displayedItems.map(item => (
             <div key={item.id} className="inventory-card">
-              <div className="inventory-card-corner-icon">✓</div>
               <img src={item.image} alt={item.name} className="inventory-card-image" />
               <div className="inventory-card-content">
                 <h3>{item.name}</h3>
