@@ -454,6 +454,38 @@ export function InteractiveZoneEditor({
                 marginTop: '16px', fontSize: '11px', fontWeight: 600, color: 'rgba(255,255,255,0.6)',
                 marginBottom: '5px', textTransform: 'uppercase', letterSpacing: '0.06em',
               }}>
+                💎 Items (Comma-separated IDs)
+              </div>
+              <input
+                type="text"
+                value={sel.items?.join(', ') ?? ''}
+                onChange={e => {
+                  const val = e.target.value
+                  const items = val.split(',').map(s => s.trim()).filter(s => s.length > 0)
+                  onUpdateZone(sel.id, { items })
+                }}
+                placeholder="e.g. rebar, wire, wrench"
+                style={{
+                  width: '100%',
+                  background: 'rgba(255,255,255,0.06)',
+                  border: '1px solid rgba(255,255,255,0.15)',
+                  borderRadius: '6px',
+                  color: '#fff',
+                  fontSize: '11px',
+                  padding: '5px 9px',
+                  outline: 'none',
+                  boxSizing: 'border-box'
+                }}
+                onClick={e => e.stopPropagation()}
+              />
+              <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', marginTop: '3px' }}>
+                Items obtained upon interaction.
+              </div>
+
+              <div style={{
+                marginTop: '16px', fontSize: '11px', fontWeight: 600, color: 'rgba(255,255,255,0.6)',
+                marginBottom: '5px', textTransform: 'uppercase', letterSpacing: '0.06em',
+              }}>
                 🚪 Level Transition
               </div>
               <input

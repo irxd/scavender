@@ -1,0 +1,27 @@
+export interface ItemData {
+  id: string
+  name: string
+  description: string
+  image: string
+}
+
+export const ITEMS: Record<string, ItemData> = {
+  rebar: {
+    id: 'rebar',
+    name: 'REBAR LEVER',
+    description: 'A heavy, sturdy piece of construction rebar, found near the staircase collapse. Its robust build makes it perfect for leveraging open stubborn metal chests.',
+    image: '/assets/images/item/rebar.png',
+  },
+  wire: {
+    id: 'wire',
+    name: 'STURDY COPPER WIRE',
+    description: 'A length of thick copper wire salvaged from an old electrical panel. Might be useful for repairing control circuits or picking primitive locks.',
+    image: '/assets/images/item/wire.png',
+  },
+  wrench: {
+    id: 'wrench',
+    name: 'HEAVY WRENCH',
+    description: 'A rusted but extremely solid pipe wrench. Suitable for tightening enormous valves or perhaps cracking open something heavily armored.',
+    image: '/assets/images/item/wrench.png',
+  },
+}

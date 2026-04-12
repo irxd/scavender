@@ -12,6 +12,7 @@ export type InteractiveZone = {
   id: string
   label: string
   dialog?: string
+  items?: string[]
   transitionTo?: string
   targetPos?: [number, number, number]
   polygon: ZonePolygon

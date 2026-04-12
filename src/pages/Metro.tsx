@@ -11,6 +11,9 @@ import { useBoundary } from '../hooks/useBoundary'
 import { useInteractiveZones } from '../hooks/useInteractiveZones'
 import type { InteractiveZone } from '../hooks/useInteractiveZones'
 import { useControls } from 'leva'
+import { useInventoryStore } from '../store/useInventoryStore'
+import { ITEMS } from '../config/items'
+import { ItemObtainedOverlay } from '../components/ItemObtainedOverlay'
 
 type LevelConfig = {
   background: string
@@ -102,6 +105,12 @@ export default function Metro() {
   const [autoWalkTarget, setAutoWalkTarget] = useState<[number, number, number] | null>(null)
   const [pendingZone, setPendingZone] = useState<InteractiveZone | null>(null)
 
+  // Sequence state
+  const [pendingItemsToGive, setPendingItemsToGive] = useState<string[]>([])
+  const [pendingTransition, setPendingTransition] = useState<string | null>(null)
+
+  const { obtainItem } = useInventoryStore()
+
   // Use a ref for charPos to prevent callback instability during movement
   const charPosRef = useRef<[number, number, number]>(spawnPos)
 
@@ -111,6 +120,23 @@ export default function Metro() {
     charPosRef.current = spawnPos
     setCharRotation(spawnRot * (Math.PI / 180))
   }, [currentLevelId, previousLevelId, spawnPos, spawnRot])
+
+  // Sequence effect: trigger transition only after dialog and items are cleared
+  useEffect(() => {
+    if (!activeDialog && pendingItemsToGive.length === 0 && pendingTransition) {
+      setLevelState({ id: pendingTransition, from: currentLevelId })
+      setPendingTransition(null)
+    }
+  }, [activeDialog, pendingItemsToGive.length, pendingTransition, currentLevelId])
+
+  // Trigger interaction sequence
+  const processZoneInteraction = useCallback((zone: InteractiveZone) => {
+    const unobtainedItems = (zone.items || []).filter(id => ITEMS[id] && !useInventoryStore.getState().hasItem(id))
+    
+    if (zone.dialog?.trim()) setActiveDialog(zone)
+    if (unobtainedItems.length > 0) setPendingItemsToGive(unobtainedItems)
+    if (zone.transitionTo?.trim()) setPendingTransition(zone.transitionTo.trim())
+  }, [])
 
   // Handlers
   const handleAnimChange = useCallback((anim: string) => {
@@ -155,7 +181,7 @@ export default function Metro() {
   }, [zones, activeDialog])
 
   const handleZoneClick = useCallback((zone: InteractiveZone) => {
-    if (!zone.dialog?.trim() && !zone.transitionTo?.trim()) return
+    if (!zone.dialog?.trim() && !zone.transitionTo?.trim() && !(zone.items && zone.items.length > 0)) return
 
     const currentPos = charPosRef.current
     const targetPos = zone.targetPos || [currentPos[0], currentPos[1], currentPos[2]]
@@ -166,12 +192,7 @@ export default function Metro() {
 
     // Interaction distance threshold: 1.5 units
     if (dist < 1.5) {
-      if (zone.transitionTo?.trim()) {
-        const nextId = zone.transitionTo.trim()
-        setLevelState({ id: nextId, from: currentLevelId })
-      } else {
-        setActiveDialog(zone)
-      }
+      processZoneInteraction(zone)
       setAutoWalkTarget(null)
       setPendingZone(null)
     } else {
@@ -183,20 +204,15 @@ export default function Metro() {
     if (gameRootRef.current) {
       gameRootRef.current.style.cursor = 'default'
     }
-  }, [currentLevelId, activeDialog])
+  }, [currentLevelId, activeDialog, processZoneInteraction])
 
   const handleDestinationReached = useCallback(() => {
     if (pendingZone) {
-      if (pendingZone.transitionTo?.trim()) {
-        const nextId = pendingZone.transitionTo.trim()
-        setLevelState({ id: nextId, from: currentLevelId })
-      } else {
-        setActiveDialog(pendingZone)
-      }
+      processZoneInteraction(pendingZone)
     }
     setAutoWalkTarget(null)
     setPendingZone(null)
-  }, [pendingZone, currentLevelId])
+  }, [pendingZone, processZoneInteraction])
 
   const handleCloseDialog = useCallback(() => {
     setActiveDialog(null)
@@ -265,6 +281,17 @@ export default function Metro() {
       {/* Dialog box — shown when player clicks an interactive zone */}
       {activeDialog && (
         <DialogBox zone={activeDialog} onClose={handleCloseDialog} />
+      )}
+
+      {/* Item Obtained Overlay — shown after dialog if there are items */}
+      {!activeDialog && pendingItemsToGive.length > 0 && ITEMS[pendingItemsToGive[0]] && (
+        <ItemObtainedOverlay
+          item={ITEMS[pendingItemsToGive[0]]}
+          onClose={() => {
+            obtainItem(pendingItemsToGive[0])
+            setPendingItemsToGive(prev => prev.slice(1))
+          }}
+        />
       )}
 
       {/* Toolbar */}
