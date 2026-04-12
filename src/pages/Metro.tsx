@@ -47,9 +47,11 @@ const LEVELS: Record<string, LevelConfig> = {
 function DebugOverlay({
   anim,
   pos,
+  rot,
 }: {
   anim: string
   pos: [number, number, number]
+  rot: number
 }) {
   useControls('Character', {
     status: { value: anim, editable: false, label: 'Current State' },
@@ -58,7 +60,12 @@ function DebugOverlay({
       editable: false,
       label: 'World Position',
     },
-  }, { collapsed: true }, [anim, pos])
+    rotation: {
+      value: (rot * (180 / Math.PI)).toFixed(2) + '°',
+      editable: false,
+      label: 'Rotation (Y)',
+    },
+  }, { collapsed: true }, [anim, pos, rot])
 
   return null
 }
@@ -84,6 +91,7 @@ export default function Metro() {
 
   const [currentAnim, setCurrentAnim] = useState('idle')
   const [charPos, setCharPos] = useState<[number, number, number]>(spawnPos)
+  const [charRotation, setCharRotation] = useState(0)
   const [autoWalkTarget, setAutoWalkTarget] = useState<[number, number, number] | null>(null)
   const [pendingZone, setPendingZone] = useState<InteractiveZone | null>(null)
 
@@ -105,6 +113,10 @@ export default function Metro() {
       setPendingZone(null)
     }
   }, [keys, autoWalkTarget])
+
+  const handleRotationChange = useCallback((rot: number) => {
+    setCharRotation(rot)
+  }, [])
 
   const handleZoneHover = useCallback((zoneId: string | null) => {
     if (!gameRootRef.current) return
@@ -184,7 +196,7 @@ export default function Metro() {
           camera={{ position: [3.29, 8, 22], fov: 50 }}
           gl={{ alpha: true, antialias: true }}
         >
-          <DebugOverlay anim={currentAnim} pos={charPos} />
+          <DebugOverlay anim={currentAnim} pos={charPos} rot={charRotation} />
           <Scene
             keys={keys}
             boundary={boundary}
@@ -192,6 +204,7 @@ export default function Metro() {
             autoWalkTarget={autoWalkTarget}
             onAnimChange={handleAnimChange}
             onPositionChange={handlePositionChange}
+            onRotationChange={handleRotationChange}
             onDestinationReached={handleDestinationReached}
             cameraConfig={level.cameraConfig}
           />

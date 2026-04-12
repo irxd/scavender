@@ -14,6 +14,7 @@ interface SceneProps {
   autoWalkTarget?: [number, number, number] | null
   onAnimChange: (anim: string) => void
   onPositionChange: (pos: [number, number, number]) => void
+  onRotationChange?: (rotation: number) => void
   onDestinationReached?: () => void
   cameraConfig?: {
     camX?: number, camY?: number, camZ?: number,
@@ -114,6 +115,7 @@ export function Scene({
   autoWalkTarget,
   onAnimChange,
   onPositionChange,
+  onRotationChange,
   onDestinationReached,
   cameraConfig,
 }: SceneProps) {
@@ -137,6 +139,7 @@ export function Scene({
           autoWalkTarget={autoWalkTarget}
           onAnimChange={onAnimChange}
           onPositionChange={onPositionChange}
+          onRotationChange={onRotationChange}
           onDestinationReached={onDestinationReached}
         />
       </Suspense>

@@ -15,9 +15,11 @@ import type { InteractiveZone } from '../hooks/useInteractiveZones'
 function DebugOverlay({
   anim,
   pos,
+  rot,
 }: {
   anim: string
   pos: [number, number, number]
+  rot: number
 }) {
   useControls('Character', {
     status: { value: anim, editable: false, label: 'Current State' },
@@ -26,7 +28,12 @@ function DebugOverlay({
       editable: false,
       label: 'World Position',
     },
-  }, { collapsed: true }, [anim, pos])
+    rotation: {
+      value: (rot * (180 / Math.PI)).toFixed(2) + '°',
+      editable: false,
+      label: 'Rotation (Y)',
+    },
+  }, { collapsed: true }, [anim, pos, rot])
 
   return null
 }
@@ -45,6 +52,7 @@ export default function Sandbox() {
   const [activeDialog, setActiveDialog] = useState<InteractiveZone | null>(null)
   const [currentAnim, setCurrentAnim] = useState('idle')
   const [charPos, setCharPos] = useState<[number, number, number]>(SPAWN_POS)
+  const [charRotation, setCharRotation] = useState(0)
   const [autoWalkTarget, setAutoWalkTarget] = useState<[number, number, number] | null>(null)
   const [pendingZone, setPendingZone] = useState<InteractiveZone | null>(null)
 
@@ -61,6 +69,10 @@ export default function Sandbox() {
       setPendingZone(null)
     }
   }, [keys, autoWalkTarget])
+
+  const handleRotationChange = useCallback((rot: number) => {
+    setCharRotation(rot)
+  }, [])
 
   const handleZoneHover = useCallback((zoneId: string | null) => {
     if (!gameRootRef.current) return
@@ -121,7 +133,7 @@ export default function Sandbox() {
           camera={{ position: [3.29, 8, 22], fov: 50 }}
           gl={{ alpha: true, antialias: true }}
         >
-          <DebugOverlay anim={currentAnim} pos={charPos} />
+          <DebugOverlay anim={currentAnim} pos={charPos} rot={charRotation} />
           <Scene
             keys={keys}
             boundary={boundary}
@@ -129,6 +141,7 @@ export default function Sandbox() {
             autoWalkTarget={autoWalkTarget}
             onAnimChange={handleAnimChange}
             onPositionChange={handlePositionChange}
+            onRotationChange={handleRotationChange}
             onDestinationReached={handleDestinationReached}
           />
         </Canvas>

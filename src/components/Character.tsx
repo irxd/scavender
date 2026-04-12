@@ -28,6 +28,7 @@ interface CharacterProps {
   autoWalkTarget?: [number, number, number] | null
   onAnimChange?: (anim: AnimState) => void
   onPositionChange?: (pos: [number, number, number]) => void
+  onRotationChange?: (rotation: number) => void
   onDestinationReached?: () => void
 }
 
@@ -40,6 +41,7 @@ export function Character({
   autoWalkTarget = null,
   onAnimChange,
   onPositionChange,
+  onRotationChange,
   onDestinationReached,
 }: CharacterProps) {
   const group = useRef<THREE.Group>(null!)
@@ -214,6 +216,7 @@ export function Character({
     }
 
     onPositionChange?.([pos.x, pos.y, pos.z])
+    onRotationChange?.(group.current.rotation.y)
   })
 
   return (
@@ -223,6 +226,16 @@ export function Character({
       {showPositionHelper && (
         <>
           <axesHelper args={[2]} />
+          <group rotation={[0, 0, 0]}>
+             <mesh position={[0, 0.1, 1]} rotation={[-Math.PI/2, 0, 0]}>
+                <coneGeometry args={[0.2, 0.5, 8]} />
+                <meshBasicMaterial color="#00ff00" />
+             </mesh>
+             <mesh position={[0, 0.1, 0.5]} rotation={[-Math.PI/2, 0, 0]}>
+                <cylinderGeometry args={[0.05, 0.05, 1, 8]} />
+                <meshBasicMaterial color="#00ff00" />
+             </mesh>
+          </group>
           <Html position={[0, 2.5, 0]} center>
             <div style={{
               background: 'rgba(0,0,0,0.8)',
@@ -237,7 +250,8 @@ export function Character({
             }}>
               X: {group.current.position.x.toFixed(2)}<br />
               Y: {group.current.position.y.toFixed(2)}<br />
-              Z: {group.current.position.z.toFixed(2)}
+              Z: {group.current.position.z.toFixed(2)}<br />
+              R: {(group.current.rotation.y * (180 / Math.PI)).toFixed(2)}°
             </div>
           </Html>
         </>
