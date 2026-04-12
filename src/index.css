@@ -172,3 +172,156 @@ html, body, #root {
   border-color: rgba(0, 220, 140, 0.6);
   color: rgb(0, 220, 140);
 }
+
+/* ─── Inventory Overlay ──────────────────────────────────────────── */
+.inventory-overlay-container {
+  position: absolute;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.inventory-overlay-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  pointer-events: all;
+}
+
+.inventory-overlay {
+  position: relative;
+  width: 900px;
+  max-width: 90%;
+  max-height: 85vh;
+  background: rgba(15, 20, 25, 0.95);
+  border: 1px solid rgba(100, 120, 140, 0.5);
+  border-radius: 4px;
+  box-shadow: 0 0 30px rgba(0,0,0,0.8);
+  font-family: 'Inter', sans-serif;
+  pointer-events: all;
+  display: flex;
+  flex-direction: column;
+}
+
+.inventory-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-bottom: 1px solid rgba(100, 120, 140, 0.3);
+}
+
+.inventory-header h2 {
+  font-size: 20px;
+  font-weight: 500;
+  color: #fff;
+  letter-spacing: 1px;
+}
+
+.inventory-header input {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(100, 120, 140, 0.5);
+  color: #ccc;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  outline: none;
+}
+
+.inventory-header input::placeholder {
+  color: rgba(255,255,255,0.3);
+}
+
+.inventory-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.inventory-card {
+  display: flex;
+  align-items: flex-start;
+  background: rgba(30, 35, 45, 0.8);
+  border: 1px solid rgba(100, 120, 140, 0.4);
+  border-radius: 4px;
+  padding: 16px;
+  position: relative;
+}
+
+.inventory-card-corner-icon {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  color: rgba(100, 120, 140, 0.8);
+  font-size: 14px;
+}
+
+.inventory-card-image {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  margin-right: 16px;
+  filter: drop-shadow(0 0 10px rgba(0,255,255,0.1));
+}
+
+.inventory-card-content h3 {
+  color: #dcb873; 
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.inventory-card-content p {
+  color: #a0b0c0;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.inventory-empty {
+  grid-column: span 2;
+  text-align: center;
+  color: #888;
+  padding: 40px;
+  font-style: italic;
+}
+
+.bag-button {
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  z-index: 20;
+  background: rgba(10, 10, 10, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  padding: 12px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.2s;
+}
+
+.bag-button:hover {
+  background: rgba(30, 30, 30, 0.9);
+  border-color: rgba(255,255,255,0.3);
+  transform: scale(1.05);
+}
+
+.bag-button img {
+  width: 32px;
+  height: 32px;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.bag-button:hover img {
+  opacity: 1;
+}

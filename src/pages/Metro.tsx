@@ -14,6 +14,7 @@ import { useControls } from 'leva'
 import { useInventoryStore } from '../store/useInventoryStore'
 import { ITEMS } from '../config/items'
 import { ItemObtainedOverlay } from '../components/ItemObtainedOverlay'
+import { InventoryOverlay } from '../components/InventoryOverlay'
 
 type LevelConfig = {
   background: string
@@ -113,6 +114,7 @@ export default function Metro() {
 
   const [boundaryEditorVisible, setBoundaryEditorVisible] = useState(false)
   const [zoneEditorVisible, setZoneEditorVisible] = useState(false)
+  const [inventoryVisible, setInventoryVisible] = useState(false)
 
   const [activeDialog, setActiveDialog] = useState<InteractiveZone | null>(null)
 
@@ -206,7 +208,7 @@ export default function Metro() {
   const handleZoneHover = useCallback((zoneId: string | null) => {
     if (!gameRootRef.current) return
 
-    let cursorUrl = '/eye-white.svg'
+    let cursorUrl = '/assets/icons/eye.svg'
     if (zoneId) {
       const zone = zones.find(z => z.id === zoneId)
       if (zone) {
@@ -220,13 +222,13 @@ export default function Metro() {
         const itemsFullyObtained = hasItems && unobtainedItems.length === 0
 
         if (hasRequirements && !requirementsMet) {
-          cursorUrl = '/locked.svg'
+          cursorUrl = '/assets/icons/locked.svg'
         } else if (hasRequirements && requirementsMet && hasItems && !itemsFullyObtained) {
-          cursorUrl = '/unlocked.svg'
+          cursorUrl = '/assets/icons/unlocked.svg'
         } else if (zone.transitionTo?.trim()) {
-          cursorUrl = '/door-white.svg'
+          cursorUrl = '/assets/icons/door.svg'
         } else {
-          cursorUrl = '/eye-white.svg'
+          cursorUrl = '/assets/icons/eye.svg'
         }
       }
     }
@@ -360,6 +362,11 @@ export default function Metro() {
         />
       )}
 
+      {/* Inventory Overlay */}
+      {inventoryVisible && (
+        <InventoryOverlay onClose={() => setInventoryVisible(false)} />
+      )}
+
       {/* Toolbar */}
       <div id="toolbar">
         <button
@@ -390,6 +397,10 @@ export default function Metro() {
         <div className="hud-badge">WASD / ↑↓←→ Move</div>
         <div className="hud-badge">Shift + Move = Run</div>
       </div>
+
+      <button className="bag-button" onClick={() => setInventoryVisible(true)} title="Open Inventory">
+        <img src="/assets/icons/bag.svg" alt="Inventory" />
+      </button>
     </div>
   )
 }

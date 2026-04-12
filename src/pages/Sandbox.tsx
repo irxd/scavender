@@ -78,7 +78,7 @@ export default function Sandbox() {
     if (!gameRootRef.current) return
     // Don't change cursor while dialog is open or editor is open
     gameRootRef.current.style.cursor = zoneId
-      ? `url('/eye-white.svg') 16 16, crosshair`
+      ? `url('/assets/icons/eye.svg') 16 16, crosshair`
       : 'default'
   }, [])
 
