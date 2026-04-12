@@ -11,6 +11,7 @@ interface SceneProps {
   keys: React.MutableRefObject<KeyState>
   boundary: BoundaryPolygon
   initialPosition?: [number, number, number]
+  initialRotation?: number
   autoWalkTarget?: [number, number, number] | null
   onAnimChange: (anim: string) => void
   onPositionChange: (pos: [number, number, number]) => void
@@ -112,6 +113,7 @@ export function Scene({
   keys,
   boundary,
   initialPosition,
+  initialRotation,
   autoWalkTarget,
   onAnimChange,
   onPositionChange,
@@ -134,6 +136,7 @@ export function Scene({
           keys={keys}
           boundary={boundary}
           initialPosition={initialPosition}
+          initialRotation={initialRotation}
           walkSpeed={walkSpeed}
           runSpeed={runSpeed}
           autoWalkTarget={autoWalkTarget}

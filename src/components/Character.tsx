@@ -23,6 +23,7 @@ interface CharacterProps {
   keys: React.MutableRefObject<KeyState>
   boundary: BoundaryPolygon
   initialPosition?: [number, number, number]
+  initialRotation?: number
   walkSpeed?: number
   runSpeed?: number
   autoWalkTarget?: [number, number, number] | null
@@ -36,6 +37,7 @@ export function Character({
   keys,
   boundary,
   initialPosition = [3.29, 0, 9.7],
+  initialRotation = 0,
   walkSpeed = 1.5,
   runSpeed = 5,
   autoWalkTarget = null,
@@ -53,7 +55,9 @@ export function Character({
     'Teleport to Start': button(() => {
       if (group.current) {
         group.current.position.set(initialPosition[0], initialPosition[1], initialPosition[2])
+        group.current.rotation.y = initialRotation * (Math.PI / 180)
         onPositionChange?.(initialPosition)
+        onRotationChange?.(initialRotation * (Math.PI / 180))
       }
     }),
   })
@@ -220,7 +224,11 @@ export function Character({
   })
 
   return (
-    <group ref={group} position={initialPosition}>
+    <group 
+      ref={group} 
+      position={initialPosition} 
+      rotation={[0, initialRotation * (Math.PI / 180), 0]}
+    >
       <primitive object={scene} scale={1} />
 
       {showPositionHelper && (

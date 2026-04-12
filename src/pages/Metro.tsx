@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useEffect } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { Background } from '../components/Background'
 import { BoundaryEditor } from '../components/BoundaryEditor'
@@ -21,7 +21,7 @@ type LevelConfig = {
     lookAtY: number
     lookAtX: number
   }
-  spawns: Record<string, [number, number, number]>
+  spawns: Record<string, [number, number, number, number?]>
 }
 
 const LEVELS: Record<string, LevelConfig> = {
@@ -29,17 +29,17 @@ const LEVELS: Record<string, LevelConfig> = {
     background: '/assets/images/background/level1.1.jpg',
     cameraConfig: { camY: 2.0, camZ: 15.0, fov: 50, lookAtY: 2.0, lookAtX: 0.0 },
     spawns: {
-      default: [4.46, 0, 7.35],
-      'level1.2': [7.21, 0, 6.11],
-      'level1.3': [-1.58, 0, 8.80],
+      default: [4.46, 0, 7.35, 20],
+      'level1.2': [6.8, 0, 6.11, -60],
+      'level1.3': [-1.58, 0, 8.80, 0],
     },
   },
   'level1.2': {
     background: '/assets/images/background/level1.2.jpg',
     cameraConfig: { camY: 1.5, camZ: 1.0, fov: 24, lookAtY: 1.5, lookAtX: -0.5 },
     spawns: {
-      default: [-10.99, 0, -9.38],
-      'level1.1': [-10.99, 0, -9.38],
+      default: [-11.68, 0, -10.46, 75],
+      'level1.1': [-11.68, 0, -10.46, 75],
     },
   },
 }
@@ -77,7 +77,9 @@ export default function Metro() {
   const previousLevelId = levelState.from
 
   const level = LEVELS[currentLevelId] || LEVELS['level1.1']
-  const spawnPos = level.spawns[previousLevelId] || level.spawns['default'] || [0, 0, 0]
+  const spawnData = level.spawns[previousLevelId] || level.spawns['default'] || [0, 0, 0, 0]
+  const spawnPos: [number, number, number] = [spawnData[0], spawnData[1], spawnData[2]]
+  const spawnRot = spawnData[3] ?? 0
 
   const { boundary, setBoundary, reset } = useBoundary(currentLevelId)
   const { zones, addZone, removeZone, updateZone } = useInteractiveZones(currentLevelId)
@@ -95,11 +97,7 @@ export default function Metro() {
   const [autoWalkTarget, setAutoWalkTarget] = useState<[number, number, number] | null>(null)
   const [pendingZone, setPendingZone] = useState<InteractiveZone | null>(null)
 
-  // Reset character position immediately upon level change or spawn change
-  useEffect(() => {
-    setCharPos(spawnPos)
-  }, [spawnPos])
-
+  // Handlers
   const handleAnimChange = useCallback((anim: string) => {
     setCurrentAnim(anim)
   }, [])
@@ -198,9 +196,11 @@ export default function Metro() {
         >
           <DebugOverlay anim={currentAnim} pos={charPos} rot={charRotation} />
           <Scene
+            key={currentLevelId}
             keys={keys}
             boundary={boundary}
-            initialPosition={charPos}
+            initialPosition={spawnPos}
+            initialRotation={spawnRot}
             autoWalkTarget={autoWalkTarget}
             onAnimChange={handleAnimChange}
             onPositionChange={handlePositionChange}

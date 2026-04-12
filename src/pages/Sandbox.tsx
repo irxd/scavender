@@ -138,6 +138,7 @@ export default function Sandbox() {
             keys={keys}
             boundary={boundary}
             initialPosition={SPAWN_POS}
+            initialRotation={0}
             autoWalkTarget={autoWalkTarget}
             onAnimChange={handleAnimChange}
             onPositionChange={handlePositionChange}
