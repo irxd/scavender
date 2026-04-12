@@ -192,8 +192,25 @@ export default function Metro() {
     let cursorUrl = '/eye-white.svg'
     if (zoneId) {
       const zone = zones.find(z => z.id === zoneId)
-      if (zone?.transitionTo?.trim()) {
-        cursorUrl = '/door-white.svg'
+      if (zone) {
+        const state = useInventoryStore.getState()
+        
+        const hasRequirements = zone.requiredItems && zone.requiredItems.length > 0
+        const requirementsMet = hasRequirements && zone.requiredItems!.every(id => state.hasItem(id))
+        
+        const hasItems = zone.items && zone.items.length > 0
+        const unobtainedItems = (zone.items || []).filter(id => ITEMS[id] && !state.hasItem(id))
+        const itemsFullyObtained = hasItems && unobtainedItems.length === 0
+
+        if (hasRequirements && !requirementsMet) {
+          cursorUrl = '/locked.svg'
+        } else if (hasRequirements && requirementsMet && hasItems && !itemsFullyObtained) {
+          cursorUrl = '/unlocked.svg'
+        } else if (zone.transitionTo?.trim()) {
+          cursorUrl = '/door-white.svg'
+        } else {
+          cursorUrl = '/eye-white.svg'
+        }
       }
     }
 
