@@ -294,8 +294,12 @@ export function InteractiveZoneEditor({
           padding: '12px 14px',
           color: '#fff',
           fontSize: '12px',
-          width: '200px',
+          width: '260px', // slightly wider for inputs
+          maxHeight: 'calc(100vh - 60px)',
+          overflowY: 'auto',
           backdropFilter: 'blur(8px)',
+          scrollbarWidth: 'thin',
+          scrollbarColor: 'rgba(255,255,255,0.2) transparent',
         }}
         onPointerDown={(e) => e.stopPropagation()} // Prevent touches on panel from leaking to svg underlying
       >
