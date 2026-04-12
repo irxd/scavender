@@ -33,9 +33,9 @@ export function InteractiveZoneOverlay({
   useEffect(() => {
     let currentHit: string | null = null
 
-    const onMove = (e: MouseEvent) => {
-      const fx = e.clientX / window.innerWidth
-      const fy = e.clientY / window.innerHeight
+    const checkHit = (clientX: number, clientY: number) => {
+      const fx = clientX / window.innerWidth
+      const fy = clientY / window.innerHeight
 
       let hit: string | null = null
       for (const zone of zones) {
@@ -49,6 +49,11 @@ export function InteractiveZoneOverlay({
         currentHit = hit
         onHoverChange(hit)
       }
+    }
+
+    const onMove = (e: MouseEvent) => {
+      if (editorOpen) return
+      checkHit(e.clientX, e.clientY)
     }
 
     const onClick = (e: MouseEvent) => {
@@ -66,9 +71,12 @@ export function InteractiveZoneOverlay({
 
     window.addEventListener('mousemove', onMove)
     window.addEventListener('click', onClick)
+
     return () => {
       window.removeEventListener('mousemove', onMove)
       window.removeEventListener('click', onClick)
+      // Ensure cursor is reset when zones change or unmount
+      onHoverChange(null)
     }
   }, [zones, onHoverChange, onZoneClick, editorOpen])
 

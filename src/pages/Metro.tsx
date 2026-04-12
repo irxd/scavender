@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useMemo, useEffect } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { Background } from '../components/Background'
 import { BoundaryEditor } from '../components/BoundaryEditor'
@@ -78,7 +78,12 @@ export default function Metro() {
 
   const level = LEVELS[currentLevelId] || LEVELS['level1.1']
   const spawnData = level.spawns[previousLevelId] || level.spawns['default'] || [0, 0, 0, 0]
-  const spawnPos: [number, number, number] = [spawnData[0], spawnData[1], spawnData[2]]
+  
+  const spawnPos = (useMemo(() => 
+    [spawnData[0], spawnData[1], spawnData[2]], 
+    [spawnData]
+  ) as [number, number, number])
+  
   const spawnRot = spawnData[3] ?? 0
 
   const { boundary, setBoundary, reset } = useBoundary(currentLevelId)
@@ -97,6 +102,16 @@ export default function Metro() {
   const [autoWalkTarget, setAutoWalkTarget] = useState<[number, number, number] | null>(null)
   const [pendingZone, setPendingZone] = useState<InteractiveZone | null>(null)
 
+  // Use a ref for charPos to prevent callback instability during movement
+  const charPosRef = useRef<[number, number, number]>(spawnPos)
+
+  // Reset character position state upon level change
+  useEffect(() => {
+    setCharPos(spawnPos)
+    charPosRef.current = spawnPos
+    setCharRotation(spawnRot * (Math.PI / 180))
+  }, [currentLevelId, previousLevelId, spawnPos, spawnRot])
+
   // Handlers
   const handleAnimChange = useCallback((anim: string) => {
     setCurrentAnim(anim)
@@ -104,6 +119,7 @@ export default function Metro() {
 
   const handlePositionChange = useCallback((pos: [number, number, number]) => {
     setCharPos(pos)
+    charPosRef.current = pos
     // If movement is manual (keys pressed), cancel auto-walk
     const isManual = keys.current.forward || keys.current.backward || keys.current.left || keys.current.right
     if (isManual && autoWalkTarget) {
@@ -128,18 +144,24 @@ export default function Metro() {
     }
 
     // Update cursor icon appropriately
+    if (activeDialog) {
+      gameRootRef.current.style.cursor = 'default'
+      return
+    }
+
     gameRootRef.current.style.cursor = zoneId
       ? `url('${cursorUrl}') 16 16, crosshair`
       : 'default'
-  }, [zones])
+  }, [zones, activeDialog])
 
   const handleZoneClick = useCallback((zone: InteractiveZone) => {
     if (!zone.dialog?.trim() && !zone.transitionTo?.trim()) return
 
-    const targetPos = zone.targetPos || [charPos[0], charPos[1], charPos[2]]
+    const currentPos = charPosRef.current
+    const targetPos = zone.targetPos || [currentPos[0], currentPos[1], currentPos[2]]
     const dist = Math.sqrt(
-      Math.pow(charPos[0] - targetPos[0], 2) +
-      Math.pow(charPos[2] - targetPos[2], 2)
+      Math.pow(currentPos[0] - targetPos[0], 2) +
+      Math.pow(currentPos[2] - targetPos[2], 2)
     )
 
     // Interaction distance threshold: 1.5 units
@@ -156,7 +178,12 @@ export default function Metro() {
       setAutoWalkTarget(targetPos)
       setPendingZone(zone)
     }
-  }, [charPos, currentLevelId])
+
+    // Reset cursor icon immediately upon click/interaction start
+    if (gameRootRef.current) {
+      gameRootRef.current.style.cursor = 'default'
+    }
+  }, [currentLevelId, activeDialog])
 
   const handleDestinationReached = useCallback(() => {
     if (pendingZone) {
