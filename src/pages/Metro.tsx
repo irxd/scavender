@@ -29,8 +29,8 @@ const LEVELS: Record<string, LevelConfig> = {
     background: '/assets/images/background/level1.1.jpg',
     cameraConfig: { camY: 2.0, camZ: 15.0, fov: 50, lookAtY: 2.0, lookAtX: 0.0 },
     spawns: {
-      default: [4.46, 0, 7.35, 20],
-      'level1.2': [6.8, 0, 6.11, -60],
+      default: [4.58, 0, 7.27, 20],
+      'level1.2': [7.21, 0, 6.11, -52],
       'level1.3': [-1.58, 0, 8.80, 0],
     },
   },
@@ -38,8 +38,8 @@ const LEVELS: Record<string, LevelConfig> = {
     background: '/assets/images/background/level1.2.jpg',
     cameraConfig: { camY: 1.5, camZ: 1.0, fov: 24, lookAtY: 1.5, lookAtX: -0.5 },
     spawns: {
-      default: [-11.68, 0, -10.46, 75],
-      'level1.1': [-11.68, 0, -10.46, 75],
+      default: [-11.97, 0, -10.10, 72.27],
+      'level1.1': [-11.97, 0, -10.10, 72.27],
     },
   },
 }
@@ -78,12 +78,12 @@ export default function Metro() {
 
   const level = LEVELS[currentLevelId] || LEVELS['level1.1']
   const spawnData = level.spawns[previousLevelId] || level.spawns['default'] || [0, 0, 0, 0]
-  
-  const spawnPos = (useMemo(() => 
-    [spawnData[0], spawnData[1], spawnData[2]], 
+
+  const spawnPos = (useMemo(() =>
+    [spawnData[0], spawnData[1], spawnData[2]],
     [spawnData]
   ) as [number, number, number])
-  
+
   const spawnRot = spawnData[3] ?? 0
 
   const { boundary, setBoundary, reset } = useBoundary(currentLevelId)
