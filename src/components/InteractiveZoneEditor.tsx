@@ -83,6 +83,56 @@ function CoordInput({
   )
 }
 
+function CommaSeparatedInput({
+  value,
+  onChange,
+  placeholder,
+}: {
+  value: string[]
+  onChange: (v: string[]) => void
+  placeholder?: string
+}) {
+  const [local, setLocal] = useState(value.join(', '))
+
+  // Sync if value changed externally
+  const lastBaseValue = useRef(value)
+  if (JSON.stringify(value) !== JSON.stringify(lastBaseValue.current)) {
+    setLocal(value.join(', '))
+    lastBaseValue.current = value
+  }
+
+  const handleChange = (val: string) => {
+    setLocal(val)
+    const items = val.split(',').map(s => s.trim()).filter(s => s.length > 0)
+    onChange(items)
+  }
+
+  return (
+    <input
+      type="text"
+      value={local}
+      onChange={e => handleChange(e.target.value)}
+      onBlur={() => {
+        // Normalize on blur
+        setLocal(value.join(', '))
+      }}
+      placeholder={placeholder}
+      style={{
+        width: '100%',
+        background: 'rgba(255,255,255,0.06)',
+        border: '1px solid rgba(255,255,255,0.15)',
+        borderRadius: '6px',
+        color: '#fff',
+        fontSize: '11px',
+        padding: '5px 9px',
+        outline: 'none',
+        boxSizing: 'border-box'
+      }}
+      onClick={e => e.stopPropagation()}
+    />
+  )
+}
+
 export function InteractiveZoneEditor({
   zones,
   onUpdateZone,
@@ -303,7 +353,7 @@ export function InteractiveZoneEditor({
         }}
         onPointerDown={(e) => e.stopPropagation()} // Prevent touches on panel from leaking to svg underlying
       >
-        <div 
+        <div
           onPointerDown={(e) => {
             e.stopPropagation()
             panelDragRef.current = { startX: e.clientX, startY: e.clientY, initX: panelPos.x, initY: panelPos.y }
@@ -313,8 +363,8 @@ export function InteractiveZoneEditor({
             if (!panelDragRef.current) return
             const dx = e.clientX - panelDragRef.current.startX
             const dy = e.clientY - panelDragRef.current.startY
-            setPanelPos({ 
-              x: panelDragRef.current.initX + dx, 
+            setPanelPos({
+              x: panelDragRef.current.initX + dx,
               y: Math.max(0, panelDragRef.current.initY + dy) // Ensure it doesn't get dragged above top of screen 
             })
           }}
@@ -324,10 +374,10 @@ export function InteractiveZoneEditor({
               panelDragRef.current = null
             }
           }}
-          style={{ 
-            fontWeight: 700, 
-            marginBottom: '8px', 
-            fontSize: '13px', 
+          style={{
+            fontWeight: 700,
+            marginBottom: '8px',
+            fontSize: '13px',
             letterSpacing: '0.02em',
             cursor: 'grab',
             userSelect: 'none'
@@ -460,27 +510,10 @@ export function InteractiveZoneEditor({
               }}>
                 💎 Items (Comma-separated IDs)
               </div>
-              <input
-                type="text"
-                value={sel.items?.join(', ') ?? ''}
-                onChange={e => {
-                  const val = e.target.value
-                  const items = val.split(',').map(s => s.trim()).filter(s => s.length > 0)
-                  onUpdateZone(sel.id, { items })
-                }}
+              <CommaSeparatedInput
+                value={sel.items ?? []}
+                onChange={items => onUpdateZone(sel.id, { items })}
                 placeholder="e.g. rebar, wire, wrench"
-                style={{
-                  width: '100%',
-                  background: 'rgba(255,255,255,0.06)',
-                  border: '1px solid rgba(255,255,255,0.15)',
-                  borderRadius: '6px',
-                  color: '#fff',
-                  fontSize: '11px',
-                  padding: '5px 9px',
-                  outline: 'none',
-                  boxSizing: 'border-box'
-                }}
-                onClick={e => e.stopPropagation()}
               />
               <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', marginTop: '3px' }}>
                 Items obtained upon interaction.
@@ -523,27 +556,10 @@ export function InteractiveZoneEditor({
               }}>
                 🔒 Required Items (Comma-separated IDs)
               </div>
-              <input
-                type="text"
-                value={sel.requiredItems?.join(', ') ?? ''}
-                onChange={e => {
-                  const val = e.target.value
-                  const requiredItems = val.split(',').map(s => s.trim()).filter(s => s.length > 0)
-                  onUpdateZone(sel.id, { requiredItems })
-                }}
+              <CommaSeparatedInput
+                value={sel.requiredItems ?? []}
+                onChange={requiredItems => onUpdateZone(sel.id, { requiredItems })}
                 placeholder="e.g. wrench"
-                style={{
-                  width: '100%',
-                  background: 'rgba(255,255,255,0.06)',
-                  border: '1px solid rgba(255,255,255,0.15)',
-                  borderRadius: '6px',
-                  color: '#fff',
-                  fontSize: '11px',
-                  padding: '5px 9px',
-                  outline: 'none',
-                  boxSizing: 'border-box'
-                }}
-                onClick={e => e.stopPropagation()}
               />
               <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', marginTop: '3px' }}>
                 Items needed to succeed/transition.
@@ -555,7 +571,7 @@ export function InteractiveZoneEditor({
                     marginTop: '16px', fontSize: '11px', fontWeight: 600, color: 'rgba(255,255,255,0.6)',
                     marginBottom: '5px', textTransform: 'uppercase', letterSpacing: '0.06em',
                   }}>
-                    💬 Dialog (Requirements Met)
+                    💬 Dialog (Requirements Met / Before Items)
                   </div>
                   <textarea
                     value={sel.dialogAfterRequiredItems ?? ''}
@@ -577,6 +593,9 @@ export function InteractiveZoneEditor({
                     }}
                     onClick={e => e.stopPropagation()}
                   />
+                  <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', marginTop: '3px' }}>
+                    Shown when requirements are fulfilled, right before the item is obtained.
+                  </div>
                 </>
               )}
 

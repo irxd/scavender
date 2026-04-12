@@ -144,12 +144,12 @@ export default function Metro() {
     // Resolve dialog text
     let finalDialog = zone.dialog?.trim()
 
-    if (hasRequirements) {
-      if (requirementsMet && zone.dialogAfterRequiredItems?.trim()) {
-        finalDialog = zone.dialogAfterRequiredItems.trim()
-      }
-    } else if (itemsFullyObtained && zone.dialogAfterItemsObtained?.trim()) {
-       finalDialog = zone.dialogAfterItemsObtained.trim()
+    if (itemsFullyObtained && zone.dialogAfterItemsObtained?.trim()) {
+      // 1. Items fully obtained has highest priority
+      finalDialog = zone.dialogAfterItemsObtained.trim()
+    } else if (hasRequirements && requirementsMet && zone.dialogAfterRequiredItems?.trim()) {
+      // 2. Requirements met but items not yet obtained
+      finalDialog = zone.dialogAfterRequiredItems.trim()
     }
 
     if (finalDialog) {
