@@ -43,6 +43,23 @@ const LEVELS: Record<string, LevelConfig> = {
     spawns: {
       default: [-11.97, 0, -10.10, 72.27],
       'level1.1': [-11.97, 0, -10.10, 72.27],
+      'level1.4': [-1.04, 0, -7.49, -11.08]
+    },
+  },
+  'level1.3': {
+    background: '/assets/images/background/level1.3.jpg',
+    cameraConfig: { camY: 2.0, camZ: 15.0, fov: 22, lookAtY: 0.5, lookAtX: 0.0 },
+    spawns: {
+      default: [-4.21, 0, 1.23, 44.73],
+      'level1.1': [-4.21, 0, 1.23, 44.73],
+    },
+  },
+  'level1.4': {
+    background: '/assets/images/background/level1.4.jpg',
+    cameraConfig: { camY: 1.5, camZ: 15.0, fov: 45, lookAtY: 1.0, lookAtX: 0.0 },
+    spawns: {
+      default: [-0.74, 0, 11.09, 39.34],
+      'level1.2': [-0.74, 0, 11.09, 39.34],
     },
   },
 }
@@ -132,7 +149,7 @@ export default function Metro() {
   // Trigger interaction sequence
   const processZoneInteraction = useCallback((zone: InteractiveZone) => {
     const state = useInventoryStore.getState()
-    
+
     // Check requirements
     const hasRequirements = zone.requiredItems && zone.requiredItems.length > 0
     const requirementsMet = hasRequirements && zone.requiredItems!.every(id => state.hasItem(id))
@@ -194,10 +211,10 @@ export default function Metro() {
       const zone = zones.find(z => z.id === zoneId)
       if (zone) {
         const state = useInventoryStore.getState()
-        
+
         const hasRequirements = zone.requiredItems && zone.requiredItems.length > 0
         const requirementsMet = hasRequirements && zone.requiredItems!.every(id => state.hasItem(id))
-        
+
         const hasItems = zone.items && zone.items.length > 0
         const unobtainedItems = (zone.items || []).filter(id => ITEMS[id] && !state.hasItem(id))
         const itemsFullyObtained = hasItems && unobtainedItems.length === 0
@@ -229,7 +246,7 @@ export default function Metro() {
     const hasItems = zone.items && zone.items.length > 0
     const hasTransition = !!zone.transitionTo?.trim()
     const hasDialog = !!zone.dialog?.trim() || !!zone.dialogAfterItemsObtained?.trim() || !!zone.dialogAfterRequiredItems?.trim()
-    
+
     if (!hasDialog && !hasTransition && !hasItems) return
 
     const currentPos = charPosRef.current
