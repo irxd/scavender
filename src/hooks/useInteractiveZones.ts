@@ -13,6 +13,9 @@ export type InteractiveZone = {
   label: string
   dialog?: string
   items?: string[]
+  dialogAfterItemsObtained?: string
+  requiredItems?: string[]
+  dialogAfterRequiredItems?: string
   transitionTo?: string
   targetPos?: [number, number, number]
   polygon: ZonePolygon

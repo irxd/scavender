@@ -89,7 +89,7 @@ export function DialogBox({ zone, onClose }: DialogBoxProps) {
           <p
             style={{
               margin: 0,
-              fontSize: '18px',
+              fontSize: '24px',
               lineHeight: 1.6,
               color: '#ffffff',
               fontFamily: "'Coming Soon', cursive",

@@ -131,11 +131,39 @@ export default function Metro() {
 
   // Trigger interaction sequence
   const processZoneInteraction = useCallback((zone: InteractiveZone) => {
-    const unobtainedItems = (zone.items || []).filter(id => ITEMS[id] && !useInventoryStore.getState().hasItem(id))
+    const state = useInventoryStore.getState()
     
-    if (zone.dialog?.trim()) setActiveDialog(zone)
-    if (unobtainedItems.length > 0) setPendingItemsToGive(unobtainedItems)
-    if (zone.transitionTo?.trim()) setPendingTransition(zone.transitionTo.trim())
+    // Check requirements
+    const hasRequirements = zone.requiredItems && zone.requiredItems.length > 0
+    const requirementsMet = hasRequirements && zone.requiredItems!.every(id => state.hasItem(id))
+
+    // Determine unobtained items
+    const unobtainedItems = (zone.items || []).filter(id => ITEMS[id] && !state.hasItem(id))
+    const itemsFullyObtained = (zone.items && zone.items.length > 0) && unobtainedItems.length === 0
+
+    // Resolve dialog text
+    let finalDialog = zone.dialog?.trim()
+
+    if (hasRequirements) {
+      if (requirementsMet && zone.dialogAfterRequiredItems?.trim()) {
+        finalDialog = zone.dialogAfterRequiredItems.trim()
+      }
+    } else if (itemsFullyObtained && zone.dialogAfterItemsObtained?.trim()) {
+       finalDialog = zone.dialogAfterItemsObtained.trim()
+    }
+
+    if (finalDialog) {
+      // Clone zone with resolved dialog text to pass to DialogBox
+      setActiveDialog({ ...zone, dialog: finalDialog })
+    }
+
+    // Process success state (giving items, transitioning)
+    const canSucceed = !hasRequirements || requirementsMet
+
+    if (canSucceed) {
+      if (unobtainedItems.length > 0) setPendingItemsToGive(unobtainedItems)
+      if (zone.transitionTo?.trim()) setPendingTransition(zone.transitionTo.trim())
+    }
   }, [])
 
   // Handlers
@@ -181,7 +209,11 @@ export default function Metro() {
   }, [zones, activeDialog])
 
   const handleZoneClick = useCallback((zone: InteractiveZone) => {
-    if (!zone.dialog?.trim() && !zone.transitionTo?.trim() && !(zone.items && zone.items.length > 0)) return
+    const hasItems = zone.items && zone.items.length > 0
+    const hasTransition = !!zone.transitionTo?.trim()
+    const hasDialog = !!zone.dialog?.trim() || !!zone.dialogAfterItemsObtained?.trim() || !!zone.dialogAfterRequiredItems?.trim()
+    
+    if (!hasDialog && !hasTransition && !hasItems) return
 
     const currentPos = charPosRef.current
     const targetPos = zone.targetPos || [currentPos[0], currentPos[1], currentPos[2]]

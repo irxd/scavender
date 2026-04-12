@@ -482,6 +482,100 @@ export function InteractiveZoneEditor({
                 Items obtained upon interaction.
               </div>
 
+              {sel.items && sel.items.length > 0 && (
+                <>
+                  <div style={{
+                    marginTop: '16px', fontSize: '11px', fontWeight: 600, color: 'rgba(255,255,255,0.6)',
+                    marginBottom: '5px', textTransform: 'uppercase', letterSpacing: '0.06em',
+                  }}>
+                    💬 Dialog (After Items Obtained)
+                  </div>
+                  <textarea
+                    value={sel.dialogAfterItemsObtained ?? ''}
+                    onChange={e => onUpdateZone(sel.id, { dialogAfterItemsObtained: e.target.value })}
+                    placeholder="e.g. 'Nothing useful here anymore.'"
+                    rows={2}
+                    style={{
+                      width: '100%',
+                      background: 'rgba(255,255,255,0.06)',
+                      border: '1px solid rgba(255,255,255,0.15)',
+                      borderRadius: '6px',
+                      color: '#fff',
+                      fontSize: '11px',
+                      padding: '7px 9px',
+                      resize: 'vertical',
+                      outline: 'none',
+                      fontFamily: 'inherit',
+                      boxSizing: 'border-box',
+                    }}
+                    onClick={e => e.stopPropagation()}
+                  />
+                </>
+              )}
+
+              <div style={{
+                marginTop: '16px', fontSize: '11px', fontWeight: 600, color: 'rgba(255,255,255,0.6)',
+                marginBottom: '5px', textTransform: 'uppercase', letterSpacing: '0.06em',
+              }}>
+                🔒 Required Items (Comma-separated IDs)
+              </div>
+              <input
+                type="text"
+                value={sel.requiredItems?.join(', ') ?? ''}
+                onChange={e => {
+                  const val = e.target.value
+                  const requiredItems = val.split(',').map(s => s.trim()).filter(s => s.length > 0)
+                  onUpdateZone(sel.id, { requiredItems })
+                }}
+                placeholder="e.g. wrench"
+                style={{
+                  width: '100%',
+                  background: 'rgba(255,255,255,0.06)',
+                  border: '1px solid rgba(255,255,255,0.15)',
+                  borderRadius: '6px',
+                  color: '#fff',
+                  fontSize: '11px',
+                  padding: '5px 9px',
+                  outline: 'none',
+                  boxSizing: 'border-box'
+                }}
+                onClick={e => e.stopPropagation()}
+              />
+              <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', marginTop: '3px' }}>
+                Items needed to succeed/transition.
+              </div>
+
+              {sel.requiredItems && sel.requiredItems.length > 0 && (
+                <>
+                  <div style={{
+                    marginTop: '16px', fontSize: '11px', fontWeight: 600, color: 'rgba(255,255,255,0.6)',
+                    marginBottom: '5px', textTransform: 'uppercase', letterSpacing: '0.06em',
+                  }}>
+                    💬 Dialog (Requirements Met)
+                  </div>
+                  <textarea
+                    value={sel.dialogAfterRequiredItems ?? ''}
+                    onChange={e => onUpdateZone(sel.id, { dialogAfterRequiredItems: e.target.value })}
+                    placeholder="e.g. 'Now I can pry this open!'"
+                    rows={2}
+                    style={{
+                      width: '100%',
+                      background: 'rgba(255,255,255,0.06)',
+                      border: '1px solid rgba(255,255,255,0.15)',
+                      borderRadius: '6px',
+                      color: '#fff',
+                      fontSize: '11px',
+                      padding: '7px 9px',
+                      resize: 'vertical',
+                      outline: 'none',
+                      fontFamily: 'inherit',
+                      boxSizing: 'border-box',
+                    }}
+                    onClick={e => e.stopPropagation()}
+                  />
+                </>
+              )}
+
               <div style={{
                 marginTop: '16px', fontSize: '11px', fontWeight: 600, color: 'rgba(255,255,255,0.6)',
                 marginBottom: '5px', textTransform: 'uppercase', letterSpacing: '0.06em',
