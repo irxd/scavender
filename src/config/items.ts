@@ -29,5 +29,11 @@ export const ITEMS: Record<string, ItemData> = {
     name: 'CHRONOS WATCH',
     description: "A rugged timepiece with a worn leather strap, remarkably still ticking. The back is engraved with the initials '彡M'.",
     image: '/assets/images/item/watch.png',
+  },
+  battery: {
+    id: 'battery',
+    name: 'H-C BATTERY',
+    description: 'A high-capacity cell with a localized time-static flicker. Needs to be stabilized before use.',
+    image: '/assets/images/item/battery.png',
   }
 }

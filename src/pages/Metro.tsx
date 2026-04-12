@@ -15,6 +15,7 @@ import { useInventoryStore } from '../store/useInventoryStore'
 import { ITEMS } from '../config/items'
 import { ItemObtainedOverlay } from '../components/ItemObtainedOverlay'
 import { InventoryOverlay } from '../components/InventoryOverlay'
+import { PuzzleOverlay } from '../components/PuzzleOverlay'
 
 type LevelConfig = {
   background: string
@@ -117,6 +118,8 @@ export default function Metro() {
   const [inventoryVisible, setInventoryVisible] = useState(false)
 
   const [activeDialog, setActiveDialog] = useState<InteractiveZone | null>(null)
+  const [activePuzzleZone, setActivePuzzleZone] = useState<InteractiveZone | null>(null)
+  const [pendingPuzzleZone, setPendingPuzzleZone] = useState<InteractiveZone | null>(null)
 
   const [currentAnim, setCurrentAnim] = useState('idle')
   const [charPos, setCharPos] = useState<[number, number, number]>(spawnPos)
@@ -142,11 +145,19 @@ export default function Metro() {
 
   // Sequence effect: trigger transition only after dialog and items are cleared
   useEffect(() => {
-    if (!activeDialog && pendingItemsToGive.length === 0 && pendingTransition) {
+    if (!activeDialog && !activePuzzleZone && pendingItemsToGive.length === 0 && pendingTransition) {
       setLevelState({ id: pendingTransition, from: currentLevelId })
       setPendingTransition(null)
     }
-  }, [activeDialog, pendingItemsToGive.length, pendingTransition, currentLevelId])
+  }, [activeDialog, activePuzzleZone, pendingItemsToGive.length, pendingTransition, currentLevelId])
+
+  // Post-dialog puzzle trigger
+  useEffect(() => {
+    if (!activeDialog && pendingPuzzleZone) {
+      setActivePuzzleZone(pendingPuzzleZone)
+      setPendingPuzzleZone(null)
+    }
+  }, [activeDialog, pendingPuzzleZone])
 
   // Trigger interaction sequence
   const processZoneInteraction = useCallback((zone: InteractiveZone) => {
@@ -171,14 +182,26 @@ export default function Metro() {
       finalDialog = zone.dialogAfterRequiredItems.trim()
     }
 
+    const canSucceed = !hasRequirements || requirementsMet
+
+    if (canSucceed && zone.puzzleId?.trim() && unobtainedItems.length > 0) {
+      // It's a puzzle and we haven't obtained the items yet.
+      // If there's a dialog to show first (e.g. requirements met), queue the puzzle.
+      if (finalDialog) {
+        setActiveDialog({ ...zone, dialog: finalDialog })
+        setPendingPuzzleZone(zone)
+      } else {
+        setActivePuzzleZone(zone)
+      }
+      return
+    }
+
     if (finalDialog) {
       // Clone zone with resolved dialog text to pass to DialogBox
       setActiveDialog({ ...zone, dialog: finalDialog })
     }
 
     // Process success state (giving items, transitioning)
-    const canSucceed = !hasRequirements || requirementsMet
-
     if (canSucceed) {
       if (unobtainedItems.length > 0) setPendingItemsToGive(unobtainedItems)
       if (zone.transitionTo?.trim()) setPendingTransition(zone.transitionTo.trim())
@@ -234,7 +257,7 @@ export default function Metro() {
     }
 
     // Update cursor icon appropriately
-    if (activeDialog) {
+    if (activeDialog || activePuzzleZone) {
       gameRootRef.current.style.cursor = 'default'
       return
     }
@@ -242,7 +265,7 @@ export default function Metro() {
     gameRootRef.current.style.cursor = zoneId
       ? `url('${cursorUrl}') 16 16, crosshair`
       : 'default'
-  }, [zones, activeDialog])
+  }, [zones, activeDialog, activePuzzleZone])
 
   const handleZoneClick = useCallback((zone: InteractiveZone) => {
     const hasItems = zone.items && zone.items.length > 0
@@ -359,6 +382,23 @@ export default function Metro() {
             obtainItem(pendingItemsToGive[0])
             setPendingItemsToGive(prev => prev.slice(1))
           }}
+        />
+      )}
+      
+      {/* Puzzle Overlay */}
+      {activePuzzleZone && activePuzzleZone.puzzleId && (
+        <PuzzleOverlay 
+          puzzleId={activePuzzleZone.puzzleId} 
+          onComplete={() => {
+            const state = useInventoryStore.getState()
+            const unobtainedItems = (activePuzzleZone.items || []).filter(id => ITEMS[id] && !state.hasItem(id))
+            
+            setActivePuzzleZone(null)
+            
+            // Give items
+            if (unobtainedItems.length > 0) setPendingItemsToGive(unobtainedItems)
+            if (activePuzzleZone.transitionTo?.trim()) setPendingTransition(activePuzzleZone.transitionTo.trim())
+          }} 
         />
       )}
 

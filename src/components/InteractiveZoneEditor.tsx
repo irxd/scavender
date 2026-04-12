@@ -628,6 +628,34 @@ export function InteractiveZoneEditor({
               </div>
 
               <div style={{
+                marginTop: '16px', fontSize: '11px', fontWeight: 600, color: 'rgba(255,255,255,0.6)',
+                marginBottom: '5px', textTransform: 'uppercase', letterSpacing: '0.06em',
+              }}>
+                🧩 Puzzle ID
+              </div>
+              <input
+                type="text"
+                value={sel.puzzleId ?? ''}
+                onChange={e => onUpdateZone(sel.id, { puzzleId: e.target.value })}
+                placeholder="Puzzle ID (e.g. metro-vending)"
+                style={{
+                  width: '100%',
+                  background: 'rgba(255,255,255,0.06)',
+                  border: '1px solid rgba(255,255,255,0.15)',
+                  borderRadius: '6px',
+                  color: '#fff',
+                  fontSize: '11px',
+                  padding: '5px 9px',
+                  outline: 'none',
+                  boxSizing: 'border-box'
+                }}
+                onClick={e => e.stopPropagation()}
+              />
+              <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', marginTop: '3px' }}>
+                If set, triggers a puzzle modal before giving items.
+              </div>
+
+              <div style={{
                 marginTop: '16px', fontSize: '11px', fontWeight: 600,
                 color: 'rgba(255,255,255,0.6)', marginBottom: '8px',
                 textTransform: 'uppercase', letterSpacing: '0.06em',
