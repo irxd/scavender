@@ -10,7 +10,7 @@ export function PuzzleOverlay({ puzzleId, onComplete }: PuzzleOverlayProps) {
   if (puzzleId !== 'metro-vending') {
     return (
       <div className="puzzle-overlay-container">
-        <div className="puzzle-overlay-backdrop" onClick={(e) => { e.stopPropagation(); onComplete(); }} />
+        <div className="puzzle-overlay-backdrop" onClick={(e) => e.stopPropagation()} />
         <div className="puzzle-overlay">
           Unknown puzzle: {puzzleId}
         </div>
@@ -59,7 +59,7 @@ export function PuzzleOverlay({ puzzleId, onComplete }: PuzzleOverlayProps) {
 
   return (
     <div className="puzzle-overlay-container">
-      <div className="puzzle-overlay-backdrop" onClick={(e) => { e.stopPropagation(); onComplete(); }} />
+      <div className="puzzle-overlay-backdrop" onClick={(e) => e.stopPropagation()} />
 
       <div className="puzzle-content-wrapper">
         <img

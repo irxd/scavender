@@ -129,6 +129,12 @@ export default function Metro() {
   const [activePuzzleZone, setActivePuzzleZone] = useState<InteractiveZone | null>(null)
   const [pendingPuzzleZone, setPendingPuzzleZone] = useState<InteractiveZone | null>(null)
 
+  // Refs to always have fresh dialog/puzzle/item state in event listeners (avoids stale closures)
+  const activeDialogRef = useRef<InteractiveZone | null>(null)
+  const activePuzzleZoneRef = useRef<InteractiveZone | null>(null)
+  const pendingItemsRef = useRef<string[]>([])
+  const closeItemOverlayRef = useRef<(() => void) | null>(null)
+
   const [currentAnim, setCurrentAnim] = useState('idle')
   const [charPos, setCharPos] = useState<[number, number, number]>(spawnPos)
   const [charRotation, setCharRotation] = useState(0)
@@ -140,6 +146,22 @@ export default function Metro() {
   const [pendingTransition, setPendingTransition] = useState<string | null>(null)
 
   const { obtainItem } = useInventoryStore()
+
+  // Keep dialog/puzzle/item refs in sync
+  useEffect(() => { activeDialogRef.current = activeDialog }, [activeDialog])
+  useEffect(() => { activePuzzleZoneRef.current = activePuzzleZone }, [activePuzzleZone])
+  useEffect(() => { pendingItemsRef.current = pendingItemsToGive }, [pendingItemsToGive])
+  // Keep close callback ref in sync whenever pending items change
+  useEffect(() => {
+    if (pendingItemsToGive.length > 0) {
+      closeItemOverlayRef.current = () => {
+        obtainItem(pendingItemsToGive[0])
+        setPendingItemsToGive(prev => prev.slice(1))
+      }
+    } else {
+      closeItemOverlayRef.current = null
+    }
+  }, [pendingItemsToGive, obtainItem])
 
   // Use a ref for charPos to prevent callback instability during movement
   const charPosRef = useRef<[number, number, number]>(spawnPos)
@@ -276,7 +298,34 @@ export default function Metro() {
       : 'default'
   }, [zones, activeDialog, activePuzzleZone])
 
+  // Capture-phase global click guard — registered ONCE, reads from refs so it's always fresh
+  useEffect(() => {
+    const handleGlobalClick = (e: MouseEvent) => {
+      if (activeDialogRef.current) {
+        setActiveDialog(null)
+        e.stopPropagation()
+        return
+      }
+      if (activePuzzleZoneRef.current) {
+        // Allow clicks INSIDE the puzzle overlay through; only block outside clicks
+        const target = e.target as Element
+        if (!target.closest('.puzzle-overlay-container')) {
+          e.stopPropagation()
+        }
+        return
+      }
+      if (pendingItemsRef.current.length > 0) {
+        // Item overlay is showing — close it and block zone interactions behind it
+        closeItemOverlayRef.current?.()
+        e.stopPropagation()
+      }
+    }
+    window.addEventListener('click', handleGlobalClick, true) // capture phase
+    return () => window.removeEventListener('click', handleGlobalClick, true)
+  }, []) // empty deps — stable forever, reads state via refs
+
   const handleZoneClick = useCallback((zone: InteractiveZone) => {
+
     const hasItems = zone.items && zone.items.length > 0
     const hasTransition = !!zone.transitionTo?.trim()
     const hasDialog = !!zone.dialog?.trim() || !!zone.dialogAfterItemsObtained?.trim() || !!zone.dialogAfterRequiredItems?.trim()
@@ -304,7 +353,7 @@ export default function Metro() {
     if (gameRootRef.current) {
       gameRootRef.current.style.cursor = 'default'
     }
-  }, [currentLevelId, activeDialog, processZoneInteraction])
+  }, [currentLevelId, processZoneInteraction])
 
   const handleDestinationReached = useCallback(() => {
     if (pendingZone) {
