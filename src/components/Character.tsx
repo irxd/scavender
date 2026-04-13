@@ -47,7 +47,7 @@ export function Character({
   onDestinationReached,
 }: CharacterProps) {
   const group = useRef<THREE.Group>(null!)
-  const { scene, animations } = useGLTF('/assets/glb/jace-miller.glb')
+  const { scene, animations } = useGLTF('/assets/glb/jace-miller-optimized.glb')
   const { actions, mixer } = useAnimations(animations, group)
 
   const { showPositionHelper } = useControls('Character', {
@@ -224,9 +224,9 @@ export function Character({
   })
 
   return (
-    <group 
-      ref={group} 
-      position={initialPosition} 
+    <group
+      ref={group}
+      position={initialPosition}
       rotation={[0, initialRotation * (Math.PI / 180), 0]}
     >
       <primitive object={scene} scale={1} />
@@ -235,14 +235,14 @@ export function Character({
         <>
           <axesHelper args={[2]} />
           <group rotation={[0, 0, 0]}>
-             <mesh position={[0, 0.1, 1]} rotation={[-Math.PI/2, 0, 0]}>
-                <coneGeometry args={[0.2, 0.5, 8]} />
-                <meshBasicMaterial color="#00ff00" />
-             </mesh>
-             <mesh position={[0, 0.1, 0.5]} rotation={[-Math.PI/2, 0, 0]}>
-                <cylinderGeometry args={[0.05, 0.05, 1, 8]} />
-                <meshBasicMaterial color="#00ff00" />
-             </mesh>
+            <mesh position={[0, 0.1, 1]} rotation={[-Math.PI / 2, 0, 0]}>
+              <coneGeometry args={[0.2, 0.5, 8]} />
+              <meshBasicMaterial color="#00ff00" />
+            </mesh>
+            <mesh position={[0, 0.1, 0.5]} rotation={[-Math.PI / 2, 0, 0]}>
+              <cylinderGeometry args={[0.05, 0.05, 1, 8]} />
+              <meshBasicMaterial color="#00ff00" />
+            </mesh>
           </group>
           <Html position={[0, 2.5, 0]} center>
             <div style={{
@@ -268,4 +268,4 @@ export function Character({
   )
 }
 
-useGLTF.preload('/assets/glb/jace-miller.glb')
+useGLTF.preload('/assets/glb/jace-miller-optimized.glb')
