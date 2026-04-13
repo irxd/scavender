@@ -309,6 +309,18 @@ export default function Metro() {
     setActiveDialog(null)
   }, [])
 
+  const [hintsEnabled, setHintsEnabled] = useState(() => {
+    const saved = localStorage.getItem('scavender_hints_enabled')
+    return saved === null ? true : saved === 'true'
+  })
+
+  // Perist hints setting
+  useEffect(() => {
+    localStorage.setItem('scavender_hints_enabled', hintsEnabled.toString())
+  }, [hintsEnabled])
+
+  const toggleHints = useCallback(() => setHintsEnabled(v => !v), [])
+
   const toggleBoundaryEditor = () => setBoundaryEditorVisible(v => !v)
   const toggleZoneEditor = () => setZoneEditorVisible(v => !v)
 
@@ -351,6 +363,7 @@ export default function Metro() {
         onHoverChange={handleZoneHover}
         onZoneClick={handleZoneClick}
         editorOpen={zoneEditorVisible}
+        hintsEnabled={hintsEnabled}
       />
 
       {/* Zone editor overlay */}
@@ -432,8 +445,15 @@ export default function Metro() {
         </button>
       </div>
 
-      {/* HUD components could be changed for Metro, but we'll leave basic instructions for now */}
+      {/* HUD components */}
       <div id="hud">
+        <button 
+          className="hud-badge hint-toggle" 
+          onClick={toggleHints}
+          title="Toggle visual hints"
+        >
+          {hintsEnabled ? '✨ Hints: On' : '🌑 Hints: Off'}
+        </button>
         <div className="hud-badge">WASD / ↑↓←→ Move</div>
         <div className="hud-badge">Shift + Move = Run</div>
       </div>
