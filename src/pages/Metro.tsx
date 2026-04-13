@@ -134,6 +134,7 @@ export default function Metro() {
   const activePuzzleZoneRef = useRef<InteractiveZone | null>(null)
   const pendingItemsRef = useRef<string[]>([])
   const closeItemOverlayRef = useRef<(() => void) | null>(null)
+  const inventoryVisibleRef = useRef(false)
 
   const [currentAnim, setCurrentAnim] = useState('idle')
   const [charPos, setCharPos] = useState<[number, number, number]>(spawnPos)
@@ -151,6 +152,7 @@ export default function Metro() {
   useEffect(() => { activeDialogRef.current = activeDialog }, [activeDialog])
   useEffect(() => { activePuzzleZoneRef.current = activePuzzleZone }, [activePuzzleZone])
   useEffect(() => { pendingItemsRef.current = pendingItemsToGive }, [pendingItemsToGive])
+  useEffect(() => { inventoryVisibleRef.current = inventoryVisible }, [inventoryVisible])
   // Keep close callback ref in sync whenever pending items change
   useEffect(() => {
     if (pendingItemsToGive.length > 0) {
@@ -288,7 +290,7 @@ export default function Metro() {
     }
 
     // Update cursor icon appropriately
-    if (activeDialog || activePuzzleZone) {
+    if (activeDialog || activePuzzleZone || inventoryVisible) {
       gameRootRef.current.style.cursor = 'default'
       return
     }
@@ -296,7 +298,7 @@ export default function Metro() {
     gameRootRef.current.style.cursor = zoneId
       ? `url('${cursorUrl}') 16 16, crosshair`
       : 'default'
-  }, [zones, activeDialog, activePuzzleZone])
+  }, [zones, activeDialog, activePuzzleZone, inventoryVisible])
 
   // Capture-phase global click guard — registered ONCE, reads from refs so it's always fresh
   useEffect(() => {
@@ -318,6 +320,14 @@ export default function Metro() {
         // Item overlay is showing — close it and block zone interactions behind it
         closeItemOverlayRef.current?.()
         e.stopPropagation()
+        return
+      }
+      if (inventoryVisibleRef.current) {
+        // Inventory is open — block zone clicks outside the inventory panel
+        const target = e.target as Element
+        if (!target.closest('.inventory-overlay-container')) {
+          e.stopPropagation()
+        }
       }
     }
     window.addEventListener('click', handleGlobalClick, true) // capture phase

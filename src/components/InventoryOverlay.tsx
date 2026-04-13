@@ -23,8 +23,8 @@ export function InventoryOverlay({ onClose }: Props) {
 
   return (
     <div className="inventory-overlay-container">
-      <div className="inventory-overlay-backdrop" onClick={onClose} />
-      <div className="inventory-overlay">
+      <div className="inventory-overlay-backdrop" onClick={(e) => { e.stopPropagation(); onClose() }} />
+      <div className="inventory-overlay" onClick={(e) => e.stopPropagation()}>
         <div className="inventory-header">
           <h2>COLLECTED ITEMS</h2>
           <input
