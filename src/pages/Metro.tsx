@@ -94,9 +94,17 @@ function DebugOverlay({
 
 export default function Metro() {
   const keys = useKeyboard()
-  const [levelState, setLevelState] = useState({ id: 'level1.1', from: 'default' })
+  const { currentLevelId: savedLevelId, setCurrentLevel } = useInventoryStore()
+  const [levelState, setLevelState] = useState({ id: savedLevelId, from: 'default' })
   const currentLevelId = levelState.id
   const previousLevelId = levelState.from
+
+  // Sync level state if store changes externally (e.g. reset)
+  useEffect(() => {
+    if (savedLevelId !== levelState.id) {
+      setLevelState({ id: savedLevelId, from: 'default' })
+    }
+  }, [savedLevelId])
 
   const level = LEVELS[currentLevelId] || LEVELS['level1.1']
   const spawnData = level.spawns[previousLevelId] || level.spawns['default'] || [0, 0, 0, 0]
@@ -147,9 +155,10 @@ export default function Metro() {
   useEffect(() => {
     if (!activeDialog && !activePuzzleZone && pendingItemsToGive.length === 0 && pendingTransition) {
       setLevelState({ id: pendingTransition, from: currentLevelId })
+      setCurrentLevel(pendingTransition)
       setPendingTransition(null)
     }
-  }, [activeDialog, activePuzzleZone, pendingItemsToGive.length, pendingTransition, currentLevelId])
+  }, [activeDialog, activePuzzleZone, pendingItemsToGive.length, pendingTransition, currentLevelId, setCurrentLevel])
 
   // Post-dialog puzzle trigger
   useEffect(() => {
