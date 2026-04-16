@@ -57,7 +57,7 @@ export function DialogBox({ zone, onClose }: DialogBoxProps) {
           }}
         >
           <img
-            src="/assets/images/jace-miller-portrait.png"
+            src="/assets/images/portrait/young-jace-portrait.png"
             alt="Character portrait"
             draggable="false"
             style={{
@@ -76,14 +76,17 @@ export function DialogBox({ zone, onClose }: DialogBoxProps) {
             flex: 1,
             background: 'rgba(0, 0, 0, 0.5)',
             backdropFilter: 'blur(4px)',
-            borderRadius: '8px',
-            padding: '28px 32px 28px 140px',
-            marginLeft: '-140px',
+            padding: '28px 32px 28px 180px',
+            marginLeft: '-160px',
             zIndex: 1,
             minHeight: '120px',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
+            maskImage: 'linear-gradient(to bottom, transparent, black 10%, black 90%, transparent), linear-gradient(to right, transparent, black 10%, black 90%, transparent)',
+            WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 10%, black 90%, transparent), linear-gradient(to right, transparent, black 10%, black 90%, transparent)',
+            maskComposite: 'intersect',
+            WebkitMaskComposite: 'source-in',
           }}
         >
           <p
@@ -92,7 +95,7 @@ export function DialogBox({ zone, onClose }: DialogBoxProps) {
               fontSize: '24px',
               lineHeight: 1.6,
               color: '#ffffff',
-              fontFamily: "'Coming Soon', cursive",
+              fontFamily: "'Quattrocento', serif",
               fontWeight: 400,
             }}
           >
