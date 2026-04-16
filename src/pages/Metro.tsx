@@ -465,21 +465,21 @@ export default function Metro() {
           }}
         />
       )}
-      
+
       {/* Puzzle Overlay */}
       {activePuzzleZone && activePuzzleZone.puzzleId && (
-        <PuzzleOverlay 
-          puzzleId={activePuzzleZone.puzzleId} 
+        <PuzzleOverlay
+          puzzleId={activePuzzleZone.puzzleId}
           onComplete={() => {
             const state = useInventoryStore.getState()
             const unobtainedItems = (activePuzzleZone.items || []).filter(id => ITEMS[id] && !state.hasItem(id))
-            
+
             setActivePuzzleZone(null)
-            
+
             // Give items
             if (unobtainedItems.length > 0) setPendingItemsToGive(unobtainedItems)
             if (activePuzzleZone.transitionTo?.trim()) setPendingTransition(activePuzzleZone.transitionTo.trim())
-          }} 
+          }}
         />
       )}
 
@@ -515,8 +515,8 @@ export default function Metro() {
 
       {/* HUD components */}
       <div id="hud">
-        <button 
-          className="hud-badge hint-toggle" 
+        <button
+          className="hud-badge hint-toggle"
           onClick={toggleHints}
           title="Toggle visual hints"
         >

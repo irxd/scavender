@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const chapters = [
   {
@@ -6,30 +7,35 @@ const chapters = [
     title: 'The Metro',
     image: '/assets/images/background/level1.1.jpg',
     subtitle: null,
+    path: '/intro/metro'
   },
   {
     id: 'refinery',
     title: 'The Refinery',
     image: '/assets/images/background/level2.jpg',
     subtitle: 'Coming Soon',
+    path: null
   },
   {
     id: 'ghost-lab',
     title: 'The Ghost Lab',
     image: '/assets/images/background/level3.jpg',
     subtitle: 'Coming Soon',
+    path: null
   },
   {
     id: 'reactor',
     title: 'The Reactor',
     image: '/assets/images/background/level4.jpg',
     subtitle: 'Coming Soon',
+    path: null
   },
 ]
 
 type Screen = 'prompt' | 'menu' | 'chapters'
 
 export default function Home() {
+  const navigate = useNavigate()
   const [screen, setScreen] = useState<Screen>('prompt')
   const [promptFading, setPromptFading] = useState(false)
 
@@ -45,6 +51,10 @@ export default function Home() {
 
   const handleBackToMenu = () => {
     setScreen('menu')
+  }
+
+  const handlePlay = () => {
+    navigate('/intro/metro')
   }
 
   return (
@@ -82,6 +92,7 @@ export default function Home() {
                   className="start-screen__nav-btn"
                   id="btn-play"
                   type="button"
+                  onClick={handlePlay}
                 >
                   Play
                 </button>
@@ -116,6 +127,7 @@ export default function Home() {
               key={ch.id}
               className="chapter-card"
               id={`chapter-${ch.id}`}
+              onClick={ch.path ? () => navigate(ch.path as string) : undefined}
             >
               <div
                 className="chapter-card__bg"
