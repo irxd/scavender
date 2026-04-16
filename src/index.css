@@ -604,7 +604,11 @@ html, body, #root {
 }
 
 #btn-play::after {
-  left: 45%;
+  left: 46%;
+}
+
+#btn-play:hover::after {
+  width: 130%;
 }
 
 /* ─── Chapter Select Screen ─────────────────────────────────────── */
@@ -633,21 +637,38 @@ html, body, #root {
   left: 28px;
   z-index: 10;
   background: none;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 4px;
+  border: none;
   color: rgba(255, 255, 255, 0.6);
   font-family: 'Cinzel', serif;
   font-size: 13px;
   letter-spacing: 0.2em;
-  padding: 8px 20px;
+  margin-right: -0.2em;
+  padding: 8px 0px;
   cursor: pointer;
-  transition: color 0.3s, border-color 0.3s, background 0.3s;
+  transition: color 0.3s ease;
+}
+
+.chapter-select__back::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 49%;
+  width: 0;
+  height: 2px;
+  background: #65bae1;
+  transform: translate(-50%, -50%);
+  transition: width 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  pointer-events: none;
+  box-shadow: 0 0 10px rgba(101, 186, 225, 0.6);
 }
 
 .chapter-select__back:hover {
   color: #fff;
-  border-color: rgba(255, 255, 255, 0.4);
-  background: rgba(255, 255, 255, 0.05);
+  text-shadow: 0 0 10px rgba(101, 186, 225, 0.8), 0 0 20px rgba(101, 186, 225, 0.4);
+}
+
+.chapter-select__back:hover::after {
+  width: 120%;
 }
 
 /* Chapter grid — 4 rows stacked vertically */
@@ -713,43 +734,38 @@ html, body, #root {
   font-size: clamp(18px, 3vw, 36px);
   font-weight: 400;
   letter-spacing: 0.25em;
+  margin-right: -0.25em;
   text-transform: uppercase;
   text-shadow: 0 2px 20px rgba(0, 0, 0, 0.8);
   transition: color 0.3s ease, text-shadow 0.3s ease, letter-spacing 0.5s ease;
   position: relative;
 }
 
-.chapter-card:hover .chapter-card__title {
-  color: #fff;
-  text-shadow: 0 0 30px rgba(255, 255, 255, 0.2), 0 2px 20px rgba(0, 0, 0, 0.8);
-  letter-spacing: 0.35em;
-}
-
-/* Decorative lines around title */
-.chapter-card__title::before,
 .chapter-card__title::after {
   content: '';
   position: absolute;
   top: 50%;
-  width: 60px;
-  height: 1px;
-  background: rgba(255, 255, 255, 0.25);
-  transition: width 0.5s ease, background 0.5s ease;
+  left: 49%;
+  width: 0;
+  height: 2px;
+  background: #65bae1;
+  transform: translate(-50%, -50%);
+  transition: width 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  pointer-events: none;
+  box-shadow: 0 0 10px rgba(101, 186, 225, 0.6);
 }
 
-.chapter-card__title::before {
-  right: calc(100% + 16px);
+.chapter-card:hover .chapter-card__title {
+  color: #fff;
+  text-shadow: 0 0 10px rgba(101, 186, 225, 0.8), 0 0 20px rgba(101, 186, 225, 0.4);
 }
 
-.chapter-card__title::after {
-  left: calc(100% + 16px);
-}
-
-.chapter-card:hover .chapter-card__title::before,
 .chapter-card:hover .chapter-card__title::after {
-  width: 90px;
-  background: rgba(255, 255, 255, 0.45);
+  width: 110%;
 }
+
+/* Decorative lines around title */
+
 
 /* "Coming soon" subtitle */
 .chapter-card__subtitle {

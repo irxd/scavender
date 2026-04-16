@@ -107,7 +107,7 @@ export default function Home() {
           type="button"
           onClick={handleBackToMenu}
         >
-          ← Back
+          BACK
         </button>
 
         <div className="chapter-select__grid">
