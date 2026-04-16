@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef, useMemo, useEffect } from 'react'
+import { useImageRect } from '../utils/imageSpace'
 import { Canvas } from '@react-three/fiber'
 import { Background } from '../components/Background'
 import { BoundaryEditor } from '../components/BoundaryEditor'
@@ -19,6 +20,8 @@ import { PuzzleOverlay } from '../components/PuzzleOverlay'
 
 type LevelConfig = {
   background: string
+  imageW: number
+  imageH: number
   cameraConfig: {
     camY: number
     camZ: number
@@ -29,9 +32,15 @@ type LevelConfig = {
   spawns: Record<string, [number, number, number, number?]>
 }
 
+// All backgrounds are 2624×1632 (16:10)
+const IMG_W = 2624
+const IMG_H = 1632
+
 const LEVELS: Record<string, LevelConfig> = {
   'level1.1': {
     background: '/assets/images/background/level1.1.jpg',
+    imageW: IMG_W,
+    imageH: IMG_H,
     cameraConfig: { camY: 2.0, camZ: 15.0, fov: 50, lookAtY: 2.0, lookAtX: 0.0 },
     spawns: {
       default: [4.58, 0, 7.27, 20],
@@ -41,6 +50,8 @@ const LEVELS: Record<string, LevelConfig> = {
   },
   'level1.2': {
     background: '/assets/images/background/level1.2.jpg',
+    imageW: IMG_W,
+    imageH: IMG_H,
     cameraConfig: { camY: 1.5, camZ: 1.0, fov: 24, lookAtY: 1.5, lookAtX: -0.5 },
     spawns: {
       default: [-11.97, 0, -10.10, 72.27],
@@ -50,6 +61,8 @@ const LEVELS: Record<string, LevelConfig> = {
   },
   'level1.3': {
     background: '/assets/images/background/level1.3.jpg',
+    imageW: IMG_W,
+    imageH: IMG_H,
     cameraConfig: { camY: 2.0, camZ: 15.0, fov: 22, lookAtY: 0.5, lookAtX: 0.0 },
     spawns: {
       default: [-4.21, 0, 1.23, 44.73],
@@ -58,6 +71,8 @@ const LEVELS: Record<string, LevelConfig> = {
   },
   'level1.4': {
     background: '/assets/images/background/level1.4.jpg',
+    imageW: IMG_W,
+    imageH: IMG_H,
     cameraConfig: { camY: 1.5, camZ: 15.0, fov: 45, lookAtY: 1.0, lookAtX: 0.0 },
     spawns: {
       default: [-0.74, 0, 11.09, 39.34],
@@ -118,6 +133,9 @@ export default function Metro() {
 
   const { boundary, setBoundary, reset } = useBoundary(currentLevelId)
   const { zones, addZone, removeZone, updateZone } = useInteractiveZones(currentLevelId)
+
+  // Image-space coordinate rect — updates on window resize
+  const imageRect = useImageRect(level.imageW, level.imageH)
 
   const gameRootRef = useRef<HTMLDivElement>(null)
 
@@ -413,6 +431,8 @@ export default function Metro() {
             key={currentLevelId}
             keys={keys}
             boundary={boundary}
+            imgW={level.imageW}
+            imgH={level.imageH}
             initialPosition={spawnPos}
             initialRotation={spawnRot}
             autoWalkTarget={autoWalkTarget}
@@ -428,6 +448,7 @@ export default function Metro() {
       {/* Interactive zone hover + click detection (always active) */}
       <InteractiveZoneOverlay
         zones={zones}
+        imageRect={imageRect}
         onHoverChange={handleZoneHover}
         onZoneClick={handleZoneClick}
         editorOpen={zoneEditorVisible}
@@ -437,6 +458,7 @@ export default function Metro() {
       {/* Zone editor overlay */}
       <InteractiveZoneEditor
         zones={zones}
+        imageRect={imageRect}
         onUpdateZone={updateZone}
         onAddZone={addZone}
         onRemoveZone={removeZone}
@@ -446,6 +468,7 @@ export default function Metro() {
       {/* Boundary editor overlay */}
       <BoundaryEditor
         boundary={boundary}
+        imageRect={imageRect}
         setBoundary={setBoundary}
         visible={boundaryEditorVisible}
       />

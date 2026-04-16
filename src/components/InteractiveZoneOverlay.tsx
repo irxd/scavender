@@ -1,9 +1,11 @@
 import { useEffect, useState, useMemo } from 'react'
 import type { InteractiveZone } from '../hooks/useInteractiveZones'
 import { useInventoryStore } from '../store/useInventoryStore'
+import { viewportToImage, imageToViewport, type ImageRect } from '../utils/imageSpace'
 
 interface InteractiveZoneOverlayProps {
   zones: InteractiveZone[]
+  imageRect: ImageRect
   /** Called with zoneId when entering a zone, null when leaving */
   onHoverChange: (zoneId: string | null) => void
   /** Called when a zone is clicked */
@@ -14,7 +16,7 @@ interface InteractiveZoneOverlayProps {
   hintsEnabled?: boolean
 }
 
-/** Point-in-polygon (ray casting) on [0,1] viewport fractions */
+/** Point-in-polygon (ray casting) on image-space [0,1] fractions */
 function isPointInPolygon(px: number, py: number, polygon: { x: number; y: number }[]) {
   let inside = false
   for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
@@ -29,6 +31,7 @@ function isPointInPolygon(px: number, py: number, polygon: { x: number; y: numbe
 
 export function InteractiveZoneOverlay({
   zones,
+  imageRect,
   onHoverChange,
   onZoneClick,
   editorOpen = false,
@@ -40,9 +43,11 @@ export function InteractiveZoneOverlay({
   useEffect(() => {
     let currentHit: string | null = null
 
+    const clientToImage = (clientX: number, clientY: number) =>
+      viewportToImage(clientX, clientY, imageRect)
+
     const checkHit = (clientX: number, clientY: number) => {
-      const fx = clientX / window.innerWidth
-      const fy = clientY / window.innerHeight
+      const { x: fx, y: fy } = clientToImage(clientX, clientY)
 
       let hit: string | null = null
       for (const zone of zones) {
@@ -66,8 +71,27 @@ export function InteractiveZoneOverlay({
 
     const onClick = (e: MouseEvent) => {
       if (editorOpen) return
-      const fx = e.clientX / window.innerWidth
-      const fy = e.clientY / window.innerHeight
+      const { x: fx, y: fy } = clientToImage(e.clientX, e.clientY)
+
+      for (const zone of zones) {
+        if (isPointInPolygon(fx, fy, zone.polygon)) {
+          onZoneClick(zone)
+          break
+        }
+      }
+    }
+
+    // Touch support — treat first touch as mouse equivalent
+    const onTouchMove = (e: TouchEvent) => {
+      if (editorOpen) return
+      const t = e.touches[0]
+      checkHit(t.clientX, t.clientY)
+    }
+
+    const onTouchEnd = (e: TouchEvent) => {
+      if (editorOpen) return
+      const t = e.changedTouches[0]
+      const { x: fx, y: fy } = clientToImage(t.clientX, t.clientY)
 
       for (const zone of zones) {
         if (isPointInPolygon(fx, fy, zone.polygon)) {
@@ -79,22 +103,28 @@ export function InteractiveZoneOverlay({
 
     window.addEventListener('mousemove', onMove)
     window.addEventListener('click', onClick)
+    window.addEventListener('touchmove', onTouchMove, { passive: true })
+    window.addEventListener('touchend', onTouchEnd)
 
     return () => {
       window.removeEventListener('mousemove', onMove)
       window.removeEventListener('click', onClick)
+      window.removeEventListener('touchmove', onTouchMove)
+      window.removeEventListener('touchend', onTouchEnd)
       // Ensure cursor is reset when zones change or unmount
       onHoverChange(null)
     }
-  }, [zones, onHoverChange, onZoneClick, editorOpen])
+  }, [zones, imageRect, onHoverChange, onZoneClick, editorOpen])
 
   const zoneCentroids = useMemo(() => {
     return zones.map(zone => {
       const n = zone.polygon.length
-      if (n === 0) return { id: zone.id, x: 0, y: 0, status: 'default', hasItems: false }
+      if (n === 0) return { id: zone.id, cx: 0, cy: 0, status: 'default', hasItems: false }
       
       const sum = zone.polygon.reduce((acc, p) => ({ x: acc.x + p.x, y: acc.y + p.y }), { x: 0, y: 0 })
-      
+      const cx = sum.x / n
+      const cy = sum.y / n
+
       // Calculate status for color
       const hasReq = zone.requiredItems && zone.requiredItems.length > 0
       const reqMet = hasReq && zone.requiredItems!.every(id => hasItem(id))
@@ -110,8 +140,8 @@ export function InteractiveZoneOverlay({
 
       return {
         id: zone.id,
-        x: (sum.x / n) * 100,
-        y: (sum.y / n) * 100,
+        cx, // image-space centroid
+        cy,
         status,
         hasItems: hasItems && !itemsFullyObtained // Only glow if there are items LEFT to get
       }
@@ -129,16 +159,20 @@ export function InteractiveZoneOverlay({
       opacity: hintsEnabled ? 1 : 0,
       transition: 'opacity 0.3s ease-in-out'
     }}>
-      {zoneCentroids.map(centroid => (
-        <div
-          key={centroid.id}
-          className={`interactive-dot ${centroid.status} ${centroid.hasItems ? 'has-items' : ''} ${hoveredZoneId === centroid.id ? 'hidden' : ''}`}
-          style={{
-            left: `${centroid.x}%`,
-            top: `${centroid.y}%`,
-          }}
-        />
-      ))}
+      {zoneCentroids.map(centroid => {
+        // Convert image-space centroid → viewport pixel, then → CSS %
+        const { x: px, y: py } = imageToViewport(centroid.cx, centroid.cy, imageRect)
+        return (
+          <div
+            key={centroid.id}
+            className={`interactive-dot ${centroid.status} ${centroid.hasItems ? 'has-items' : ''} ${hoveredZoneId === centroid.id ? 'hidden' : ''}`}
+            style={{
+              left: `${px}px`,
+              top: `${py}px`,
+            }}
+          />
+        )
+      })}
     </div>
   )
 }

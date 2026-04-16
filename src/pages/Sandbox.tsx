@@ -11,6 +11,11 @@ import { useKeyboard } from '../hooks/useKeyboard'
 import { useBoundary } from '../hooks/useBoundary'
 import { useInteractiveZones } from '../hooks/useInteractiveZones'
 import type { InteractiveZone } from '../hooks/useInteractiveZones'
+import { useImageRect } from '../utils/imageSpace'
+
+// Sandbox uses same background dimensions as real levels
+const SANDBOX_IMG_W = 2624
+const SANDBOX_IMG_H = 1632
 
 function DebugOverlay({
   anim,
@@ -44,6 +49,7 @@ export default function Sandbox() {
   const keys = useKeyboard()
   const { boundary, setBoundary, reset } = useBoundary()
   const { zones, addZone, removeZone, updateZone } = useInteractiveZones()
+  const imageRect = useImageRect(SANDBOX_IMG_W, SANDBOX_IMG_H)
 
   const gameRootRef = useRef<HTMLDivElement>(null)
 
@@ -137,6 +143,8 @@ export default function Sandbox() {
           <Scene
             keys={keys}
             boundary={boundary}
+            imgW={SANDBOX_IMG_W}
+            imgH={SANDBOX_IMG_H}
             initialPosition={SPAWN_POS}
             initialRotation={0}
             autoWalkTarget={autoWalkTarget}
@@ -151,6 +159,7 @@ export default function Sandbox() {
       {/* Interactive zone hover + click detection (always active) */}
       <InteractiveZoneOverlay
         zones={zones}
+        imageRect={imageRect}
         onHoverChange={handleZoneHover}
         onZoneClick={handleZoneClick}
         editorOpen={zoneEditorVisible}
@@ -159,6 +168,7 @@ export default function Sandbox() {
       {/* Zone editor overlay */}
       <InteractiveZoneEditor
         zones={zones}
+        imageRect={imageRect}
         onUpdateZone={updateZone}
         onAddZone={addZone}
         onRemoveZone={removeZone}
@@ -168,6 +178,7 @@ export default function Sandbox() {
       {/* Boundary editor overlay */}
       <BoundaryEditor
         boundary={boundary}
+        imageRect={imageRect}
         setBoundary={setBoundary}
         visible={boundaryEditorVisible}
       />

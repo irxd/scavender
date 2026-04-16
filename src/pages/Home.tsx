@@ -5,28 +5,28 @@ const chapters = [
   {
     id: 'metro',
     title: 'The Metro',
-    image: '/assets/images/background/level1.1.jpg',
+    image: '/assets/images/background/level1.1.webp',
     subtitle: null,
     path: '/intro/metro'
   },
   {
     id: 'refinery',
     title: 'The Refinery',
-    image: '/assets/images/background/level2.jpg',
+    image: '/assets/images/background/level2.webp',
     subtitle: 'Coming Soon',
     path: null
   },
   {
     id: 'ghost-lab',
     title: 'The Ghost Lab',
-    image: '/assets/images/background/level3.jpg',
+    image: '/assets/images/background/level3.webp',
     subtitle: 'Coming Soon',
     path: null
   },
   {
     id: 'reactor',
     title: 'The Reactor',
-    image: '/assets/images/background/level4.jpg',
+    image: '/assets/images/background/level4.webp',
     subtitle: 'Coming Soon',
     path: null
   },
@@ -68,7 +68,7 @@ export default function Home() {
         >
           {/* Logo */}
           <img
-            src="/assets/images/scavender-logo.png"
+            src="/assets/images/logo.png"
             alt="Scavender"
             className="start-screen__logo"
             draggable={false}

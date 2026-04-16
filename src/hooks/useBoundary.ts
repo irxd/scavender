@@ -10,16 +10,23 @@ export type BoundaryPolygon = BoundaryPoint[]
 const STORAGE_KEY_PREFIX = 'scavender_boundary_poly_'
 
 const DEFAULT_BOUNDARY: BoundaryPolygon = [
-  { x: 0.1, y: 0.1 },
-  { x: 0.9, y: 0.1 },
-  { x: 0.9, y: 0.9 },
-  { x: 0.1, y: 0.9 },
+  { x: 0.4, y: 0.4 },
+  { x: 0.6, y: 0.4 },
+  { x: 0.6, y: 0.6 },
+  { x: 0.4, y: 0.6 },
 ]
 
 function load(levelId: string): BoundaryPolygon {
   try {
     const raw = localStorage.getItem(STORAGE_KEY_PREFIX + levelId)
-    if (raw) return JSON.parse(raw) as BoundaryPolygon
+    if (raw) {
+      const parsed = JSON.parse(raw)
+      if (Array.isArray(parsed)) {
+        // Filter out any nulls or invalid points
+        const valid = parsed.filter(p => p && typeof p.x === 'number' && typeof p.y === 'number')
+        if (valid.length >= 3) return valid
+      }
+    }
   } catch {
     // ignore
   }

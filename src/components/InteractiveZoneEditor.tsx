@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import type { InteractiveZone, ZonePolygon } from '../hooks/useInteractiveZones'
+import { viewportToImage, type ImageRect } from '../utils/imageSpace'
 
 // Distinct accent colors cycling per zone index
 const ZONE_COLORS = [
@@ -14,6 +15,7 @@ const ZONE_COLORS = [
 
 interface InteractiveZoneEditorProps {
   zones: InteractiveZone[]
+  imageRect: ImageRect
   onUpdateZone: (id: string, patch: Partial<Omit<InteractiveZone, 'id'>>) => void
   onAddZone: () => string
   onRemoveZone: (id: string) => void
@@ -135,6 +137,7 @@ function CommaSeparatedInput({
 
 export function InteractiveZoneEditor({
   zones,
+  imageRect,
   onUpdateZone,
   onAddZone,
   onRemoveZone,
@@ -164,30 +167,26 @@ export function InteractiveZoneEditor({
   }
 
   const handlePointerMove = (e: React.PointerEvent) => {
-    if (!svgRef.current) return
-    const rect = svgRef.current.getBoundingClientRect()
-    const x = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width))
-    const y = Math.max(0, Math.min(1, (e.clientY - rect.top) / rect.height))
+    // Convert viewport pixel → image-space (clamped 0–1)
+    const { x, y } = viewportToImage(e.clientX, e.clientY, imageRect)
+    const cx = Math.max(0, Math.min(1, x))
+    const cy = Math.max(0, Math.min(1, y))
 
     if (draggingNode.current) {
       const { zoneId, nodeIdx } = draggingNode.current
       const zone = zones.find(z => z.id === zoneId)
       if (!zone) return
-      const next: ZonePolygon = zone.polygon.map((p, i) => (i === nodeIdx ? { x, y } : p))
+      const next: ZonePolygon = zone.polygon.map((p, i) => (i === nodeIdx ? { x: cx, y: cy } : p))
       onUpdateZone(zoneId, { polygon: next })
       return
     }
 
     if (draggingZone.current) {
       const { zoneId, startX, startY, startPoly } = draggingZone.current
-      const rawX = (e.clientX - rect.left) / rect.width
-      const rawY = (e.clientY - rect.top) / rect.height
-      const dx = rawX - startX
-      const dy = rawY - startY
+      const dx = cx - startX
+      const dy = cy - startY
 
       const next: ZonePolygon = startPoly.map(p => ({
-        // Using clamp here enforces boundaries but can deform shape if dragged hard against the edge.
-        // For simple dragging, a simple clamp is fine.
         x: Math.max(0, Math.min(1, p.x + dx)),
         y: Math.max(0, Math.min(1, p.y + dy)),
       }))
@@ -235,10 +234,17 @@ export function InteractiveZoneEditor({
         zIndex: 20,
       }}
     >
-      {/* SVG canvas */}
+      {/* SVG canvas — positioned exactly over the image rendered rect */}
       <svg
         ref={svgRef}
-        style={{ width: '100%', height: '100%', display: 'block' }}
+        style={{
+          position: 'absolute',
+          left: imageRect.offsetX,
+          top: imageRect.offsetY,
+          width: imageRect.renderW,
+          height: imageRect.renderH,
+          display: 'block',
+        }}
         viewBox="0 0 100 100"
         preserveAspectRatio="none"
         onPointerMove={handlePointerMove}
@@ -266,10 +272,7 @@ export function InteractiveZoneEditor({
                 onPointerDown={(e) => {
                   e.stopPropagation()
                   setSelectedZoneId(zone.id)
-                  if (!svgRef.current) return
-                  const rect = svgRef.current.getBoundingClientRect()
-                  const startX = (e.clientX - rect.left) / rect.width
-                  const startY = (e.clientY - rect.top) / rect.height
+                  const { x: startX, y: startY } = viewportToImage(e.clientX, e.clientY, imageRect)
                   draggingZone.current = { zoneId: zone.id, startX, startY, startPoly: zone.polygon }
                   e.currentTarget.setPointerCapture(e.pointerId)
                 }}

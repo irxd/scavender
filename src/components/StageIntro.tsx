@@ -46,7 +46,6 @@ export function StageIntro({ slides, onComplete }: Props) {
   const currentText = currentSlide.texts[textIdx]
   const isLastText = textIdx === currentSlide.texts.length - 1
   const isLastSlide = slideIdx === slides.length - 1
-  const showClickHint = !(isLastText && isLastSlide)
 
   return (
     <div

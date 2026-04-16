@@ -1,15 +1,30 @@
 import { useRef } from 'react'
 import type { BoundaryPolygon } from '../hooks/useBoundary'
+import { viewportToImage, type ImageRect } from '../utils/imageSpace'
 
 interface BoundaryEditorProps {
   boundary: BoundaryPolygon
+  imageRect: ImageRect
   setBoundary: (next: BoundaryPolygon | ((prev: BoundaryPolygon) => BoundaryPolygon)) => void
   visible: boolean
 }
 
-export function BoundaryEditor({ boundary, setBoundary, visible }: BoundaryEditorProps) {
+export function BoundaryEditor({ boundary, imageRect, setBoundary, visible }: BoundaryEditorProps) {
   const draggingIdx = useRef<number | null>(null)
   const svgRef = useRef<SVGSVGElement>(null)
+
+  // The SVG is positioned/sized to exactly match the image rendered rect,
+  // so pointer coords within SVG directly map to image-space.
+  const { offsetX, offsetY, renderW, renderH } = imageRect
+
+  const svgStyle: React.CSSProperties = {
+    position: 'absolute',
+    left: offsetX,
+    top: offsetY,
+    width: renderW,
+    height: renderH,
+    display: 'block',
+  }
 
   const handlePointerDown = (idx: number, e: React.PointerEvent) => {
     e.stopPropagation()
@@ -18,14 +33,15 @@ export function BoundaryEditor({ boundary, setBoundary, visible }: BoundaryEdito
   }
 
   const handlePointerMove = (e: React.PointerEvent) => {
-    if (draggingIdx.current === null || !svgRef.current) return
-    const rect = svgRef.current.getBoundingClientRect()
-    const x = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width))
-    const y = Math.max(0, Math.min(1, (e.clientY - rect.top) / rect.height))
+    if (draggingIdx.current === null) return
+    // Convert viewport pixel → image-space (clamped 0–1)
+    const { x, y } = viewportToImage(e.clientX, e.clientY, imageRect)
+    const cx = Math.max(0, Math.min(1, x))
+    const cy = Math.max(0, Math.min(1, y))
     
     setBoundary(prev => {
       const next = [...prev]
-      next[draggingIdx.current!] = { x, y }
+      next[draggingIdx.current!] = { x: cx, y: cy }
       return next
     })
   }
@@ -39,7 +55,6 @@ export function BoundaryEditor({ boundary, setBoundary, visible }: BoundaryEdito
 
   const handleEdgeClick = (idx: number, e: React.MouseEvent) => {
     e.stopPropagation()
-    if (!svgRef.current) return
     
     setBoundary(prev => {
       const next = [...prev]
@@ -65,13 +80,14 @@ export function BoundaryEditor({ boundary, setBoundary, visible }: BoundaryEdito
 
   if (!visible) return null
 
+  // Points in viewBox "0 0 100 100" — multiply image-space fraction by 100
   const pointsStr = boundary.map(p => `${p.x * 100},${p.y * 100}`).join(' ')
 
   return (
     <div id="boundary-overlay" className="editing" style={{ pointerEvents: 'auto' }}>
       <svg 
         ref={svgRef}
-        style={{ width: '100%', height: '100%', display: 'block' }}
+        style={svgStyle}
         viewBox="0 0 100 100" 
         preserveAspectRatio="none"
         onPointerMove={handlePointerMove}

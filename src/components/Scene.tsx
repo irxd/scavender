@@ -10,6 +10,8 @@ import type { BoundaryPolygon } from '../hooks/useBoundary'
 interface SceneProps {
   keys: React.MutableRefObject<KeyState>
   boundary: BoundaryPolygon
+  imgW: number
+  imgH: number
   initialPosition?: [number, number, number]
   initialRotation?: number
   autoWalkTarget?: [number, number, number] | null
@@ -112,6 +114,8 @@ function FixedCamera({ config }: { config?: SceneProps['cameraConfig'] }) {
 export function Scene({
   keys,
   boundary,
+  imgW,
+  imgH,
   initialPosition,
   initialRotation,
   autoWalkTarget,
@@ -135,6 +139,8 @@ export function Scene({
         <Character
           keys={keys}
           boundary={boundary}
+          imgW={imgW}
+          imgH={imgH}
           initialPosition={initialPosition}
           initialRotation={initialRotation}
           walkSpeed={walkSpeed}

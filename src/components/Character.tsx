@@ -5,6 +5,7 @@ import { useControls, button } from 'leva'
 import * as THREE from 'three'
 import type { KeyState } from '../hooks/useKeyboard'
 import type { BoundaryPolygon } from '../hooks/useBoundary'
+import { getImageRect, imageToViewport } from '../utils/imageSpace'
 
 // Animation name mapping (as provided by user):
 //   "Idle_11"  → plays when character is WALKING
@@ -12,9 +13,9 @@ import type { BoundaryPolygon } from '../hooks/useBoundary'
 //   "Walking"  → plays when character is RUNNING
 
 const ANIM = {
-  idle: 'Running',
-  walk: 'Idle_11',
-  run: 'Walking',
+  idle: 'Idle_3',
+  walk: 'Walking_2',
+  run: 'Running_1',
 } as const
 
 type AnimState = 'idle' | 'walk' | 'run'
@@ -22,6 +23,8 @@ type AnimState = 'idle' | 'walk' | 'run'
 interface CharacterProps {
   keys: React.MutableRefObject<KeyState>
   boundary: BoundaryPolygon
+  imgW: number
+  imgH: number
   initialPosition?: [number, number, number]
   initialRotation?: number
   walkSpeed?: number
@@ -36,6 +39,8 @@ interface CharacterProps {
 export function Character({
   keys,
   boundary,
+  imgW,
+  imgH,
   initialPosition = [3.29, 0, 9.7],
   initialRotation = 0,
   walkSpeed = 1.5,
@@ -47,11 +52,12 @@ export function Character({
   onDestinationReached,
 }: CharacterProps) {
   const group = useRef<THREE.Group>(null!)
-  const { scene, animations } = useGLTF('/assets/glb/jace-miller-optimized.glb')
+  const { scene, animations } = useGLTF('/assets/glb/new.glb')
   const { actions, mixer } = useAnimations(animations, group)
 
-  const { showPositionHelper } = useControls('Character', {
+  const { showPositionHelper, modelScale } = useControls('Character', {
     showPositionHelper: { value: false, label: '🛠️ Show Pos Debug' },
+    modelScale: { value: 0.008, min: 0.0001, max: 0.1, step: 0.0001, label: '📏 Model Scale' },
     'Teleport to Start': button(() => {
       if (group.current) {
         group.current.position.set(initialPosition[0], initialPosition[1], initialPosition[2])
@@ -87,7 +93,17 @@ export function Character({
     onAnimChange?.(next)
   }
 
-  useFrame(({ camera }, delta) => {
+  useFrame(({ camera, viewport }, delta) => {
+    // 1. Always update scale and imageRect (needed for boundary and responsiveness)
+    const viewW = window.innerWidth
+    const viewH = window.innerHeight
+    const imageRect = getImageRect(viewW, viewH, imgW, imgH)
+
+    // Responsive scale: makes character size match the background image zoom level.
+    // modelScale from debug menu allows tweaking the size of the GLB model itself.
+    const bgScale = (imageRect.renderH / viewH) * modelScale
+    group.current.scale.setScalar(bgScale)
+
     const k = keys.current
     const isMoving = k.forward || k.backward || k.left || k.right
     const isRunning = isMoving && k.run
@@ -139,8 +155,12 @@ export function Character({
 
     const pos = group.current.position.clone().add(velocity.current.clone().multiplyScalar(delta))
 
-    // Convert boundary (0–1 viewport fractions) → world space dynamically
-    // Unproject 2D screen coordinates onto the Y=0 plane to exactly match the 2D bounding box
+    // Convert boundary (image-space 0–1 fractions) → world space:
+    // 1. Image-space → viewport pixel (via cover/contain rect)
+    // 2. Viewport pixel → NDC
+    // 3. NDC → unproject onto Y=0 plane
+    // (Note: viewW, viewH, imageRect were computed at top of useFrame)
+
     const getIntersectY0 = (ndcX: number, ndcY: number) => {
       const v = new THREE.Vector3(ndcX, ndcY, 0.5)
       v.unproject(camera)
@@ -155,9 +175,13 @@ export function Character({
     }
 
     // Unproject all boundary points to Y=0 plane to form 3D polygon
-    const poly3D = boundary.map(p => {
-      const ndcX = p.x * 2 - 1
-      const ndcY = -(p.y * 2) + 1
+    const poly3D = (boundary || []).map(p => {
+      if (!p) return new THREE.Vector3()
+      // 1. image-space → viewport pixel
+      const vp = imageToViewport(p.x, p.y, imageRect)
+      // 2. viewport pixel → NDC
+      const ndcX = (vp.x / viewW) * 2 - 1
+      const ndcY = -((vp.y / viewH) * 2) + 1
       return getIntersectY0(ndcX, ndcY)
     })
 
@@ -268,4 +292,4 @@ export function Character({
   )
 }
 
-useGLTF.preload('/assets/glb/jace-miller-optimized.glb')
+useGLTF.preload('/assets/glb/new.glb')
