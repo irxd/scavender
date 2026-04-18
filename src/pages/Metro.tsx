@@ -54,26 +54,26 @@ const LEVELS: Record<string, LevelConfig> = {
     imageH: IMG_H,
     cameraConfig: { camY: 1.5, camZ: 1.0, fov: 24, lookAtY: 1.5, lookAtX: -0.5 },
     spawns: {
-      default: [-11.97, 0, -10.10, 72.27],
-      'level1.1': [-11.97, 0, -10.10, 72.27],
-      'level1.4': [-1.04, 0, -7.49, -11.08]
+      default: [-10.50, 0, -9.58, 58.52],
+      'level1.1': [-10.50, 0, -9.58, 58.52],
+      'level1.4': [-1.05, 0, -6.57, -14]
     },
   },
   'level1.3': {
-    background: '/assets/images/background/level1.3.jpg',
+    background: '/assets/images/background/level1.3.webp',
     imageW: IMG_W,
     imageH: IMG_H,
-    cameraConfig: { camY: 2.0, camZ: 15.0, fov: 22, lookAtY: 0.5, lookAtX: 0.0 },
+    cameraConfig: { camY: 2.5, camZ: 15.0, fov: 25, lookAtY: 1.0, lookAtX: 0.0 },
     spawns: {
-      default: [-4.21, 0, 1.23, 44.73],
-      'level1.1': [-4.21, 0, 1.23, 44.73],
+      default: [-4.3, 0, 1.23, 44.73],
+      'level1.1': [-4.3, 0, 1.23, 44.73],
     },
   },
   'level1.4': {
-    background: '/assets/images/background/level1.4.jpg',
+    background: '/assets/images/background/level1.4.webp',
     imageW: IMG_W,
     imageH: IMG_H,
-    cameraConfig: { camY: 1.5, camZ: 15.0, fov: 45, lookAtY: 1.0, lookAtX: 0.0 },
+    cameraConfig: { camY: 1.5, camZ: 16.0, fov: 45, lookAtY: 1.0, lookAtX: 0.0 },
     spawns: {
       default: [-0.74, 0, 11.09, 39.34],
       'level1.2': [-0.74, 0, 11.09, 39.34],
@@ -551,9 +551,9 @@ export default function Metro() {
         onClick={toggleHints}
         title={hintsEnabled ? 'Turn Hints Off' : 'Turn Hints On'}
       >
-        <img 
-          src={hintsEnabled ? "/assets/icons/hint-on-icon.webp" : "/assets/icons/hint-off-icon.webp"} 
-          alt="Toggle Hints" 
+        <img
+          src={hintsEnabled ? "/assets/icons/hint-on-icon.webp" : "/assets/icons/hint-off-icon.webp"}
+          alt="Toggle Hints"
         />
       </button>
     </div>
