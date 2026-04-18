@@ -37,12 +37,24 @@ function save(levelId: string, b: BoundaryPolygon) {
   localStorage.setItem(STORAGE_KEY_PREFIX + levelId, JSON.stringify(b))
 }
 
-export function useBoundary(levelId: string = 'global') {
-  const [boundary, setBoundaryState] = useState<BoundaryPolygon>(() => load(levelId))
+export function useBoundary(levelId: string = 'global', initialBoundary?: BoundaryPolygon) {
+  const [boundary, setBoundaryState] = useState<BoundaryPolygon>(() => {
+    const saved = load(levelId)
+    // If we have stage-specific hardcoded boundary and NO saved data (or it matches default), use hardcoded
+    if (initialBoundary && (JSON.stringify(saved) === JSON.stringify(DEFAULT_BOUNDARY))) {
+      return initialBoundary
+    }
+    return saved
+  })
 
   useEffect(() => {
-    setBoundaryState(load(levelId))
-  }, [levelId])
+    const saved = load(levelId)
+    if (initialBoundary && (JSON.stringify(saved) === JSON.stringify(DEFAULT_BOUNDARY))) {
+       setBoundaryState(initialBoundary)
+    } else {
+       setBoundaryState(saved)
+    }
+  }, [levelId, initialBoundary])
 
   const setBoundary = useCallback((next: BoundaryPolygon | ((prev: BoundaryPolygon) => BoundaryPolygon)) => {
     setBoundaryState(prev => {
@@ -53,9 +65,10 @@ export function useBoundary(levelId: string = 'global') {
   }, [levelId])
 
   const reset = useCallback(() => {
-    save(levelId, DEFAULT_BOUNDARY)
-    setBoundaryState([...DEFAULT_BOUNDARY])
-  }, [levelId])
+    const target = initialBoundary || DEFAULT_BOUNDARY
+    save(levelId, target)
+    setBoundaryState([...target])
+  }, [levelId, initialBoundary])
 
   return { boundary, setBoundary, reset }
 }
