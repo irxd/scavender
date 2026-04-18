@@ -1,4 +1,4 @@
-import { Suspense, useEffect } from 'react'
+import { Suspense, useEffect, useRef } from 'react'
 import { Environment } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { useControls } from 'leva'
@@ -27,23 +27,43 @@ interface SceneProps {
 }
 
 function Lights() {
-  const { ambientIntensity, dirIntensity, dirX, dirY, dirZ } = useControls('Lighting', {
+  const { ambientIntensity, dirIntensity, dirX, dirY, dirZ, showLightHelper, showShadowHelper } = useControls('Lighting', {
     ambientIntensity: { value: 1.2, min: 0, max: 5, step: 0.1 },
     dirIntensity: { value: 2.0, min: 0, max: 10, step: 0.1 },
     dirX: { value: 5, min: -20, max: 20, step: 0.5 },
     dirY: { value: 10, min: 0, max: 30, step: 0.5 },
     dirZ: { value: 5, min: -20, max: 20, step: 0.5 },
+    showLightHelper: { value: false, label: '🔦 Show Light Debug' },
+    showShadowHelper: { value: false, label: '📦 Show Shadow Box' },
   }, { collapsed: true })
+
+  const lightRef = useRef<THREE.DirectionalLight>(null!)
 
   return (
     <>
       <ambientLight intensity={ambientIntensity} />
       <directionalLight
+        ref={lightRef}
         position={[dirX, dirY, dirZ]}
         intensity={dirIntensity}
         castShadow
         shadow-mapSize={[2048, 2048]}
+        shadow-camera-left={-20}
+        shadow-camera-right={20}
+        shadow-camera-top={20}
+        shadow-camera-bottom={-20}
+        shadow-camera-far={50}
+        shadow-bias={-0.0001}
       />
+      {showLightHelper && (
+        <mesh position={[dirX, dirY, dirZ]}>
+          <sphereGeometry args={[0.5, 16, 16]} />
+          <meshBasicMaterial color="yellow" wireframe />
+        </mesh>
+      )}
+      {showShadowHelper && lightRef.current && (
+        <cameraHelper args={[lightRef.current.shadow.camera]} />
+      )}
     </>
   )
 }

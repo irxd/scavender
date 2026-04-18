@@ -15,7 +15,7 @@ export function ItemObtainedOverlay({
     const handler = () => {
       if (isActive) onClose()
     }
-    
+
     const timeoutId = setTimeout(() => {
       window.addEventListener('keydown', handler)
       window.addEventListener('click', handler)
@@ -46,50 +46,48 @@ export function ItemObtainedOverlay({
     >
       <div
         style={{
-          width: '400px',
-          background: 'radial-gradient(ellipse at center, rgba(30,30,35,0.95) 0%, rgba(15,15,18,0.98) 100%)',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
-          boxShadow: '0 0 40px rgba(0,0,0,0.8), inset 0 0 20px rgba(0,0,0,0.5)',
+          width: '500px',
+          background: 'rgba(0, 0, 0, 0.5)',
+          backdropFilter: 'blur(4px)',
+          WebkitBackdropFilter: 'blur(4px)',
           display: 'flex',
           flexDirection: 'column',
           position: 'relative',
-          padding: '24px 32px',
-          // Distinct modern cut-corner style via clip-path
-          clipPath: 'polygon(0 15px, 15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%)',
+          padding: '40px 50px',
+          maskImage: 'linear-gradient(to bottom, transparent, black 10%, black 90%, transparent), linear-gradient(to right, transparent, black 10%, black 90%, transparent)',
+          WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 10%, black 90%, transparent), linear-gradient(to right, transparent, black 10%, black 90%, transparent)',
+          maskComposite: 'intersect',
+          WebkitMaskComposite: 'source-in',
         }}
-        onClick={e => e.stopPropagation()} // Stop propagation so it doesn't trigger global click close immediately, but actually we WANT global click close, so we can let it bubble or handle it locally. 
-        // Wait, the global listener is on window, so we don't strictly need to stop propagation.
+        onClick={e => e.stopPropagation()}
       >
-        {/* Accents (mimicking the reference image's UI elements) */}
-        <div style={{ position: 'absolute', top: 0, left: 0, width: '2px', height: '15px', background: 'rgba(255,255,255,0.4)' }} />
-        <div style={{ position: 'absolute', top: 0, left: 0, width: '15px', height: '2px', background: 'rgba(255,255,255,0.4)' }} />
-        <div style={{ position: 'absolute', bottom: 0, right: 0, width: '2px', height: '15px', background: 'rgba(255,255,255,0.4)' }} />
-        <div style={{ position: 'absolute', bottom: 0, right: 0, width: '15px', height: '2px', background: 'rgba(255,255,255,0.4)' }} />
-
         {/* Header */}
-        <div style={{ 
-          textAlign: 'center', 
-          fontSize: '18px', 
-          fontWeight: 300, 
-          letterSpacing: '0.1em',
+        <div style={{
+          textAlign: 'center',
+          fontSize: '20px',
+          fontWeight: 400,
+          letterSpacing: '0.2em',
           color: '#fff',
           textTransform: 'uppercase',
-          marginBottom: '16px',
+          marginBottom: '20px',
+          fontFamily: "'Cinzel', serif",
         }}>
           Item Obtained
         </div>
 
         {/* Separator */}
-        <div style={{ width: '100%', height: '1px', background: 'rgba(255,255,255,0.15)', marginBottom: '20px' }} />
+        <div style={{ width: '100%', height: '1px', background: 'rgba(255,255,255,0.15)', marginBottom: '32px' }} />
 
         {/* Item Title */}
-        <div style={{ 
-          fontSize: '22px', 
-          fontWeight: 700, 
+        <div style={{
+          fontSize: '28px',
+          fontWeight: 400,
           letterSpacing: '0.05em',
-          color: '#d4b77f', // Gold/Bronze accent color
+          color: '#65bae1',
           textTransform: 'uppercase',
-          marginBottom: '24px',
+          marginBottom: '32px',
+          textAlign: 'center',
+          fontFamily: "'Cinzel', serif",
         }}>
           {item.name}
         </div>
@@ -101,27 +99,29 @@ export function ItemObtainedOverlay({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          marginBottom: '28px',
+          marginBottom: '32px',
+          filter: 'drop-shadow(0px 10px 20px rgba(0,0,0,0.6))',
         }}>
-          <img 
-            src={item.image} 
-            alt={item.name} 
-            style={{ 
-              maxWidth: '100%', 
-              maxHeight: '100%', 
+          <img
+            src={item.image}
+            alt={item.name}
+            style={{
+              maxWidth: '100%',
+              maxHeight: '100%',
               objectFit: 'contain',
-              filter: 'drop-shadow(0px 10px 15px rgba(0,0,0,0.6))',
-            }} 
+            }}
             draggable="false"
           />
         </div>
 
         {/* Description */}
-        <div style={{ 
-          fontSize: '13px', 
-          lineHeight: 1.6, 
-          color: '#ddd',
-          fontFamily: "'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+        <div style={{
+          fontSize: '18px',
+          lineHeight: 1.6,
+          color: '#fff',
+          textAlign: 'center',
+          fontFamily: "'Quattrocento', serif",
+          opacity: 0.9,
         }}>
           {item.description}
         </div>

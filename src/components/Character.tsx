@@ -1,5 +1,5 @@
 import { useRef, useEffect } from 'react'
-import { useGLTF, useAnimations, Html } from '@react-three/drei'
+import { useGLTF, useAnimations, Html, ContactShadows } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { useControls, button } from 'leva'
 import * as THREE from 'three'
@@ -54,6 +54,16 @@ export function Character({
   const group = useRef<THREE.Group>(null!)
   const { scene, animations } = useGLTF('/assets/glb/new.glb')
   const { actions, mixer } = useAnimations(animations, group)
+
+  // Enable shadows for all meshes in the model
+  useEffect(() => {
+    scene.traverse((node) => {
+      if ((node as THREE.Mesh).isMesh) {
+        node.castShadow = true
+        node.receiveShadow = true
+      }
+    })
+  }, [scene])
 
   const { showPositionHelper, modelScale } = useControls('Character', {
     showPositionHelper: { value: false, label: '🛠️ Show Pos Debug' },
@@ -254,6 +264,17 @@ export function Character({
       rotation={[0, initialRotation * (Math.PI / 180), 0]}
     >
       <primitive object={scene} scale={1} />
+
+      {/* Soft character shadow that follows the model */}
+      <ContactShadows
+        position={[0, 0, 0]}
+        opacity={0.75}
+        scale={2.5}
+        blur={2.5}
+        far={2}
+        resolution={256}
+        color="#000000"
+      />
 
       {showPositionHelper && (
         <>

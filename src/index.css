@@ -124,33 +124,28 @@ html, body, #root {
 }
 
 .hud-badge {
-  background: rgba(10, 10, 10, 0.7);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 8px;
-  padding: 6px 14px;
-  color: rgba(255,255,255,0.7);
-  font-size: 12px;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  padding: 8px 20px;
+  color: rgba(255,255,255,0.8);
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
   font-weight: 500;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
   user-select: none;
+  
+  /* Thematic mask effect like DialogBox */
+  mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent), 
+              linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent), 
+                      linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  mask-composite: intersect;
+  -webkit-mask-composite: source-in;
 }
 
-.hint-toggle {
-  pointer-events: all;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  min-width: 110px;
-  text-align: left;
-  outline: none;
-}
-
-.hint-toggle:hover {
-  background: rgba(40, 40, 40, 0.9);
-  border-color: rgba(255, 255, 255, 0.3);
-  color: #fff;
-  transform: translateX(4px);
-}
+/* (old hint-toggle removed) */
 
 /* ─── Toolbar ────────────────────────────────────────────────────── */
 #toolbar {
@@ -211,41 +206,50 @@ html, body, #root {
 .inventory-overlay {
   position: relative;
   width: 900px;
-  max-width: 90%;
+  max-width: 95%;
   max-height: 85vh;
-  background: rgba(15, 20, 25, 0.95);
-  border: 1px solid rgba(100, 120, 140, 0.5);
-  border-radius: 4px;
-  box-shadow: 0 0 30px rgba(0,0,0,0.8);
-  font-family: 'Inter', sans-serif;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   pointer-events: all;
   display: flex;
   flex-direction: column;
+  
+  /* Thematic mask effect like DialogBox */
+  mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent), 
+              linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent), 
+                      linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+  mask-composite: intersect;
+  -webkit-mask-composite: source-in;
 }
 
 .inventory-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 24px;
-  border-bottom: 1px solid rgba(100, 120, 140, 0.3);
+  padding: 30px 40px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .inventory-header h2 {
-  font-size: 20px;
-  font-weight: 500;
+  font-size: 24px;
+  font-weight: 400;
   color: #fff;
-  letter-spacing: 1px;
+  letter-spacing: 0.2em;
+  font-family: 'Cinzel', serif;
+  text-transform: uppercase;
 }
 
 .inventory-header input {
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(100, 120, 140, 0.5);
-  color: #ccc;
-  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  padding: 8px 16px;
   border-radius: 4px;
   font-size: 14px;
   outline: none;
+  font-family: 'Quattrocento', serif;
 }
 
 .inventory-header input::placeholder {
@@ -255,83 +259,133 @@ html, body, #root {
 .inventory-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  padding: 24px;
+  gap: 30px;
+  padding: 40px;
   overflow-y: auto;
 }
 
 .inventory-card {
   display: flex;
-  align-items: flex-start;
-  background: rgba(30, 35, 45, 0.8);
-  border: 1px solid rgba(100, 120, 140, 0.4);
-  border-radius: 4px;
-  padding: 16px;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 20px;
   position: relative;
+  transition: all 0.2s;
+  
+  /* Mask effect for "blur around" the edges */
+  mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent), 
+              linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent), 
+                      linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  mask-composite: intersect;
+  -webkit-mask-composite: source-in;
+}
+
+.inventory-card:hover {
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .inventory-card-image {
-  width: 80px;
-  height: 80px;
+  width: 100px;
+  height: 100px;
   object-fit: contain;
-  margin-right: 16px;
-  filter: drop-shadow(0 0 10px rgba(0,255,255,0.1));
+  margin-right: 24px;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5));
 }
 
 .inventory-card-content h3 {
-  color: #dcb873; 
-  font-size: 16px;
+  color: #65bae1; 
+  font-size: 18px;
   font-weight: 600;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
   text-transform: uppercase;
+  font-family: 'Quattrocento', serif;
 }
 
 .inventory-card-content p {
-  color: #a0b0c0;
-  font-size: 13px;
-  line-height: 1.4;
+  color: #fff;
+  font-size: 15px;
+  line-height: 1.5;
+  font-family: 'Quattrocento', serif;
+  opacity: 0.8;
 }
 
 .inventory-empty {
   grid-column: span 2;
   text-align: center;
-  color: #888;
-  padding: 40px;
+  color: #fff;
+  padding: 80px;
   font-style: italic;
+  font-family: 'Quattrocento', serif;
+  opacity: 0.5;
+  font-size: 18px;
 }
 
 .bag-button {
   position: absolute;
-  bottom: 24px;
-  right: 24px;
+  top: 20px;
+  right: 20px;
   z-index: 20;
-  background: rgba(10, 10, 10, 0.7);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 12px;
-  padding: 12px;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
   cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: all 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  outline: none;
 }
 
 .bag-button:hover {
-  background: rgba(30, 30, 30, 0.9);
-  border-color: rgba(255,255,255,0.3);
-  transform: scale(1.05);
+  transform: translateY(-8px) scale(1.1);
 }
 
 .bag-button img {
-  width: 32px;
-  height: 32px;
-  opacity: 0.8;
-  transition: opacity 0.2s;
+  width: 80px;
+  height: 80px;
+  opacity: 1;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.7))
+          drop-shadow(0 8px 24px rgba(0, 0, 0, 0.4));
+  transition: all 0.3s ease;
 }
 
-.bag-button:hover img {
-  opacity: 1;
+.bag-button img:hover, .hint-button img:hover {
+  filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.8))
+          drop-shadow(0 16px 48px rgba(0, 0, 0, 0.6));
+}
+
+.hint-button {
+  position: absolute;
+  top: 20px;
+  right: 110px;
+  z-index: 20;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  outline: none;
+  pointer-events: all;
+}
+
+.hint-button:hover {
+  transform: translateY(-4px) scale(1.1);
+}
+
+.hint-button img {
+  width: 76px;
+  height: 76px;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.7))
+          drop-shadow(0 8px 24px rgba(0, 0, 0, 0.4));
+  transition: all 0.3s ease;
 }
 
 /* ─── Puzzle Overlay ─────────────────────────────────────────────── */

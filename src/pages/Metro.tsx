@@ -538,19 +538,23 @@ export default function Metro() {
 
       {/* HUD components */}
       <div id="hud">
-        <button
-          className="hud-badge hint-toggle"
-          onClick={toggleHints}
-          title="Toggle visual hints"
-        >
-          {hintsEnabled ? '✨ Hints: On' : '🌑 Hints: Off'}
-        </button>
         <div className="hud-badge">WASD / ↑↓←→ Move</div>
         <div className="hud-badge">Shift + Move = Run</div>
       </div>
 
       <button className="bag-button" onClick={() => setInventoryVisible(true)} title="Open Inventory">
-        <img src="/assets/icons/bag.svg" alt="Inventory" />
+        <img src="/assets/icons/backpack-icon.webp" alt="Inventory" />
+      </button>
+
+      <button
+        className="hint-button"
+        onClick={toggleHints}
+        title={hintsEnabled ? 'Turn Hints Off' : 'Turn Hints On'}
+      >
+        <img 
+          src={hintsEnabled ? "/assets/icons/hint-on-icon.webp" : "/assets/icons/hint-off-icon.webp"} 
+          alt="Toggle Hints" 
+        />
       </button>
     </div>
   )
