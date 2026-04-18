@@ -43,12 +43,24 @@ function save(levelId: string, zones: InteractiveZone[]) {
 let nextIdCounter = Date.now()
 let nextLabelNum = 1
 
-export function useInteractiveZones(levelId: string = 'global') {
-  const [zones, setZonesState] = useState<InteractiveZone[]>(() => load(levelId))
+export function useInteractiveZones(levelId: string = 'global', initialZones?: InteractiveZone[]) {
+  const [zones, setZonesState] = useState<InteractiveZone[]>(() => {
+    const saved = load(levelId)
+    // If we have stage-specific hardcoded zones and NO saved data, use hardcoded
+    if (initialZones && saved.length === 0) {
+      return initialZones
+    }
+    return saved
+  })
 
   useEffect(() => {
-    setZonesState(load(levelId))
-  }, [levelId])
+    const saved = load(levelId)
+    if (initialZones && saved.length === 0) {
+      setZonesState(initialZones)
+    } else {
+      setZonesState(saved)
+    }
+  }, [levelId, initialZones])
   
   const setZones = useCallback(
     (next: InteractiveZone[] | ((prev: InteractiveZone[]) => InteractiveZone[])) => {
@@ -96,10 +108,10 @@ export function useInteractiveZones(levelId: string = 'global') {
   )
 
   const resetZones = useCallback(() => {
-    const fresh = DEFAULT_ZONES.map(z => ({ ...z, polygon: [...z.polygon] }))
-    save(levelId, fresh)
-    setZonesState(fresh)
-  }, [levelId])
+    const target = initialZones || DEFAULT_ZONES.map(z => ({ ...z, polygon: [...z.polygon] }))
+    save(levelId, target)
+    setZonesState(target)
+  }, [levelId, initialZones])
 
   return { zones, setZones, addZone, removeZone, updateZone, resetZones }
 }
