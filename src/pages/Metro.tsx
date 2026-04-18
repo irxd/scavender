@@ -32,24 +32,24 @@ type LevelConfig = {
   spawns: Record<string, [number, number, number, number?]>
 }
 
-// All backgrounds are 2624×1632 (16:10)
-const IMG_W = 2624
-const IMG_H = 1632
+// All backgrounds are 1920×1080 (16:9)
+const IMG_W = 1920
+const IMG_H = 1080
 
 const LEVELS: Record<string, LevelConfig> = {
   'level1.1': {
-    background: '/assets/images/background/level1.1.jpg',
+    background: '/assets/images/background/level1.1.webp',
     imageW: IMG_W,
     imageH: IMG_H,
-    cameraConfig: { camY: 2.0, camZ: 15.0, fov: 50, lookAtY: 2.0, lookAtX: 0.0 },
+    cameraConfig: { camY: 2.0, camZ: 9.5, fov: 50, lookAtY: 1.5, lookAtX: 0.0 },
     spawns: {
-      default: [4.58, 0, 7.27, 20],
-      'level1.2': [7.21, 0, 6.11, -52],
-      'level1.3': [-1.58, 0, 8.80, 0],
+      default: [5.58, 0, -6, 8],
+      'level1.2': [8.24, 0, -5, -62],
+      'level1.3': [-0.6, 0, 0.11, 57],
     },
   },
   'level1.2': {
-    background: '/assets/images/background/level1.2.jpg',
+    background: '/assets/images/background/level1.2.webp',
     imageW: IMG_W,
     imageH: IMG_H,
     cameraConfig: { camY: 1.5, camZ: 1.0, fov: 24, lookAtY: 1.5, lookAtX: -0.5 },

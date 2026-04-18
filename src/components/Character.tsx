@@ -13,9 +13,9 @@ import { getImageRect, imageToViewport } from '../utils/imageSpace'
 //   "Walking"  → plays when character is RUNNING
 
 const ANIM = {
-  idle: 'Idle_3',
-  walk: 'Walking_2',
-  run: 'Running_1',
+  idle: 'Idle_11',
+  walk: 'Walking',
+  run: 'Running',
 } as const
 
 type AnimState = 'idle' | 'walk' | 'run'
@@ -57,7 +57,7 @@ export function Character({
 
   const { showPositionHelper, modelScale } = useControls('Character', {
     showPositionHelper: { value: false, label: '🛠️ Show Pos Debug' },
-    modelScale: { value: 0.008, min: 0.0001, max: 0.1, step: 0.0001, label: '📏 Model Scale' },
+    modelScale: { value: 1, min: 1, max: 10, step: 1, label: '📏 Model Scale' },
     'Teleport to Start': button(() => {
       if (group.current) {
         group.current.position.set(initialPosition[0], initialPosition[1], initialPosition[2])
