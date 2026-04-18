@@ -622,7 +622,7 @@ export default function Metro() {
 
   const [hintsEnabled, setHintsEnabled] = useState(() => {
     const saved = localStorage.getItem('scavender_hints_enabled')
-    return saved === null ? true : saved === 'true'
+    return saved === null ? false : saved === 'true'
   })
 
   // Perist hints setting
