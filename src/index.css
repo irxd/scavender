@@ -198,7 +198,7 @@ html, body, #root {
 .inventory-overlay-backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(4px);
   pointer-events: all;
 }
@@ -208,18 +208,18 @@ html, body, #root {
   width: 900px;
   max-width: 95%;
   max-height: 85vh;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   pointer-events: all;
   display: flex;
   flex-direction: column;
   
-  /* Thematic mask effect like DialogBox */
-  mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent), 
-              linear-gradient(to right, transparent, black 5%, black 95%, transparent);
-  -webkit-mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent), 
-                      linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+  /* Thematic mask effect like DialogBox - synchronized to 10%/90% for identical fade */
+  mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent), 
+              linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent), 
+                      linear-gradient(to right, transparent, black 10%, black 90%, transparent);
   mask-composite: intersect;
   -webkit-mask-composite: source-in;
 }
@@ -298,7 +298,7 @@ html, body, #root {
 .inventory-card-content h3 {
   color: #65bae1; 
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 400;
   margin-bottom: 8px;
   text-transform: uppercase;
   font-family: 'Quattrocento', serif;

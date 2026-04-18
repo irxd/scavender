@@ -36,7 +36,7 @@ export function ItemObtainedOverlay({
         inset: 0,
         zIndex: 100,
         backgroundColor: 'rgba(0, 0, 0, 0.7)',
-        backdropFilter: 'blur(3px)',
+        backdropFilter: 'blur(4px)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -47,9 +47,9 @@ export function ItemObtainedOverlay({
       <div
         style={{
           width: '500px',
-          background: 'rgba(0, 0, 0, 0.5)',
-          backdropFilter: 'blur(4px)',
-          WebkitBackdropFilter: 'blur(4px)',
+          background: 'rgba(0, 0, 0, 0.1)',
+          backdropFilter: 'blur(8px)',
+          WebkitBackdropFilter: 'blur(8px)',
           display: 'flex',
           flexDirection: 'column',
           position: 'relative',
