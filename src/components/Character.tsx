@@ -80,6 +80,9 @@ export function Character({
 
   const currentAnim = useRef<AnimState>('idle')
   const velocity = useRef(new THREE.Vector3())
+  // Track whether the current auto-walk started far enough to run first
+  const autoWalkIsRunning = useRef(false)
+  const prevAutoWalkTarget = useRef<[number, number, number] | null>(null)
 
   // Play initial idle
   useEffect(() => {
@@ -138,16 +141,37 @@ export function Character({
       if (dist < 0.1) {
         // Reached destination
         velocity.current.set(0, 0, 0)
+        autoWalkIsRunning.current = false
+        prevAutoWalkTarget.current = null
         transitionTo('idle')
         onDestinationReached?.()
         return
       }
 
+      // Detect new target → decide whether to start running
+      const RUN_TO_WALK_THRESHOLD = 2.0 // units; switch from run to walk within this distance
+      const targetChanged =
+        !prevAutoWalkTarget.current ||
+        prevAutoWalkTarget.current[0] !== autoWalkTarget[0] ||
+        prevAutoWalkTarget.current[2] !== autoWalkTarget[2]
+
+      if (targetChanged) {
+        // If far enough, start in run mode
+        autoWalkIsRunning.current = dist > RUN_TO_WALK_THRESHOLD
+        prevAutoWalkTarget.current = autoWalkTarget
+      }
+
+      // Transition from run → walk once close enough
+      if (autoWalkIsRunning.current && dist <= RUN_TO_WALK_THRESHOLD) {
+        autoWalkIsRunning.current = false
+      }
+
       dir.copy(toTarget.normalize())
-      // Use walk speed for auto-walk
-      speed = walkSpeed
+      speed = autoWalkIsRunning.current ? runSpeed : walkSpeed
     } else {
       // No movement
+      autoWalkIsRunning.current = false
+      prevAutoWalkTarget.current = null
       transitionTo('idle')
       return
     }
@@ -157,7 +181,7 @@ export function Character({
       if (isRunning) transitionTo('run')
       else transitionTo('walk')
     } else if (autoWalkTarget) {
-      transitionTo('walk')
+      transitionTo(autoWalkIsRunning.current ? 'run' : 'walk')
     }
 
     // Smooth velocity
