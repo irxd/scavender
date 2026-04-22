@@ -52,7 +52,7 @@ export function Character({
   onDestinationReached,
 }: CharacterProps) {
   const group = useRef<THREE.Group>(null!)
-  const { scene, animations } = useGLTF('/assets/glb/new.glb')
+  const { scene, animations } = useGLTF('/assets/glb/jace.glb')
   const { actions, mixer } = useAnimations(animations, group)
 
   // Enable shadows for all meshes in the model
@@ -337,4 +337,4 @@ export function Character({
   )
 }
 
-useGLTF.preload('/assets/glb/new.glb')
+useGLTF.preload('/assets/glb/jace.glb')
