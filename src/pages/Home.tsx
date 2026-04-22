@@ -12,7 +12,7 @@ const chapters = [
   {
     id: 'refinery',
     title: 'The Refinery',
-    image: '/assets/images/background/level2.webp',
+    image: '/assets/images/background/level2.1.webp',
     subtitle: 'Coming Soon',
     path: null
   },
@@ -20,13 +20,6 @@ const chapters = [
     id: 'ghost-lab',
     title: 'The Ghost Lab',
     image: '/assets/images/background/level3.webp',
-    subtitle: 'Coming Soon',
-    path: null
-  },
-  {
-    id: 'reactor',
-    title: 'The Reactor',
-    image: '/assets/images/background/level4.webp',
     subtitle: 'Coming Soon',
     path: null
   },
