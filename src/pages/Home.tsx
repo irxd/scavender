@@ -13,8 +13,8 @@ const chapters = [
     id: 'refinery',
     title: 'The Refinery',
     image: '/assets/images/background/level2.1.webp',
-    subtitle: 'Coming Soon',
-    path: null
+    subtitle: null,
+    path: '/intro/refinery'
   },
   {
     id: 'ghost-lab',
