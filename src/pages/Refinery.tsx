@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef, useMemo, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useImageRect } from '../utils/imageSpace'
 import { Canvas } from '@react-three/fiber'
 import { Background } from '../components/Background'
@@ -30,6 +31,7 @@ type LevelConfig = {
     lookAtX: number
   }
   spawns: Record<string, [number, number, number, number?]>
+  hydraSpawn?: [number, number, number]
   boundary?: import('../hooks/useBoundary').BoundaryPolygon
   zones?: InteractiveZone[]
 }
@@ -49,6 +51,7 @@ const LEVELS: Record<string, LevelConfig> = {
       'level2.2': [4.38, 0, -2.9, -41],
       'level2.3': [-6.91, 0, -7.37, 32.5],
     },
+    hydraSpawn: [-5, 0, -5],
     boundary: [
       { "x": 0.11764933268229166, "y": 0.2372974537037037 },
       { "x": 0.20851236979166668, "y": 0.20005063657407407 },
@@ -142,6 +145,7 @@ const LEVELS: Record<string, LevelConfig> = {
       'level2.1': [-6.17, 0, 5.66, 150],
       'level2.3': [3.41, 0, -6.07, -37]
     },
+    hydraSpawn: [5, 0, -5],
     boundary: [
       { "x": 0.706201171875, "y": 0.21389973958333333 },
       { "x": 0.8286885579427083, "y": 0.2985279224537037 },
@@ -223,6 +227,7 @@ const LEVELS: Record<string, LevelConfig> = {
       'level2.1': [-7.24, 0, -0.33, 90],
       'level2.2': [7.57, 0, -0.35, -90],
     },
+    hydraSpawn: [5, 0, 5],
     boundary: [
       { "x": 0.11154988606770834, "y": 0.3867332175925926 },
       { "x": 0.3682657877604167, "y": 0.3923213252314815 },
@@ -373,6 +378,7 @@ function DebugOverlay({
 }
 
 export default function Refinery() {
+  const navigate = useNavigate()
   const keys = useKeyboard()
   const { currentLevelId: savedLevelId, setCurrentLevel } = useInventoryStore()
 
@@ -692,6 +698,10 @@ export default function Refinery() {
   const toggleBoundaryEditor = () => setBoundaryEditorVisible(v => !v)
   const toggleZoneEditor = () => setZoneEditorVisible(v => !v)
 
+  const handleGameOver = useCallback(() => {
+    navigate('/game-over', { state: { returnUrl: '/refinery', levelId: currentLevelId } })
+  }, [navigate, currentLevelId])
+
   return (
     <div id="game-root" ref={gameRootRef}>
       {/* 
@@ -723,6 +733,9 @@ export default function Refinery() {
             onRotationChange={handleRotationChange}
             onDestinationReached={handleDestinationReached}
             cameraConfig={level.cameraConfig}
+            charPos={charPos}
+            hydraSpawn={level.hydraSpawn}
+            onGameOver={handleGameOver}
           />
         </Canvas>
       </div>

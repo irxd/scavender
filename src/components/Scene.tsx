@@ -4,6 +4,7 @@ import { useFrame } from '@react-three/fiber'
 import { useControls } from 'leva'
 import * as THREE from 'three'
 import { Character } from './Character'
+import { Hydra } from './Hydra'
 import type { KeyState } from '../hooks/useKeyboard'
 import type { BoundaryPolygon } from '../hooks/useBoundary'
 
@@ -24,6 +25,9 @@ interface SceneProps {
     fov?: number,
     lookAtX?: number, lookAtY?: number, lookAtZ?: number
   }
+  charPos?: [number, number, number]
+  hydraSpawn?: [number, number, number]
+  onGameOver?: () => void
 }
 
 function Lights() {
@@ -144,6 +148,9 @@ export function Scene({
   onRotationChange,
   onDestinationReached,
   cameraConfig,
+  charPos,
+  hydraSpawn,
+  onGameOver,
 }: SceneProps) {
   const { walkSpeed, runSpeed } = useControls('Character', {
     walkSpeed: { value: 1.5, min: 0.5, max: 10, step: 0.1 },
@@ -171,6 +178,16 @@ export function Scene({
           onRotationChange={onRotationChange}
           onDestinationReached={onDestinationReached}
         />
+        {hydraSpawn && charPos && onGameOver && (
+          <Hydra
+            boundary={boundary}
+            imgW={imgW}
+            imgH={imgH}
+            spawnPos={hydraSpawn}
+            targetPos={charPos}
+            onGameOver={onGameOver}
+          />
+        )}
       </Suspense>
       <Environment preset="city" />
     </>

@@ -5,6 +5,7 @@ import Metro from './pages/Metro'
 import IntroMetro from './pages/IntroMetro'
 import Refinery from './pages/Refinery'
 import IntroRefinery from './pages/IntroRefinery'
+import GameOver from './pages/GameOver'
 import './index.css'
 
 export default function App() {
@@ -16,6 +17,7 @@ export default function App() {
       <Route path="/intro/metro" element={<IntroMetro />} />
       <Route path="/refinery" element={<Refinery />} />
       <Route path="/intro/refinery" element={<IntroRefinery />} />
+      <Route path="/game-over" element={<GameOver />} />
     </Routes>
   )
 }
