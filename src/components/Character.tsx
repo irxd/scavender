@@ -149,7 +149,7 @@ export function Character({
       }
 
       // Detect new target → decide whether to start running
-      const RUN_TO_WALK_THRESHOLD = 2.0 // units; switch from run to walk within this distance
+      const RUN_TO_WALK_THRESHOLD = 1.0 // units; switch from run to walk within this distance
       const targetChanged =
         !prevAutoWalkTarget.current ||
         prevAutoWalkTarget.current[0] !== autoWalkTarget[0] ||
