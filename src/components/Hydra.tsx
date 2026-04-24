@@ -31,13 +31,14 @@ export function Hydra({
   const velocity = useRef(new THREE.Vector3())
   const hasTriggeredGameOver = useRef(false)
 
-  const { pauseHydra, showHydraHelper, hydraModelScale, hydraSpeed, hydraAnimSpeed, disableGameOver } = useControls('Hydra Debug', {
+  const { pauseHydra, showHydraHelper, hydraModelScale, hydraSpeed, hydraAnimSpeed, collisionThreshold, disableGameOver } = useControls('Hydra Debug', {
     pauseHydra: { value: false, label: '⏸️ Pause Movement' },
     showHydraHelper: { value: false, label: '🛠️ Show Pos Debug' },
     hydraModelScale: { value: 1500, min: 1, max: 10000, step: 10, label: '📏 Model Scale' },
     hydraSpeed: { value: 2, min: 0.1, max: 100, step: 0.1, label: '🏃 Hydra Speed' },
     hydraAnimSpeed: { value: 0.7, min: 0.1, max: 5.0, step: 0.1, label: '⏱️ Anim Speed' },
-    disableGameOver: { value: true, label: '🛡️ Disable Game Over' },
+    collisionThreshold: { value: 3, min: 0.1, max: 10, step: 0.1, label: '🎯 Collision Dist' },
+    disableGameOver: { value: false, label: '🛡️ Disable Game Over' },
   })
 
   // Enable shadows
@@ -85,7 +86,7 @@ export function Hydra({
 
     // Check distance for game over
     const dist = currentPos.distanceTo(charVec)
-    if (dist < 1.0) {
+    if (dist < collisionThreshold) {
       if (!disableGameOver) {
         hasTriggeredGameOver.current = true
         onGameOver()

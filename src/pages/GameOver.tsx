@@ -4,13 +4,21 @@ import { useInventoryStore } from '../store/useInventoryStore'
 export default function GameOver() {
   const navigate = useNavigate()
   const location = useLocation()
-  const { resetItems } = useInventoryStore()
+  const { resetItems, setCurrentLevel } = useInventoryStore()
 
   const state = location.state as { returnUrl?: string; levelId?: string } | null
   const returnUrl = state?.returnUrl || '/'
 
   const handleRetry = () => {
     resetItems()
+    
+    // Reset back to the start of the respective stage
+    if (returnUrl.includes('refinery')) {
+      setCurrentLevel('level2.1')
+    } else if (returnUrl.includes('metro')) {
+      setCurrentLevel('level1.1')
+    }
+
     navigate(returnUrl)
   }
 
