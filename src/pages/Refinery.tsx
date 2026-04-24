@@ -43,31 +43,33 @@ const LEVELS: Record<string, LevelConfig> = {
     background: '/assets/images/background/level2.1.webp',
     imageW: IMG_W,
     imageH: IMG_H,
-    cameraConfig: { camY: 2.0, camZ: 9.5, fov: 50, lookAtY: 1.5, lookAtX: 0.0 },
+    cameraConfig: { camY: 15.0, camZ: 23.5, fov: 17, lookAtY: 0.5, lookAtX: -1.5 },
     spawns: {
-      default: [0, 0, 0, 0],
-      'level2.2': [0, 0, 0, 0],
+      default: [3.40, 0, 5.37, -134],
+      'level2.2': [4.38, 0, -2.9, -41],
+      'level2.3': [-6.91, 0, -7.37, 32.5],
     },
   },
   'level2.2': {
     background: '/assets/images/background/level2.2.webp',
     imageW: IMG_W,
     imageH: IMG_H,
-    cameraConfig: { camY: 2.0, camZ: 9.5, fov: 50, lookAtY: 1.5, lookAtX: 0.0 },
+    cameraConfig: { camY: 15.0, camZ: 23.5, fov: 17, lookAtY: 0.5, lookAtX: -1.5 },
     spawns: {
-      default: [0, 0, 0, 0],
-      'level2.1': [0, 0, 0, 0],
-      'level2.3': [0, 0, 0, 0]
+      default: [-6.17, 0, 5.66, 150],
+      'level2.1': [-6.17, 0, 5.66, 150],
+      'level2.3': [3.41, 0, -6.07, -37]
     },
   },
   'level2.3': {
     background: '/assets/images/background/level2.3.webp',
     imageW: IMG_W,
     imageH: IMG_H,
-    cameraConfig: { camY: 2.0, camZ: 9.5, fov: 50, lookAtY: 1.5, lookAtX: 0.0 },
+    cameraConfig: { camY: 30.0, camZ: 9.5, fov: 17, lookAtY: 1.5, lookAtX: 0.0 },
     spawns: {
-      default: [0, 0, 0, 0],
-      'level2.2': [0, 0, 0, 0],
+      default: [-7.24, 0, -0.33, 90],
+      'level2.1': [-7.24, 0, -0.33, 90],
+      'level2.2': [7.57, 0, -0.35, -90],
     },
   },
 }
@@ -101,10 +103,10 @@ function DebugOverlay({
 export default function Refinery() {
   const keys = useKeyboard()
   const { currentLevelId: savedLevelId, setCurrentLevel } = useInventoryStore()
-  
+
   // Set default level if entering the stage for the first time
   const initLevelId = savedLevelId.startsWith('level2.') ? savedLevelId : 'level2.1'
-  
+
   const [levelState, setLevelState] = useState({ id: initLevelId, from: 'default' })
   const currentLevelId = levelState.id
   const previousLevelId = levelState.from
@@ -269,6 +271,10 @@ export default function Refinery() {
   const handlePositionChange = useCallback((pos: [number, number, number]) => {
     setCharPos(pos)
     charPosRef.current = pos
+
+    // Log position for debugging spawn points
+    // console.log(`Pos: [${pos[0].toFixed(2)}, ${pos[1].toFixed(2)}, ${pos[2].toFixed(2)}]`)
+
     // If movement is manual (keys pressed), cancel auto-walk
     const isManual = keys.current.forward || keys.current.backward || keys.current.left || keys.current.right
     if (isManual && autoWalkTarget) {
@@ -279,6 +285,8 @@ export default function Refinery() {
 
   const handleRotationChange = useCallback((rot: number) => {
     setCharRotation(rot)
+    // Log rotation in degrees for spawn config
+    console.log(`Rot: ${(rot * (180 / Math.PI)).toFixed(2)}°`)
   }, [])
 
   const handleZoneHover = useCallback((zoneId: string | null) => {

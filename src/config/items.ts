@@ -35,5 +35,23 @@ export const ITEMS: Record<string, ItemData> = {
     name: 'H-C BATTERY',
     description: 'A high-capacity cell with a localized time-static flicker. Needs to be stabilized before use.',
     image: '/assets/images/item/battery.png',
+  },
+  fuel: {
+    id: 'fuel',
+    name: 'FUEL CANISTER',
+    description: 'A canister of high-grade volatile fuel, salvaged from a derelict generator. Essential for powering burners or mechanical engines.',
+    image: '/assets/images/item/fuel.png',
+  },
+  igniter: {
+    id: 'igniter',
+    name: 'PIEZO IGNITER',
+    description: 'A primitive but reliable sparking tool. Can ignite fuel or trigger carefully placed explosives.',
+    image: '/assets/images/item/igniter.png',
+  },
+  sulfate: {
+    id: 'sulfate',
+    name: 'STATIC-NEUTRALIZED SULFATE',
+    description: 'A pouch of pure sulfate crystals, scavenged from an old laboratory. A key component for advanced chemical crafting.',
+    image: '/assets/images/item/sulfate.png',
   }
 }
