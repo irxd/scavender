@@ -35,66 +35,20 @@ export default function GameOver() {
         zIndex: 9999,
       }}
     >
-      <h1
-        style={{
-          fontFamily: "'Cinzel', serif",
-          fontSize: '4rem',
-          letterSpacing: '0.2em',
-          marginBottom: '2rem',
-          textAlign: 'center',
-          color: '#ff3333',
-          textShadow: '0 0 20px rgba(255, 0, 0, 0.5)',
-        }}
-      >
+      <div className="game-over-title">
         TIMELINE SEVERED
-      </h1>
-      
-      <div style={{ display: 'flex', gap: '2rem', marginTop: '2rem' }}>
+      </div>
+
+      <div className="game-over-nav">
         <button
           onClick={handleRetry}
-          style={{
-            background: 'transparent',
-            border: '1px solid rgba(255, 255, 255, 0.5)',
-            color: '#fff',
-            padding: '12px 32px',
-            fontSize: '1.2rem',
-            fontFamily: "'Cinzel', serif",
-            cursor: 'pointer',
-            transition: 'all 0.2s',
-            letterSpacing: '0.1em',
-          }}
-          onMouseOver={(e) => {
-            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
-            e.currentTarget.style.borderColor = '#fff'
-          }}
-          onMouseOut={(e) => {
-            e.currentTarget.style.background = 'transparent'
-            e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.5)'
-          }}
+          className="game-over-nav-btn"
         >
           RETRY
         </button>
         <button
           onClick={handleExit}
-          style={{
-            background: 'transparent',
-            border: '1px solid rgba(255, 255, 255, 0.5)',
-            color: '#fff',
-            padding: '12px 32px',
-            fontSize: '1.2rem',
-            fontFamily: "'Cinzel', serif",
-            cursor: 'pointer',
-            transition: 'all 0.2s',
-            letterSpacing: '0.1em',
-          }}
-          onMouseOver={(e) => {
-            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
-            e.currentTarget.style.borderColor = '#fff'
-          }}
-          onMouseOut={(e) => {
-            e.currentTarget.style.background = 'transparent'
-            e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.5)'
-          }}
+          className="game-over-nav-btn"
         >
           EXIT
         </button>
