@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef, useMemo, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useImageRect } from '../utils/imageSpace'
 import { Canvas } from '@react-three/fiber'
 import { Background } from '../components/Background'
@@ -232,7 +233,9 @@ const LEVELS: Record<string, LevelConfig> = {
         "targetPos": [-0.92, 0, 1.08],
         "requiredItems": ["wire", "battery"],
         "dialog": "I think I can still use this terminal, but got no access. If I have some battery and wire, maybe I can make a jumpstart kit.",
-        "dialogAfterRequiredItems": "Now let's try."
+        "dialogAfterRequiredItems": "Now let's try.",
+        "puzzleId": "metro-pipe",
+        "transitionTo": "/intro/refinery"
       },
       {
         "id": "zone-1775995600628",
@@ -334,6 +337,7 @@ function DebugOverlay({
 
 export default function Metro() {
   const keys = useKeyboard()
+  const navigate = useNavigate()
   const { currentLevelId: savedLevelId, setCurrentLevel } = useInventoryStore()
   const [levelState, setLevelState] = useState({ id: savedLevelId, from: 'default' })
   const currentLevelId = levelState.id
@@ -421,11 +425,15 @@ export default function Metro() {
   // Sequence effect: trigger transition only after dialog and items are cleared
   useEffect(() => {
     if (!activeDialog && !activePuzzleZone && pendingItemsToGive.length === 0 && pendingTransition) {
-      setLevelState({ id: pendingTransition, from: currentLevelId })
-      setCurrentLevel(pendingTransition)
+      if (pendingTransition.startsWith('/')) {
+        navigate(pendingTransition)
+      } else {
+        setLevelState({ id: pendingTransition, from: currentLevelId })
+        setCurrentLevel(pendingTransition)
+      }
       setPendingTransition(null)
     }
-  }, [activeDialog, activePuzzleZone, pendingItemsToGive.length, pendingTransition, currentLevelId, setCurrentLevel])
+  }, [activeDialog, activePuzzleZone, pendingItemsToGive.length, pendingTransition, currentLevelId, setCurrentLevel, navigate])
 
   // Post-dialog puzzle trigger
   useEffect(() => {
@@ -460,9 +468,12 @@ export default function Metro() {
 
     const canSucceed = !hasRequirements || requirementsMet
 
-    if (canSucceed && zone.puzzleId?.trim() && unobtainedItems.length > 0) {
-      // It's a puzzle and we haven't obtained the items yet.
-      // If there's a dialog to show first (e.g. requirements met), queue the puzzle.
+    const isPuzzle = !!zone.puzzleId?.trim()
+    const hasItems = zone.items && zone.items.length > 0
+    const needsPuzzle = isPuzzle && (!hasItems || unobtainedItems.length > 0)
+
+    if (canSucceed && needsPuzzle) {
+      // It's a puzzle and we haven't solved it yet (either no items, or still need to obtain them)
       if (finalDialog) {
         setActiveDialog({ ...zone, dialog: finalDialog })
         setPendingPuzzleZone(zone)

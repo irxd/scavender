@@ -1063,3 +1063,85 @@ html, body, #root {
 .game-over-nav-btn:hover::after {
   width: 110%;
 }
+
+/* ─── Pipe Puzzle ────────────────────────────────────────────────── */
+.pipe-monitor-image {
+  max-width: 100%;
+  max-height: 80vh;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+  filter: drop-shadow(0 0 20px rgba(0, 255, 0, 0.2));
+}
+
+.pipe-puzzle-container {
+  width: 60%;
+  aspect-ratio: 1;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  gap: 4px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 10, 0, 0.4);
+  padding: 8px;
+  border-radius: 12px;
+  box-shadow: inset 0 0 20px rgba(0, 255, 0, 0.1);
+}
+
+.pipe-tile {
+  background: rgba(10, 40, 10, 0.6);
+  border: 1px solid rgba(0, 255, 0, 0.2);
+  border-radius: 8px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.pipe-tile:hover {
+  background: rgba(20, 60, 20, 0.8);
+  border-color: rgba(0, 255, 0, 0.4);
+}
+
+.pipe-svg-container {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+}
+
+.pipe-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.pipe-source, .pipe-dest {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  top: calc(62.5% - 8px);
+  z-index: 10;
+}
+
+.pipe-source {
+  left: -20px;
+  background: #3f3;
+  box-shadow: 0 0 10px #3f3, 0 0 20px #3f3;
+}
+
+.pipe-dest {
+  right: -20px;
+  background: #333;
+  box-shadow: inset 0 0 5px #000;
+  transition: all 0.5s ease;
+}
+
+.pipe-dest.powered {
+  background: #3f3;
+  box-shadow: 0 0 10px #3f3, 0 0 20px #3f3;
+}
+
