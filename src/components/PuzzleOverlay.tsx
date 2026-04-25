@@ -63,7 +63,7 @@ export function PuzzleOverlay({ puzzleId, onComplete }: PuzzleOverlayProps) {
 
       <div className="puzzle-content-wrapper">
         <img
-          src={isOpen ? "/assets/images/puzzle/metro/panel-opened.png" : "/assets/images/puzzle/metro/panel-closed.png"}
+          src={isOpen ? "/assets/images/puzzle/metro/panel-opened.webp" : "/assets/images/puzzle/metro/panel-closed.webp"}
           alt="Electrical Panel"
           className="puzzle-panel-image"
         />
