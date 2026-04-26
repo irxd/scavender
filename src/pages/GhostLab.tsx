@@ -29,6 +29,7 @@ type LevelConfig = {
     fov: number
     lookAtY: number
     lookAtX: number
+    lookAtZ?: number
   }
   spawns: Record<string, [number, number, number, number?]>
   boundary?: import('../hooks/useBoundary').BoundaryPolygon
@@ -44,11 +45,10 @@ const LEVELS: Record<string, LevelConfig> = {
     background: '/assets/images/background/level3.1.webp',
     imageW: IMG_W,
     imageH: IMG_H,
-    cameraConfig: { camY: 15.0, camZ: 23.5, fov: 17, lookAtY: 0.5, lookAtX: -1.5 },
+    cameraConfig: { camY: 2.5, camZ: 7, fov: 21, lookAtY: 2, lookAtX: -0.5 },
     spawns: {
-      default: [3.40, 0, 5.37, -134],
-      'level3.2': [4.38, 0, -2.9, -41],
-      'level3.3': [-6.91, 0, -7.37, 32.5],
+      default: [-0.52, 0, -2.6, 180],
+      'level3.2': [-0.65, 0, -9, 0],
     },
     boundary: [
       { "x": 0.1, "y": 0.9 },
@@ -87,11 +87,10 @@ const LEVELS: Record<string, LevelConfig> = {
     background: '/assets/images/background/level3.2.webp',
     imageW: IMG_W,
     imageH: IMG_H,
-    cameraConfig: { camY: 15.0, camZ: 23.5, fov: 17, lookAtY: 0.5, lookAtX: -1.5 },
+    cameraConfig: { camY: 2.5, camZ: 22, fov: 24, lookAtY: 0.5, lookAtX: -6, lookAtZ: -5.0 },
     spawns: {
-      default: [-6.17, 0, 5.66, 150],
-      'level3.1': [-6.17, 0, 5.66, 150],
-      'level3.3': [3.41, 0, -6.07, -37]
+      default: [-1.33, 0, 2.95, 0],
+      'level3.1': [-1.33, 0, 2.95, 0],
     },
     boundary: [
       { "x": 0.1, "y": 0.9 },
@@ -130,11 +129,9 @@ const LEVELS: Record<string, LevelConfig> = {
     background: '/assets/images/background/level3.3.webp',
     imageW: IMG_W,
     imageH: IMG_H,
-    cameraConfig: { camY: 30.0, camZ: 9.5, fov: 17, lookAtY: 1.5, lookAtX: 0.0 },
+    cameraConfig: { camY: 5.0, camZ: 9.5, fov: 25, lookAtY: 1.5, lookAtX: 0.0 },
     spawns: {
-      default: [-7.24, 0, -0.33, 90],
-      'level3.1': [-7.24, 0, -0.33, 90],
-      'level3.2': [7.57, 0, -0.35, -90],
+      default: [4.91, 0, -6.5, -30],
     },
     boundary: [
       { "x": 0.1, "y": 0.9 },

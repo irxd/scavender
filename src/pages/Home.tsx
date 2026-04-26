@@ -19,7 +19,7 @@ const chapters = [
   {
     id: 'ghost-lab',
     title: 'The Ghost Lab',
-    image: '/assets/images/background/level3.1.webp',
+    image: '/assets/images/background/level3.2.webp',
     subtitle: null,
     path: '/intro/ghost-lab'
   },
