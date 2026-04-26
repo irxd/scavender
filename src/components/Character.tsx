@@ -106,7 +106,7 @@ export function Character({
     onAnimChange?.(next)
   }
 
-  useFrame(({ camera, viewport }, delta) => {
+  useFrame(({ camera }, delta) => {
     // 1. Always update scale and imageRect (needed for boundary and responsiveness)
     const viewW = window.innerWidth
     const viewH = window.innerHeight
