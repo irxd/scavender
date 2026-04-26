@@ -321,7 +321,8 @@ const LEVELS: Record<string, LevelConfig> = {
         "targetPos": [2.58, 0, -0.5],
         "dialog": "Can't get through, I need something to destroy this.",
         "requiredItems": ["igniter", "fuel", "sulfate"],
-        "dialogAfterRequiredItems": "Let's make this kaboom!"
+        "dialogAfterRequiredItems": "Let's make this kaboom!",
+        "transitionTo": "/intro/ghost-lab"
       },
       {
         "id": "zone-1777018881257",
