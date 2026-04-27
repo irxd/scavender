@@ -1,28 +1,34 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useMemo } from 'react'
 import { useGLTF, useAnimations, Html } from '@react-three/drei'
 import { useControls } from 'leva'
 import * as THREE from 'three'
+import { SkeletonUtils } from 'three-stdlib'
 
 interface ScientistProps {
+  id: string
   position: [number, number, number]
   rotation?: number
 }
 
-export function Scientist({ position, rotation = 0 }: ScientistProps) {
+export function Scientist({ id, position, rotation = 0 }: ScientistProps) {
   const group = useRef<THREE.Group>(null!)
   const { scene, animations } = useGLTF('/assets/glb/scientist.glb')
+
+  // Clone the scene to allow multiple instances
+  const clone = useMemo(() => SkeletonUtils.clone(scene), [scene])
+
   const { actions, mixer } = useAnimations(animations, group)
 
-  const { showScientistHelper, scientistModelScale, scientistAnimSpeed, scientistOpacity } = useControls('Scientist Debug', {
+  const { showScientistHelper, scientistModelScale, scientistAnimSpeed, scientistOpacity } = useControls(`Scientist ${id}`, {
     showScientistHelper: { value: false, label: '🛠️ Show Pos Debug' },
     scientistModelScale: { value: 1.2, min: 0.1, max: 10, step: 0.1, label: '📏 Model Scale' },
-    scientistAnimSpeed: { value: 1.0, min: 0.1, max: 5.0, step: 0.1, label: '⏱️ Anim Speed' },
+    scientistAnimSpeed: { value: 0.5, min: 0.1, max: 5.0, step: 0.1, label: '⏱️ Anim Speed' },
     scientistOpacity: { value: 0.7, min: 0.0, max: 1.0, step: 0.1, label: '👻 Opacity' },
   })
 
   // Enable shadows and semi-transparent
   useEffect(() => {
-    scene.traverse((node) => {
+    clone.traverse((node) => {
       if ((node as THREE.Mesh).isMesh) {
         node.castShadow = true
         node.receiveShadow = true
@@ -43,7 +49,7 @@ export function Scientist({ position, rotation = 0 }: ScientistProps) {
         }
       }
     })
-  }, [scene, scientistOpacity])
+  }, [clone, scientistOpacity])
 
   // Play default animation (first one available)
   useEffect(() => {
@@ -63,7 +69,7 @@ export function Scientist({ position, rotation = 0 }: ScientistProps) {
   }, [mixer, scientistAnimSpeed])
 
   // Allow tweaking position and rotation in dev mode via Leva (using position and rotation as initial values)
-  const { devPosX, devPosY, devPosZ, devRotY } = useControls('Scientist Debug', {
+  const { devPosX, devPosY, devPosZ, devRotY } = useControls(`Scientist ${id}`, {
     devPosX: { value: position[0], step: 0.1, label: '📍 Pos X' },
     devPosY: { value: position[1], step: 0.1, label: '📍 Pos Y' },
     devPosZ: { value: position[2], step: 0.1, label: '📍 Pos Z' },
@@ -74,7 +80,7 @@ export function Scientist({ position, rotation = 0 }: ScientistProps) {
 
   return (
     <group ref={group} position={currentPos} rotation={[0, devRotY, 0]} scale={scientistModelScale}>
-      <primitive object={scene} />
+      <primitive object={clone} />
       {showScientistHelper && (
         <>
           <axesHelper args={[2]} />

@@ -548,8 +548,10 @@ export default function GhostLab() {
             cameraConfig={level.cameraConfig}
             charPos={charPos}
             onGameOver={handleGameOver}
-            scientistSpawn={currentLevelId === 'level3.2' ? [-1.82, 0, 7.2] : undefined}
-            scientistRotation={currentLevelId === 'level3.2' ? -Math.PI / 2 : undefined}
+            scientists={currentLevelId === 'level3.2' ? [
+              { id: 'Scientist1', position: [-1.82, 0, 7.2], rotation: -Math.PI / 2 },
+              { id: 'Scientist2', position: [-0.5, 0, 7.2], rotation: 1.7 } // Default position for the second NPC
+            ] : undefined}
           />
         </Canvas>
       </div>

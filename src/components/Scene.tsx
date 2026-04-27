@@ -29,8 +29,7 @@ interface SceneProps {
   charPos?: [number, number, number]
   hydraSpawn?: [number, number, number]
   onGameOver?: () => void
-  scientistSpawn?: [number, number, number]
-  scientistRotation?: number
+  scientists?: Array<{ id: string; position: [number, number, number]; rotation?: number }>
 }
 
 function Lights() {
@@ -154,8 +153,7 @@ export function Scene({
   charPos,
   hydraSpawn,
   onGameOver,
-  scientistSpawn,
-  scientistRotation,
+  scientists,
 }: SceneProps) {
   const { walkSpeed, runSpeed } = useControls('Character', {
     walkSpeed: { value: 1.5, min: 0.5, max: 10, step: 0.1 },
@@ -193,9 +191,9 @@ export function Scene({
             onGameOver={onGameOver}
           />
         )}
-        {scientistSpawn && (
-          <Scientist position={scientistSpawn} rotation={scientistRotation} />
-        )}
+        {scientists?.map((npc) => (
+          <Scientist key={npc.id} id={npc.id} position={npc.position} rotation={npc.rotation} />
+        ))}
       </Suspense>
       <Environment preset="city" />
     </>
