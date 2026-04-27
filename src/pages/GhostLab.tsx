@@ -548,6 +548,8 @@ export default function GhostLab() {
             cameraConfig={level.cameraConfig}
             charPos={charPos}
             onGameOver={handleGameOver}
+            scientistSpawn={currentLevelId === 'level3.2' ? [-1.82, 0, 7.2] : undefined}
+            scientistRotation={currentLevelId === 'level3.2' ? -Math.PI / 2 : undefined}
           />
         </Canvas>
       </div>

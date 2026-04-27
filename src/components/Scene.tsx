@@ -5,6 +5,7 @@ import { useControls } from 'leva'
 import * as THREE from 'three'
 import { Character } from './Character'
 import { Hydra } from './Hydra'
+import { Scientist } from './Scientist'
 import type { KeyState } from '../hooks/useKeyboard'
 import type { BoundaryPolygon } from '../hooks/useBoundary'
 
@@ -28,6 +29,8 @@ interface SceneProps {
   charPos?: [number, number, number]
   hydraSpawn?: [number, number, number]
   onGameOver?: () => void
+  scientistSpawn?: [number, number, number]
+  scientistRotation?: number
 }
 
 function Lights() {
@@ -151,6 +154,8 @@ export function Scene({
   charPos,
   hydraSpawn,
   onGameOver,
+  scientistSpawn,
+  scientistRotation,
 }: SceneProps) {
   const { walkSpeed, runSpeed } = useControls('Character', {
     walkSpeed: { value: 1.5, min: 0.5, max: 10, step: 0.1 },
@@ -187,6 +192,9 @@ export function Scene({
             targetPos={charPos}
             onGameOver={onGameOver}
           />
+        )}
+        {scientistSpawn && (
+          <Scientist position={scientistSpawn} rotation={scientistRotation} />
         )}
       </Suspense>
       <Environment preset="city" />
