@@ -550,7 +550,9 @@ export default function GhostLab() {
             onGameOver={handleGameOver}
             scientists={currentLevelId === 'level3.2' ? [
               { id: 'Scientist1', position: [-1.82, 0, 7.2], rotation: -Math.PI / 2 },
-              { id: 'Scientist2', position: [-0.5, 0, 7.2], rotation: 1.7 } // Default position for the second NPC
+              { id: 'Scientist2', position: [-0.5, 0, 7.2], rotation: 1.7 },
+              { id: 'Scientist3', position: [-2, 0, 15], rotation: 4.6 },
+              { id: 'Scientist4', position: [-0.1, 0, 14.1], rotation: 1.5 }
             ] : undefined}
           />
         </Canvas>
