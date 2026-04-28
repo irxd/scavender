@@ -348,6 +348,13 @@ const LEVELS: Record<string, LevelConfig> = {
   },
 }
 
+const INTRO_DIALOGS = [
+  { text: "Well, look who finally showed up. You're late, Jace.", portrait: "/assets/images/portrait/old-jace-portrait.png", side: 'right' as const },
+  { text: "I had some... complications. Who are you exactly?", portrait: "/assets/images/portrait/young-jace-portrait.png", side: 'left' as const },
+  { text: "Someone who knows more than you do. But we don't have time for pleasantries.", portrait: "/assets/images/portrait/old-jace-portrait.png", side: 'right' as const },
+  { text: "Fine. What's the plan?", portrait: "/assets/images/portrait/young-jace-portrait.png", side: 'left' as const },
+]
+
 function DebugOverlay({
   anim,
   pos,
@@ -432,6 +439,7 @@ export default function Refinery() {
   const pendingItemsRef = useRef<string[]>([])
   const closeItemOverlayRef = useRef<(() => void) | null>(null)
   const inventoryVisibleRef = useRef(false)
+  const introDialogIndexRef = useRef<number | null>(null)
 
   const [currentAnim, setCurrentAnim] = useState('idle')
   const [charPos, setCharPos] = useState<[number, number, number]>(spawnPos)
@@ -440,12 +448,15 @@ export default function Refinery() {
   const [pendingZone, setPendingZone] = useState<InteractiveZone | null>(null)
 
   const [activeHydraSpawn, setActiveHydraSpawn] = useState<[number, number, number] | null>(null)
+  const [introDialogIndex, setIntroDialogIndex] = useState<number | null>(null)
+  const [introCompleted, setIntroCompleted] = useState(false)
 
   // Manage dynamic hydra spawn
   useEffect(() => {
     if (previousLevelId === 'default') {
-      // First load spawn location
-      setActiveHydraSpawn([-6.91, 0, -7.37])
+      // First load: Start intro dialog
+      setIntroDialogIndex(0)
+      setActiveHydraSpawn(null)
     } else {
       // Subsequent levels: wait 1 second, then spawn at character's spawn position
       setActiveHydraSpawn(null)
@@ -455,6 +466,13 @@ export default function Refinery() {
       return () => clearTimeout(timer)
     }
   }, [currentLevelId, previousLevelId, spawnPos])
+
+  // Spawn hydra after intro completes
+  useEffect(() => {
+    if (previousLevelId === 'default' && introCompleted && !activeHydraSpawn) {
+      setActiveHydraSpawn([-6.91, 0, -7.37])
+    }
+  }, [introCompleted, previousLevelId, activeHydraSpawn])
 
   // Sequence state
   const [pendingItemsToGive, setPendingItemsToGive] = useState<string[]>([])
@@ -467,6 +485,7 @@ export default function Refinery() {
   useEffect(() => { activePuzzleZoneRef.current = activePuzzleZone }, [activePuzzleZone])
   useEffect(() => { pendingItemsRef.current = pendingItemsToGive }, [pendingItemsToGive])
   useEffect(() => { inventoryVisibleRef.current = inventoryVisible }, [inventoryVisible])
+  useEffect(() => { introDialogIndexRef.current = introDialogIndex }, [introDialogIndex])
   // Keep close callback ref in sync whenever pending items change
   useEffect(() => {
     if (pendingItemsToGive.length > 0) {
@@ -623,6 +642,16 @@ export default function Refinery() {
   // Capture-phase global click guard — registered ONCE, reads from refs so it's always fresh
   useEffect(() => {
     const handleGlobalClick = (e: MouseEvent) => {
+      if (introDialogIndexRef.current !== null) {
+        setIntroDialogIndex(prev => {
+          if (prev === null) return null
+          if (prev < INTRO_DIALOGS.length - 1) return prev + 1
+          setIntroCompleted(true)
+          return null
+        })
+        e.stopPropagation()
+        return
+      }
       if (activeDialogRef.current) {
         setActiveDialog(null)
         e.stopPropagation()
@@ -785,6 +814,23 @@ export default function Refinery() {
       {/* Dialog box — shown when player clicks an interactive zone */}
       {activeDialog && (
         <DialogBox zone={activeDialog} onClose={handleCloseDialog} />
+      )}
+
+      {/* Intro Dialog */}
+      {introDialogIndex !== null && (
+        <DialogBox
+          text={INTRO_DIALOGS[introDialogIndex].text}
+          portrait={INTRO_DIALOGS[introDialogIndex].portrait}
+          side={INTRO_DIALOGS[introDialogIndex].side}
+          onClose={() => {
+            setIntroDialogIndex(prev => {
+              if (prev === null) return null
+              if (prev < INTRO_DIALOGS.length - 1) return prev + 1
+              setIntroCompleted(true)
+              return null
+            })
+          }}
+        />
       )}
 
       {/* Item Obtained Overlay — shown after dialog if there are items */}

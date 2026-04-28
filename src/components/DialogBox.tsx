@@ -2,11 +2,14 @@ import { useEffect } from 'react'
 import type { InteractiveZone } from '../hooks/useInteractiveZones'
 
 interface DialogBoxProps {
-  zone: InteractiveZone
+  zone?: InteractiveZone
+  text?: string
+  portrait?: string
+  side?: 'left' | 'right'
   onClose: () => void
 }
 
-export function DialogBox({ zone, onClose }: DialogBoxProps) {
+export function DialogBox({ zone, text: manualText, portrait, side = 'left', onClose }: DialogBoxProps) {
   // Close on Escape
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -16,7 +19,10 @@ export function DialogBox({ zone, onClose }: DialogBoxProps) {
     return () => window.removeEventListener('keydown', onKey)
   }, [onClose])
 
-  const text = zone.dialog?.trim() || '...'
+  const text = manualText || zone?.dialog?.trim() || '...'
+  const portraitSrc = portrait || "/assets/images/portrait/young-jace-portrait.png"
+
+  const isRight = side === 'right'
 
   return (
     <div
@@ -38,6 +44,7 @@ export function DialogBox({ zone, onClose }: DialogBoxProps) {
         style={{
           position: 'relative',
           display: 'flex',
+          flexDirection: isRight ? 'row-reverse' : 'row',
           alignItems: 'flex-end',
           width: 'min(860px, 90vw)',
           minHeight: '160px',
@@ -57,7 +64,7 @@ export function DialogBox({ zone, onClose }: DialogBoxProps) {
           }}
         >
           <img
-            src="/assets/images/portrait/young-jace-portrait.png"
+            src={portraitSrc}
             alt="Character portrait"
             draggable="false"
             style={{
@@ -76,8 +83,9 @@ export function DialogBox({ zone, onClose }: DialogBoxProps) {
             flex: 1,
             background: 'rgba(0, 0, 0, 0.5)',
             backdropFilter: 'blur(4px)',
-            padding: '28px 32px 28px 180px',
-            marginLeft: '-160px',
+            padding: isRight ? '28px 180px 28px 32px' : '28px 32px 28px 180px',
+            marginLeft: isRight ? '0' : '-160px',
+            marginRight: isRight ? '-160px' : '0',
             zIndex: 1,
             minHeight: '120px',
             display: 'flex',
@@ -87,6 +95,7 @@ export function DialogBox({ zone, onClose }: DialogBoxProps) {
             WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 10%, black 90%, transparent), linear-gradient(to right, transparent, black 10%, black 90%, transparent)',
             maskComposite: 'intersect',
             WebkitMaskComposite: 'source-in',
+            textAlign: isRight ? 'right' : 'left',
           }}
         >
           <p
