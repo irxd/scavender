@@ -4,7 +4,7 @@ import type { IntroSlide } from '../components/StageIntro'
 
 const REFINERY_INTRO_SLIDES: IntroSlide[] = [
   {
-    image: '/assets/images/background/level2.1.webp',
+    image: '/assets/images/intro/intro2.1.webp',
     texts: [
       `The Refinery... It's been abandoned for years.`,
       `But there might still be some useful scraps inside.`,
