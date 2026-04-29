@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 
 const chapters = [
   {
@@ -29,7 +29,14 @@ type Screen = 'prompt' | 'menu' | 'chapters'
 
 export default function Home() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const [screen, setScreen] = useState<Screen>('prompt')
+
+  useEffect(() => {
+    if (searchParams.get('portal') === 'true') {
+      navigate('/metro?portal=true', { replace: true })
+    }
+  }, [searchParams, navigate])
   const [promptFading, setPromptFading] = useState(false)
 
   const handlePromptClick = () => {

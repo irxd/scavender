@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, useMemo, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useImageRect } from '../utils/imageSpace'
 import { Canvas } from '@react-three/fiber'
 import { Background } from '../components/Background'
@@ -49,8 +49,9 @@ const LEVELS: Record<string, LevelConfig> = {
       default: [5.58, 0, -6, 8],
       'level1.2': [8.24, 0, -5, -62],
       'level1.3': [-0.6, 0, 0.11, 57],
+      portal: [-6.89, 0, 0.17, 45],
     },
-    boundary: [{ "x": 0.0035725911458333332, "y": 0.7931242766203703 }, { "x": 0.057725016276041666, "y": 0.73212890625 }, { "x": 0.05565592447916667, "y": 0.6397786458333333 }, { "x": 0.17105916341145833, "y": 0.6145218460648149 }, { "x": 0.18651936848958334, "y": 0.6887767650462963 }, { "x": 0.22087605794270834, "y": 0.7088288483796297 }, { "x": 0.44749552408854165, "y": 0.6488534432870371 }, { "x": 0.45517374674479166, "y": 0.605859375 }, { "x": 0.5108846028645834, "y": 0.6256293402777777 }, { "x": 0.6644673665364583, "y": 0.5900173611111111 }, { "x": 0.6895914713541667, "y": 0.5599681712962963 }, { "x": 0.7216878255208333, "y": 0.5663230613425926 }, { "x": 0.7752583821614584, "y": 0.56767578125 }, { "x": 0.8527099609375, "y": 0.5801938657407407 }, { "x": 0.917559814453125, "y": 0.582765480324074 }, { "x": 0.7836507161458334, "y": 0.6501302083333333 }, { "x": 0.11198527018229167, "y": 0.9260669849537037 }, { "x": 0.0026529947916666668, "y": 0.9277199074074074 }],
+    boundary: [{"x": 0.0035725911458333332, "y": 0.7931242766203703}, {"x": 0.057725016276041666, "y": 0.73212890625}, {"x": 0.05565592447916667, "y": 0.6397786458333333}, {"x": 0.14862467447916666, "y": 0.6305410879629629}, {"x": 0.19569091796875, "y": 0.6776439525462963}, {"x": 0.22461751302083333, "y": 0.6930808738425925}, {"x": 0.2505615234375, "y": 0.6937102141203704}, {"x": 0.44749552408854165, "y": 0.6488534432870371}, {"x": 0.47005818684895834, "y": 0.6314199942129629}, {"x": 0.5108846028645834, "y": 0.6256293402777777}, {"x": 0.6644673665364583, "y": 0.5900173611111111}, {"x": 0.6895914713541667, "y": 0.5599681712962963}, {"x": 0.7216878255208333, "y": 0.5663230613425926}, {"x": 0.7752583821614584, "y": 0.56767578125}, {"x": 0.8527099609375, "y": 0.5801938657407407}, {"x": 0.917559814453125, "y": 0.582765480324074}, {"x": 0.7836507161458334, "y": 0.6501302083333333}, {"x": 0.11198527018229167, "y": 0.9260669849537037}, {"x": 0.0026529947916666668, "y": 0.9277199074074074}],
     zones: [
       {
         "id": "zone-1776438025104",
@@ -95,7 +96,7 @@ const LEVELS: Record<string, LevelConfig> = {
         "requiredItems": ["rebar"],
         "dialog": "I need something sturdy to pry this open.",
         "dialogAfterRequiredItems": "Now I can pry this open!",
-        "items": ["wrench"],
+        "items": ["wrench", "wire"],
         "dialogAfterItemsObtained": "It's empty."
       },
       {
@@ -143,15 +144,21 @@ const LEVELS: Record<string, LevelConfig> = {
       },
       {
         "id": "zone-1776490943214",
-        "label": "level1.5",
+        "label": "portal",
         "polygon": [
           { "x": 0.04599609375, "y": 0.3944842303240741 },
+          { "x": 0.10525309244791667, "y": 0.35065104166666666 },
           { "x": 0.16197102864583332, "y": 0.3922055844907407 },
-          { "x": 0.167132568359375, "y": 0.6040979456018518 },
-          { "x": 0.04617513020833333, "y": 0.6203884548611112 }
+          { "x": 0.16807047526041666, "y": 0.4892361111111111 },
+          { "x": 0.14954833984375, "y": 0.5615957754629629 },
+          { "x": 0.11286417643229167, "y": 0.5991102430555556 },
+          { "x": 0.07122802734375, "y": 0.5908817997685185 },
+          { "x": 0.04590047200520833, "y": 0.5482385706018519 }
         ],
         "targetPos": [-6.89, 0, 0.17],
-        "transitionTo": "level1.5"
+        "transitionTo": "https://vibej.am/portal/2026?ref=scavender.mhirsd.com",
+        "items": [],
+        "dialog": "Some kind of portal, where this leads?"
       }
     ]
   },
@@ -338,17 +345,31 @@ function DebugOverlay({
 export default function Metro() {
   const keys = useKeyboard()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const { currentLevelId: savedLevelId, setCurrentLevel } = useInventoryStore()
-  const [levelState, setLevelState] = useState({ id: savedLevelId, from: 'default' })
+
+  // Detect portal entry from another game
+  const isPortalEntry = useMemo(() => searchParams.get('portal') === 'true', [searchParams])
+  const initialLevelId = isPortalEntry ? 'level1.1' : savedLevelId
+  const initialFrom = isPortalEntry ? 'portal' : 'default'
+
+  const [levelState, setLevelState] = useState({ id: initialLevelId, from: initialFrom })
   const currentLevelId = levelState.id
   const previousLevelId = levelState.from
 
+  // Handle portal entry store update
+  useEffect(() => {
+    if (isPortalEntry) {
+      setCurrentLevel('level1.1')
+    }
+  }, [isPortalEntry, setCurrentLevel])
+
   // Sync level state if store changes externally (e.g. reset)
   useEffect(() => {
-    if (savedLevelId !== levelState.id) {
+    if (savedLevelId !== levelState.id && !isPortalEntry) {
       setLevelState({ id: savedLevelId, from: 'default' })
     }
-  }, [savedLevelId])
+  }, [savedLevelId, levelState.id, isPortalEntry])
 
   const level = LEVELS[currentLevelId] || LEVELS['level1.1']
   const spawnData = level.spawns[previousLevelId] || level.spawns['default'] || [0, 0, 0, 0]
@@ -425,7 +446,9 @@ export default function Metro() {
   // Sequence effect: trigger transition only after dialog and items are cleared
   useEffect(() => {
     if (!activeDialog && !activePuzzleZone && pendingItemsToGive.length === 0 && pendingTransition) {
-      if (pendingTransition.startsWith('/')) {
+      if (pendingTransition.startsWith('http')) {
+        window.location.href = pendingTransition
+      } else if (pendingTransition.startsWith('/')) {
         navigate(pendingTransition)
       } else {
         setLevelState({ id: pendingTransition, from: currentLevelId })
