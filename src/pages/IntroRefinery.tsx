@@ -6,8 +6,8 @@ const REFINERY_INTRO_SLIDES: IntroSlide[] = [
   {
     image: '/assets/images/intro/intro2.1.webp',
     texts: [
-      `The Refinery... It's been abandoned for years.`,
-      `But there might still be some useful scraps inside.`,
+      `Finally, the door is opening...`,
+      `I don't know where this leads to, but the signal is getting stronger.`,
     ],
   },
 ]

@@ -6,8 +6,9 @@ const GHOST_LAB_INTRO_SLIDES: IntroSlide[] = [
   {
     image: '/assets/images/intro/intro3.1.webp',
     texts: [
-      `The Ghost Lab...`,
-      `I've heard rumors about this place. Let's see what's inside.`,
+      `Kaboom!`,
+      `Looks like hydra is injured too.`,
+      `I need to hurry up!`,
     ],
   },
 ]

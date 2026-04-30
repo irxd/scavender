@@ -19,7 +19,7 @@ const METRO_INTRO_SLIDES: IntroSlide[] = [
   {
     image: '/assets/images/intro/intro1.3.webp',
     texts: [
-      `My name is Jace Miller. I don't live in the past, and I'm barely surviving the present. I just want to find a way to make the world tick again.`,
+      `My name is Jace Miller. I don't live in the past, and I'm barely surviving the present. I just want to protect my village.`,
     ],
   },
 ]
