@@ -17,11 +17,11 @@ interface MillerProps {
 export function Miller({ position, rotation = 0, shouldFade = false, imgW, imgH, scale = 1 }: MillerProps) {
   const group = useRef<THREE.Group>(null!)
   const { scene, animations } = useGLTF('/assets/glb/miller.glb')
-  
+
   // Clone the scene to allow multiple instances or clean state
   const clone = useMemo(() => SkeletonUtils.clone(scene), [scene])
   const { actions, mixer } = useAnimations(animations, group)
-  
+
   const [opacity, setOpacity] = useState(1)
 
   // Apply opacity to all materials
@@ -36,8 +36,6 @@ export function Miller({ position, rotation = 0, shouldFade = false, imgW, imgH,
             mesh.material.forEach(m => {
               m.transparent = true
               m.opacity = opacity
-              // Disable depth write when transparent to avoid sorting issues if needed, 
-              // but for a simple fade-out it might be okay.
               m.depthWrite = opacity > 0.9
             })
           } else {
@@ -65,7 +63,7 @@ export function Miller({ position, rotation = 0, shouldFade = false, imgW, imgH,
     }
   }, [actions, mixer])
 
-  // Fading and scaling logic
+  // Smooth opacity scaling logic
   useFrame((_state, delta) => {
     // Responsive scale
     const viewW = window.innerWidth
@@ -74,8 +72,11 @@ export function Miller({ position, rotation = 0, shouldFade = false, imgW, imgH,
     const bgScale = (imageRect.renderH / viewH) * scale
     group.current.scale.setScalar(bgScale)
 
+    // Handle fading or resetting opacity
     if (shouldFade && opacity > 0) {
       setOpacity(prev => Math.max(0, prev - delta * 0.5)) // Fade out over ~2 seconds
+    } else if (!shouldFade && opacity < 1) {
+      setOpacity(prev => Math.min(1, THREE.MathUtils.lerp(prev, 1, delta * 4)))
     }
   })
 
@@ -83,13 +84,13 @@ export function Miller({ position, rotation = 0, shouldFade = false, imgW, imgH,
   if (opacity <= 0) return null
 
   return (
-    <group 
-      ref={group} 
-      position={position} 
+    <group
+      ref={group}
+      position={position}
       rotation={[0, rotation * (Math.PI / 180), 0]}
     >
       <primitive object={clone} />
-      
+
       {/* Soft shadow that also fades */}
       <ContactShadows
         position={[0, 0, 0]}

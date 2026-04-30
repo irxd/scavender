@@ -51,35 +51,47 @@ const LEVELS: Record<string, LevelConfig> = {
       'level3.2': [-0.65, 0, -9, 0],
     },
     boundary: [
-      { "x": 0.1, "y": 0.9 },
-      { "x": 0.9, "y": 0.9 },
-      { "x": 0.9, "y": 0.1 },
-      { "x": 0.1, "y": 0.1 }
+      { "x": 0.44288533528645835, "y": 0.9131040219907407 },
+      { "x": 0.7649943033854166, "y": 0.9129918981481482 },
+      { "x": 0.7180419921875, "y": 0.6033383969907408 },
+      { "x": 0.6184326171875, "y": 0.5975405092592593 }
     ],
     zones: [
       {
-        "id": "zone-1",
+        "id": "zone-1777212702497",
         "label": "level3.2",
         "polygon": [
-          { "x": 0.8, "y": 0.2 },
-          { "x": 0.9, "y": 0.2 },
-          { "x": 0.9, "y": 0.4 },
-          { "x": 0.8, "y": 0.4 }
+          { "x": 0.45930379231770835, "y": 0.35517216435185184 },
+          { "x": 0.6142191569010417, "y": 0.35406177662037036 },
+          { "x": 0.6152730305989583, "y": 0.6710611979166666 },
+          { "x": 0.4563090006510417, "y": 0.6668836805555556 }
         ],
-        "targetPos": [4.38, 0, -2.9],
+        "targetPos": [-0.65, 0, -9],
         "transitionTo": "level3.2"
       },
       {
-        "id": "zone-2",
-        "label": "level3.3",
+        "id": "zone-1777543685861",
+        "label": "panel",
         "polygon": [
-          { "x": 0.1, "y": 0.2 },
-          { "x": 0.2, "y": 0.2 },
-          { "x": 0.2, "y": 0.4 },
-          { "x": 0.1, "y": 0.4 }
+          { "x": 0.35159708658854166, "y": 0.38399522569444444 },
+          { "x": 0.39835205078125, "y": 0.4061487268518518 },
+          { "x": 0.39746500651041666, "y": 0.5577835648148147 },
+          { "x": 0.34978434244791673, "y": 0.5743959780092592 }
         ],
-        "targetPos": [-6.91, 0, -7.37],
-        "transitionTo": "level3.3"
+        "targetPos": [-1.83, 0, -7.38],
+        "dialog": "Someone already bypass this door control panel. Hope the door still works."
+      },
+      {
+        "id": "zone-1777543685862",
+        "label": "monitoring",
+        "polygon": [
+          { "x": 0.68212890625, "y": 0.42657335069444446 },
+          { "x": 0.73924560546875, "y": 0.3946433738425926 },
+          { "x": 0.73924560546875, "y": 0.5946433738425926 },
+          { "x": 0.6816630045572917, "y": 0.5644603587962963 }
+        ],
+        "targetPos": [0.33, 0, -7.3],
+        "dialog": "A monitoring station. The screens are cracked and the reels haven't moved in decades."
       }
     ],
   },
@@ -103,25 +115,75 @@ const LEVELS: Record<string, LevelConfig> = {
         "id": "zone-3",
         "label": "level3.1",
         "polygon": [
-          { "x": 0.05, "y": 0.8 },
-          { "x": 0.2, "y": 0.8 },
-          { "x": 0.2, "y": 0.95 },
-          { "x": 0.05, "y": 0.95 }
+          { "x": 0.6147257486979166, "y": 0.37119140625 },
+          { "x": 0.723211669921875, "y": 0.36569372106481485 },
+          { "x": 0.7226582845052083, "y": 0.5905490451388888 },
+          { "x": 0.61795654296875, "y": 0.5887333622685186 }
         ],
-        "targetPos": [-6.17, 0, 5.66],
+        "targetPos": [-1.33, 0, 2.95],
         "transitionTo": "level3.1"
       },
       {
         "id": "zone-4",
         "label": "level3.3",
         "polygon": [
-          { "x": 0.7, "y": 0.1 },
-          { "x": 0.8, "y": 0.1 },
-          { "x": 0.8, "y": 0.3 },
-          { "x": 0.7, "y": 0.3 }
+          { "x": 0.45069986979166665, "y": 0.7670536747685185 },
+          { "x": 0.7489583333333333, "y": 0.7914460358796296 },
+          { "x": 0.7609110514322917, "y": 0.9107313368055556 },
+          { "x": 0.4508585611979167, "y": 0.9107313368055555 }
         ],
-        "targetPos": [3.41, 0, -6.07],
+        "targetPos": [-1, 0, 13.19],
         "transitionTo": "level3.3"
+      },
+      {
+        "id": "zone-1777543685857",
+        "label": "scientiest1",
+        "polygon": [
+          { "x": 0.596142578125, "y": 0.4098017939814815 },
+          { "x": 0.6080729166666666, "y": 0.4199363425925926 },
+          { "x": 0.611279296875, "y": 0.5106083622685185 },
+          { "x": 0.61702880859375, "y": 0.6661747685185185 },
+          { "x": 0.5859110514322917, "y": 0.6788375289351852 },
+          { "x": 0.5904500325520833, "y": 0.5799153645833334 },
+          { "x": 0.5904073079427083, "y": 0.5032732928240741 }
+        ],
+        "targetPos": [-1.51, 0, 7.26],
+        "dialog": "They don’t even see me. They’re just echoes caught in the time static."
+      },
+      {
+        "id": "zone-1777543685859",
+        "label": "scientiest3",
+        "polygon": [
+          { "x": 0.3996805826822916, "y": 0.471603732638889 },
+          { "x": 0.4306823730468749, "y": 0.4696289062500001 },
+          { "x": 0.43703409830729156, "y": 0.5161458333333334 },
+          { "x": 0.4506306966145833, "y": 0.5497359664351852 },
+          { "x": 0.4629923502604167, "y": 0.625122974537037 },
+          { "x": 0.453875732421875, "y": 0.8049732349537038 },
+          { "x": 0.4635091145833333, "y": 0.9173068576388889 },
+          { "x": 0.39872843424479165, "y": 0.9183521412037037 },
+          { "x": 0.383056640625, "y": 0.8290581597222222 },
+          { "x": 0.3996805826822916, "y": 0.671603732638889 }
+        ],
+        "targetPos": [-1.93, 0, 13.47],
+        "dialog": "It’s like watching a recording of a memory."
+      },
+      {
+        "id": "zone-1777543685860",
+        "label": "scientiest4",
+        "polygon": [
+          { "x": 0.73046875, "y": 0.5126699942129629 },
+          { "x": 0.7399739583333333, "y": 0.46088686342592583 },
+          { "x": 0.7640604654947917, "y": 0.46504629629629624 },
+          { "x": 0.7595357259114583, "y": 0.6695059317129629 },
+          { "x": 0.7664143880208333, "y": 0.7912796585648147 },
+          { "x": 0.7442911783854167, "y": 0.9146592881944443 },
+          { "x": 0.7046122233072917, "y": 0.9132740162037036 },
+          { "x": 0.7104146321614583, "y": 0.800708912037037 },
+          { "x": 0.7220865885416666, "y": 0.6058883101851851 }
+        ],
+        "targetPos": [-0.51, 0, 13.15],
+        "dialog": "Empty shells of the past."
       }
     ],
   },
@@ -134,35 +196,64 @@ const LEVELS: Record<string, LevelConfig> = {
       default: [4.91, 0, -6.5, -30],
     },
     boundary: [
-      { "x": 0.1, "y": 0.9 },
-      { "x": 0.9, "y": 0.9 },
-      { "x": 0.9, "y": 0.1 },
-      { "x": 0.1, "y": 0.1 }
+      { "x": 0.7107767740885417, "y": 0.354173900462963 },
+      { "x": 0.7767964680989583, "y": 0.4194878472222222 },
+      { "x": 0.8084676106770833, "y": 0.5301070601851852 },
+      { "x": 0.899554443359375, "y": 0.6428855613425926 },
+      { "x": 0.9017069498697917, "y": 0.7203486689814815 },
+      { "x": 0.866912841796875, "y": 0.8178240740740741 },
+      { "x": 0.7351888020833334, "y": 0.8418438946759259 },
+      { "x": 0.7182881673177083, "y": 0.8971571180555555 },
+      { "x": 0.9025634765625, "y": 0.8974320023148148 },
+      { "x": 0.9467427571614583, "y": 0.8104853877314815 },
+      { "x": 1, "y": 0.6271665219907407 },
+      { "x": 0.885345458984375, "y": 0.4056278935185185 },
+      { "x": 0.7484293619791667, "y": 0.35294053819444443 }
     ],
     zones: [
       {
-        "id": "zone-5",
-        "label": "level3.1",
+        "id": "zone-6",
+        "label": "panel",
         "polygon": [
-          { "x": 0.05, "y": 0.4 },
-          { "x": 0.15, "y": 0.4 },
-          { "x": 0.15, "y": 0.6 },
-          { "x": 0.05, "y": 0.6 }
+          { "x": 0.749566650390625, "y": 0.42298900462962963 },
+          { "x": 0.7704610188802083, "y": 0.4254484953703704 },
+          { "x": 0.8046101888020833, "y": 0.5433919270833334 },
+          { "x": 0.8428426106770833, "y": 0.5931351273148149 },
+          { "x": 0.8573811848958334, "y": 0.6907841435185186 },
+          { "x": 0.8524149576822917, "y": 0.7986147280092593 },
+          { "x": 0.751800537109375, "y": 0.79443359375 }
         ],
-        "targetPos": [-7.24, 0, -0.33],
-        "transitionTo": "level3.1"
+        "targetPos": [4.18, 0, -0.49],
+        "transitionTo": "",
+        "dialog": "The console is waiting. One keystroke to save them, one to change everything."
       },
       {
-        "id": "zone-6",
-        "label": "level3.2",
+        "id": "zone-1777276114001",
+        "label": "door",
         "polygon": [
-          { "x": 0.9, "y": 0.4 },
-          { "x": 0.98, "y": 0.4 },
-          { "x": 0.98, "y": 0.6 },
-          { "x": 0.9, "y": 0.6 }
+          { "x": 0.7475260416666667, "y": 0.10996455439814815 },
+          { "x": 0.8681070963541666, "y": 0.1323531539351852 },
+          { "x": 0.8661397298177084, "y": 0.38670789930555555 },
+          { "x": 0.7458150227864583, "y": 0.3420826099537037 }
         ],
-        "targetPos": [7.57, 0, -0.35],
-        "transitionTo": "level3.2"
+        "targetPos": [4.77, 0, -6.36],
+        "dialog": "No need to go back."
+      },
+      {
+        "id": "zone-1777545047234",
+        "label": "reactor",
+        "polygon": [
+          { "x": 0.45503133138020835, "y": 0.3789243344907407 },
+          { "x": 0.5228129069010417, "y": 0.3330946180555555 },
+          { "x": 0.5982035319010417, "y": 0.37251880787037034 },
+          { "x": 0.6165018717447917, "y": 0.4682725694444444 },
+          { "x": 0.5940348307291666, "y": 0.5575050636574074 },
+          { "x": 0.5243021647135416, "y": 0.60869140625 },
+          { "x": 0.450982666015625, "y": 0.5470341435185185 },
+          { "x": 0.43830973307291665, "y": 0.47052951388888886 }
+        ],
+        "targetPos": [2.4, 0, 1],
+        "dialog": "This is it! The source of the signal. I need pull the plug on this."
       }
     ],
   },
@@ -198,6 +289,13 @@ const INTRO_DIALOGS = [
   { text: "The elevator brought me here...", portrait: "/assets/images/portrait/young-jace-portrait.png", side: 'left' as const },
   { text: "This place feels... colder. Like the air itself is holding its breath.", portrait: "/assets/images/portrait/young-jace-portrait.png", side: 'left' as const },
   { text: "I can feel the signal's source nearby. It's close now.", portrait: "/assets/images/portrait/young-jace-portrait.png", side: 'left' as const },
+]
+
+const MILLER_DIALOGS = [
+  { text: "The console is waiting. One keystroke to change everything.", portrait: "/assets/images/portrait/young-jace-portrait.png", side: 'left' as const },
+  { text: "It shouldn't be touched.", portrait: "/assets/images/portrait/old-jace-portrait.png", side: 'right' as const },
+  { text: "Miller? You're... still here?", portrait: "/assets/images/portrait/young-jace-portrait.png", side: 'left' as const },
+  { text: "Only as a ghost of the machine. The reactor must be stabilized, Jace. Use the console.", portrait: "/assets/images/portrait/old-jace-portrait.png", side: 'right' as const },
 ]
 
 export default function GhostLab() {
@@ -261,6 +359,10 @@ export default function GhostLab() {
   const introDialogIndexRef = useRef<number | null>(null)
   const [introCompleted, setIntroCompleted] = useState(false)
 
+  const [millerSpawned, setMillerSpawned] = useState(false)
+  const [millerDialogIndex, setMillerDialogIndex] = useState<number | null>(null)
+  const millerDialogIndexRef = useRef<number | null>(null)
+
   // Sequence state
   const [pendingItemsToGive, setPendingItemsToGive] = useState<string[]>([])
   const [pendingTransition, setPendingTransition] = useState<string | null>(null)
@@ -271,6 +373,15 @@ export default function GhostLab() {
   useEffect(() => { pendingItemsRef.current = pendingItemsToGive }, [pendingItemsToGive])
   useEffect(() => { inventoryVisibleRef.current = inventoryVisible }, [inventoryVisible])
   useEffect(() => { introDialogIndexRef.current = introDialogIndex }, [introDialogIndex])
+  useEffect(() => { millerDialogIndexRef.current = millerDialogIndex }, [millerDialogIndex])
+
+  // Spawn Miller when dialogue advances to his first line
+  useEffect(() => {
+    if (millerDialogIndex === 1) {
+      setMillerSpawned(true)
+    }
+  }, [millerDialogIndex])
+
   // Keep close callback ref in sync whenever pending items change
   useEffect(() => {
     if (pendingItemsToGive.length > 0) {
@@ -317,6 +428,12 @@ export default function GhostLab() {
 
   // Trigger interaction sequence
   const processZoneInteraction = useCallback((zone: InteractiveZone) => {
+    // Special Miller sequence in level 3.3
+    if (zone.label === 'panel' && currentLevelId === 'level3.3' && !millerSpawned) {
+      setMillerDialogIndex(0)
+      return
+    }
+
     const state = useInventoryStore.getState()
 
     // Check requirements
@@ -362,7 +479,7 @@ export default function GhostLab() {
       if (unobtainedItems.length > 0) setPendingItemsToGive(unobtainedItems)
       if (zone.transitionTo?.trim()) setPendingTransition(zone.transitionTo.trim())
     }
-  }, [])
+  }, [currentLevelId, millerSpawned])
 
   // Handlers
   const handleAnimChange = useCallback((anim: string) => {
@@ -432,6 +549,15 @@ export default function GhostLab() {
           if (prev === null) return null
           if (prev < INTRO_DIALOGS.length - 1) return prev + 1
           setIntroCompleted(true)
+          return null
+        })
+        e.stopPropagation()
+        return
+      }
+      if (millerDialogIndexRef.current !== null) {
+        setMillerDialogIndex(prev => {
+          if (prev === null) return null
+          if (prev < MILLER_DIALOGS.length - 1) return prev + 1
           return null
         })
         e.stopPropagation()
@@ -569,9 +695,9 @@ export default function GhostLab() {
               { id: 'Scientist3', position: [-2, 0, 15], rotation: 4.6 },
               { id: 'Scientist4', position: [-0.1, 0, 14.1], rotation: 1.5 }
             ] : undefined}
-            miller={currentLevelId === 'level3.3' ? {
+            miller={currentLevelId === 'level3.3' && millerSpawned ? {
               position: [-3, 0, 0],
-              rotation: 80
+              rotation: 80,
             } : undefined}
           />
         </Canvas>
@@ -621,6 +747,22 @@ export default function GhostLab() {
               if (prev === null) return null
               if (prev < INTRO_DIALOGS.length - 1) return prev + 1
               setIntroCompleted(true)
+              return null
+            })
+          }}
+        />
+      )}
+
+      {/* Miller Dialog */}
+      {millerDialogIndex !== null && (
+        <DialogBox
+          text={MILLER_DIALOGS[millerDialogIndex].text}
+          portrait={MILLER_DIALOGS[millerDialogIndex].portrait}
+          side={MILLER_DIALOGS[millerDialogIndex].side}
+          onClose={() => {
+            setMillerDialogIndex(prev => {
+              if (prev === null) return null
+              if (prev < MILLER_DIALOGS.length - 1) return prev + 1
               return null
             })
           }}
