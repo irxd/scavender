@@ -1022,6 +1022,14 @@ html, body, #root {
   align-items: center;
   justify-content: center;
   min-height: 80px;
+
+  /* Thematic mask effect like DialogBox */
+  mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent), 
+              linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent), 
+                      linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+  mask-composite: intersect;
+  -webkit-mask-composite: source-in;
 }
 
 .stage-intro__text {
@@ -1377,8 +1385,8 @@ html, body, #root {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  max-width: 60%;
-  max-height: 80vh;
+  max-width: 45%;
+  max-height: 70vh;
   opacity: 0;
   transition: opacity 1.5s ease-in-out;
 }
@@ -1390,7 +1398,7 @@ html, body, #root {
 .game-ending-image {
   width: 100%;
   height: auto;
-  max-height: 60vh;
+  max-height: 50vh;
   object-fit: contain;
   margin-bottom: 24px;
 }
