@@ -438,10 +438,26 @@ export default function Metro() {
     }
   }, [savedLevelId, levelState.id, isPortalEntry])
 
+  const [hintsEnabled, setHintsEnabled] = useState(() => {
+    const saved = localStorage.getItem('scavender_hints_enabled')
+    return saved === null ? false : saved === 'true'
+  })
+
+  // Perist hints setting
+  useEffect(() => {
+    localStorage.setItem('scavender_hints_enabled', hintsEnabled.toString())
+  }, [hintsEnabled])
+
   const MINI_GOAL_CONFIG: Record<string, string> = {
-    terminal: "Find battery and wire to jumpstart terminal",
-    vending: "Find wrench to open vending machine bolts",
-    chest: "Find rebar to open chest"
+    terminal: hintsEnabled 
+      ? "Find battery inside vending and wire inside chest to jumpstart terminal" 
+      : "Find battery and wire to jumpstart terminal",
+    vending: hintsEnabled 
+      ? "Find wrench inside chest to open vending machine bolts" 
+      : "Find wrench to open vending machine bolts",
+    chest: hintsEnabled 
+      ? "Find rebar in rubble near vending to open chest" 
+      : "Find rebar to open chest"
   }
   const MINI_GOAL_ORDER = ['terminal', 'vending', 'chest']
   const [activeMiniGoals, setActiveMiniGoals] = useState<string[]>([])
@@ -772,15 +788,7 @@ export default function Metro() {
     setActiveDialog(null)
   }, [])
 
-  const [hintsEnabled, setHintsEnabled] = useState(() => {
-    const saved = localStorage.getItem('scavender_hints_enabled')
-    return saved === null ? false : saved === 'true'
-  })
-
   // Perist hints setting
-  useEffect(() => {
-    localStorage.setItem('scavender_hints_enabled', hintsEnabled.toString())
-  }, [hintsEnabled])
 
   const toggleHints = useCallback(() => setHintsEnabled(v => !v), [])
 
