@@ -56,6 +56,9 @@ function VendingPuzzle({ onComplete }: { onComplete: () => void }) {
 
   return (
     <div className={`puzzle-content-wrapper ${phase}`}>
+      <div style={{ position: 'absolute', top: '-50px', left: '50%', transform: 'translateX(-50%)', color: 'rgba(255, 255, 255, 0.9)', fontFamily: '"Quattrocento", serif', fontSize: '1.2rem', textAlign: 'center', width: '100vw', textShadow: '0 2px 4px rgba(0,0,0,0.8)', zIndex: 10, pointerEvents: 'none', letterSpacing: '0.05em' }}>
+        The panel is flickering with time static, plug the battery out when panel is opened
+      </div>
       <div className={`puzzle-image-container ${isFlickering ? 'flicker-transition' : ''}`}>
         <img
           src={isOpen ? "/assets/images/puzzle/metro/panel-opened.webp" : "/assets/images/puzzle/metro/panel-closed.webp"}
@@ -260,6 +263,9 @@ function PipePuzzle({ onComplete }: { onComplete: () => void }) {
 
   return (
     <div className="puzzle-content-wrapper" onClick={(e) => e.stopPropagation()}>
+      <div style={{ position: 'absolute', top: '-50px', left: '50%', transform: 'translateX(-50%)', color: 'rgba(255, 255, 255, 0.9)', fontFamily: '"Quattrocento", serif', fontSize: '1.2rem', textAlign: 'center', width: '100vw', textShadow: '0 2px 4px rgba(0,0,0,0.8)', zIndex: 10, pointerEvents: 'none', letterSpacing: '0.05em' }}>
+        Rotate the pipe segments to create an uninterrupted path from the Entrance to the Exit
+      </div>
       <img
         src="/assets/images/puzzle/metro/monitor-display.webp"
         alt="Monitor Display"
