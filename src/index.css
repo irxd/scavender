@@ -723,6 +723,8 @@ html, body, #root {
   transition: width 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
   pointer-events: none;
   box-shadow: 0 0 10px rgba(0, 122, 229, 0.6);
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
 }
 
 .start-screen__nav-btn:hover::after {
@@ -786,6 +788,8 @@ html, body, #root {
   transition: width 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
   pointer-events: none;
   box-shadow: 0 0 10px rgba(101, 186, 225, 0.6);
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
 }
 
 .chapter-select__back:hover {
@@ -879,6 +883,8 @@ html, body, #root {
   transition: width 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
   pointer-events: none;
   box-shadow: 0 0 10px rgba(101, 186, 225, 0.6);
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
 }
 
 .chapter-card:hover .chapter-card__title {
@@ -964,6 +970,8 @@ html, body, #root {
   transition: width 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
   pointer-events: none;
   box-shadow: 0 0 10px rgba(101, 186, 225, 0.6);
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
 }
 
 .stage-intro__skip:hover {
@@ -1130,6 +1138,8 @@ html, body, #root {
   transition: width 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
   pointer-events: none;
   box-shadow: 0 0 10px rgba(255, 51, 51, 0.6);
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
 }
 
 .game-over-nav-btn:hover::after {
@@ -1328,6 +1338,26 @@ html, body, #root {
   color: #fff;
   text-shadow: 0 0 10px rgba(101, 186, 225, 0.8), 0 0 20px rgba(101, 186, 225, 0.4);
   transform: scale(1.05);
+}
+
+.decision-btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: #65bae1;
+  transform: translate(-50%, -50%);
+  transition: width 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  pointer-events: none;
+  box-shadow: 0 0 10px rgba(101, 186, 225, 0.6);
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+
+.decision-btn:hover::after {
+  width: 110%;
 }
 
 /* ─── Game Ending ────────────────────────────────────────────────── */

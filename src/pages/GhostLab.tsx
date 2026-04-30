@@ -539,7 +539,7 @@ export default function GhostLab() {
     }
 
     // Update cursor icon appropriately
-    if (activeDialog || activePuzzleZone || inventoryVisible) {
+    if (activeDialog || activePuzzleZone || inventoryVisible || showDecisionOverlay) {
       gameRootRef.current.style.cursor = 'default'
       return
     }
@@ -547,7 +547,7 @@ export default function GhostLab() {
     gameRootRef.current.style.cursor = zoneId
       ? `url('${cursorUrl}') 16 16, crosshair`
       : 'default'
-  }, [zones, activeDialog, activePuzzleZone, inventoryVisible])
+  }, [zones, activeDialog, activePuzzleZone, inventoryVisible, showDecisionOverlay])
 
   // Capture-phase global click guard — registered ONCE, reads from refs so it's always fresh
   useEffect(() => {
