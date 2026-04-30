@@ -945,29 +945,31 @@ export default function Refinery() {
       )}
 
       {/* Toolbar */}
-      <div id="toolbar">
-        <button
-          className={`toolbar-btn ${boundaryEditorVisible ? 'active' : ''}`}
-          onClick={toggleBoundaryEditor}
-          title="Toggle boundary editor"
-        >
-          ✏️ Boundary Editor
-        </button>
-        <button
-          className={`toolbar-btn ${zoneEditorVisible ? 'active' : ''}`}
-          onClick={toggleZoneEditor}
-          title="Toggle zone editor"
-        >
-          👁 Zone Editor
-        </button>
-        <button
-          className="toolbar-btn"
-          onClick={reset}
-          title="Reset boundary to default"
-        >
-          ↺ Reset
-        </button>
-      </div>
+      {import.meta.env.VITE_ENABLE_DEBUG === 'true' && (
+        <div id="toolbar">
+          <button
+            className={`toolbar-btn ${boundaryEditorVisible ? 'active' : ''}`}
+            onClick={toggleBoundaryEditor}
+            title="Toggle boundary editor"
+          >
+            ✏️ Boundary Editor
+          </button>
+          <button
+            className={`toolbar-btn ${zoneEditorVisible ? 'active' : ''}`}
+            onClick={toggleZoneEditor}
+            title="Toggle zone editor"
+          >
+            👁 Zone Editor
+          </button>
+          <button
+            className="toolbar-btn"
+            onClick={reset}
+            title="Reset boundary to default"
+          >
+            ↺ Reset
+          </button>
+        </div>
+      )}
 
       {/* ─── HUD Layer ────────────────────────────────────────────────── */}
       <div id="goal-hud">

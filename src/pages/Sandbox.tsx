@@ -126,7 +126,7 @@ export default function Sandbox() {
   return (
     <div id="game-root" ref={gameRootRef}>
       {/* Leva panel */}
-      <Leva collapsed={false} titleBar={{ title: '🎮 Sandbox Debug' }} />
+      <Leva collapsed={false} titleBar={{ title: '🎮 Sandbox Debug' }} hidden={import.meta.env.VITE_ENABLE_DEBUG !== 'true'} />
 
       {/* Static background */}
       <Background src="/assets/images/sandbox-background.png" />
@@ -189,29 +189,31 @@ export default function Sandbox() {
       )}
 
       {/* Toolbar */}
-      <div id="toolbar">
-        <button
-          className={`toolbar-btn ${boundaryEditorVisible ? 'active' : ''}`}
-          onClick={toggleBoundaryEditor}
-          title="Toggle boundary editor"
-        >
-          ✏️ Boundary Editor
-        </button>
-        <button
-          className={`toolbar-btn ${zoneEditorVisible ? 'active' : ''}`}
-          onClick={toggleZoneEditor}
-          title="Toggle zone editor"
-        >
-          👁 Zone Editor
-        </button>
-        <button
-          className="toolbar-btn"
-          onClick={reset}
-          title="Reset boundary to default"
-        >
-          ↺ Reset
-        </button>
-      </div>
+      {import.meta.env.VITE_ENABLE_DEBUG === 'true' && (
+        <div id="toolbar">
+          <button
+            className={`toolbar-btn ${boundaryEditorVisible ? 'active' : ''}`}
+            onClick={toggleBoundaryEditor}
+            title="Toggle boundary editor"
+          >
+            ✏️ Boundary Editor
+          </button>
+          <button
+            className={`toolbar-btn ${zoneEditorVisible ? 'active' : ''}`}
+            onClick={toggleZoneEditor}
+            title="Toggle zone editor"
+          >
+            👁 Zone Editor
+          </button>
+          <button
+            className="toolbar-btn"
+            onClick={reset}
+            title="Reset boundary to default"
+          >
+            ↺ Reset
+          </button>
+        </div>
+      )}
 
       {/* HUD */}
       <div id="hud">

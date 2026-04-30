@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { Routes, Route } from 'react-router-dom'
+import { Leva } from 'leva'
 import Home from './pages/Home'
 import Sandbox from './pages/Sandbox'
 import Metro from './pages/Metro'
@@ -24,17 +25,20 @@ export default function App() {
   }, [])
 
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/sandbox" element={<Sandbox />} />
-      <Route path="/metro" element={<Metro />} />
-      <Route path="/intro/metro" element={<IntroMetro />} />
-      <Route path="/refinery" element={<Refinery />} />
-      <Route path="/intro/refinery" element={<IntroRefinery />} />
-      <Route path="/ghost-lab" element={<GhostLab />} />
-      <Route path="/intro/ghost-lab" element={<IntroGhostLab />} />
-      <Route path="/ending/:id" element={<Ending />} />
-      <Route path="/game-over" element={<GameOver />} />
-    </Routes>
+    <>
+      <Leva hidden={import.meta.env.VITE_ENABLE_DEBUG !== 'true'} />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/sandbox" element={<Sandbox />} />
+        <Route path="/metro" element={<Metro />} />
+        <Route path="/intro/metro" element={<IntroMetro />} />
+        <Route path="/refinery" element={<Refinery />} />
+        <Route path="/intro/refinery" element={<IntroRefinery />} />
+        <Route path="/ghost-lab" element={<GhostLab />} />
+        <Route path="/intro/ghost-lab" element={<IntroGhostLab />} />
+        <Route path="/ending/:id" element={<Ending />} />
+        <Route path="/game-over" element={<GameOver />} />
+      </Routes>
+    </>
   )
 }
