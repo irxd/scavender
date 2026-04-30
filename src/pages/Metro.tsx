@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useImageRect } from '../utils/imageSpace'
 import { Canvas } from '@react-three/fiber'
 import { Background } from '../components/Background'
+import { BackgroundAudio } from '../components/BackgroundAudio'
 import { BoundaryEditor } from '../components/BoundaryEditor'
 import { DialogBox } from '../components/DialogBox'
 import { InteractiveZoneEditor } from '../components/InteractiveZoneEditor'
@@ -777,6 +778,7 @@ export default function Metro() {
 
   return (
     <div id="game-root" ref={gameRootRef}>
+      <BackgroundAudio src="/assets/audio/metro.ogg" />
       {/* 
         This is a real stage.
         Background dynamically swaps based on currentLevelId.
