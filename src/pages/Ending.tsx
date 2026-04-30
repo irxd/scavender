@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { GameEnding, type EndingSlide } from '../components/GameEnding'
 
 const ENDING_1_SLIDES: EndingSlide[] = [
@@ -67,11 +67,12 @@ const ENDING_3_SLIDES: EndingSlide[] = [
 export default function Ending() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
+  const location = useLocation()
 
   let slides: EndingSlide[] = []
-  if (id === '1') slides = ENDING_1_SLIDES
+  if (location.pathname === '/truth') slides = ENDING_3_SLIDES
+  else if (id === '1') slides = ENDING_1_SLIDES
   else if (id === '2') slides = ENDING_2_SLIDES
-  else if (id === '3') slides = ENDING_3_SLIDES
   else slides = ENDING_1_SLIDES // Default fallback
 
   return (

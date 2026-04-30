@@ -37,6 +37,7 @@ export default function App() {
         <Route path="/ghost-lab" element={<GhostLab />} />
         <Route path="/intro/ghost-lab" element={<IntroGhostLab />} />
         <Route path="/ending/:id" element={<Ending />} />
+        <Route path="/truth" element={<Ending />} />
         <Route path="/game-over" element={<GameOver />} />
       </Routes>
     </>

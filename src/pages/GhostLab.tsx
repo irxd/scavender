@@ -792,7 +792,7 @@ export default function GhostLab() {
               STABILIZE REACTOR
             </button>
             {hasWatch && (
-              <button className="decision-btn" onClick={() => navigate('/ending/3')}>
+              <button className="decision-btn" onClick={() => navigate('/truth')}>
                 SYNC REACTOR WITH WATCH [SECRET]
               </button>
             )}
