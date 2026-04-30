@@ -1269,3 +1269,111 @@ html, body, #root {
   justify-content: center;
   align-items: center;
 }
+
+/* ─── Decision Overlay ───────────────────────────────────────────── */
+.decision-overlay-container {
+  position: absolute;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.decision-overlay-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  pointer-events: all;
+}
+
+.decision-overlay-menu {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+  pointer-events: all;
+  
+  /* Thematic mask effect like DialogBox */
+  mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent), 
+              linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent), 
+                      linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  mask-composite: intersect;
+  -webkit-mask-composite: source-in;
+  
+  padding: 40px;
+  background: rgba(10, 10, 10, 0.4);
+}
+
+.decision-btn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: 'Cinzel', serif;
+  font-size: clamp(16px, 2vw, 24px);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 12px 24px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.decision-btn:hover {
+  color: #fff;
+  text-shadow: 0 0 10px rgba(101, 186, 225, 0.8), 0 0 20px rgba(101, 186, 225, 0.4);
+  transform: scale(1.05);
+}
+
+/* ─── Game Ending ────────────────────────────────────────────────── */
+.game-ending-page {
+  width: 100vw;
+  height: 100vh;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.game-ending-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 60%;
+  max-height: 80vh;
+  opacity: 0;
+  transition: opacity 1.5s ease-in-out;
+}
+
+.game-ending-content.visible {
+  opacity: 1;
+}
+
+.game-ending-image {
+  width: 100%;
+  height: auto;
+  max-height: 60vh;
+  object-fit: contain;
+  margin-bottom: 24px;
+}
+
+.game-ending-text {
+  color: rgba(255, 255, 255, 0.9);
+  font-family: 'Quattrocento', serif;
+  font-size: 20px;
+  line-height: 1.6;
+  text-align: center;
+  width: 100%;
+  padding: 0 16px;
+  letter-spacing: 0.02em;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+  white-space: pre-line;
+}

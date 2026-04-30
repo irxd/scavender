@@ -308,6 +308,7 @@ export default function GhostLab() {
   const navigate = useNavigate()
   const keys = useKeyboard()
   const { obtainItem, resetWithDefaults } = useInventoryStore()
+  const hasWatch = useInventoryStore(state => state.hasItem('watch'))
 
   // Set default level if entering the stage for the first time
   // Always reset to starting level of this stage on fresh load/refresh
@@ -368,6 +369,7 @@ export default function GhostLab() {
   const [millerSpawned, setMillerSpawned] = useState(false)
   const [millerDialogIndex, setMillerDialogIndex] = useState<number | null>(null)
   const millerDialogIndexRef = useRef<number | null>(null)
+  const [showDecisionOverlay, setShowDecisionOverlay] = useState(false)
 
   // Sequence state
   const [pendingItemsToGive, setPendingItemsToGive] = useState<string[]>([])
@@ -564,6 +566,7 @@ export default function GhostLab() {
         setMillerDialogIndex(prev => {
           if (prev === null) return null
           if (prev < MILLER_DIALOGS.length - 1) return prev + 1
+          setShowDecisionOverlay(true)
           return null
         })
         e.stopPropagation()
@@ -770,10 +773,31 @@ export default function GhostLab() {
             setMillerDialogIndex(prev => {
               if (prev === null) return null
               if (prev < MILLER_DIALOGS.length - 1) return prev + 1
+              setShowDecisionOverlay(true)
               return null
             })
           }}
         />
+      )}
+
+      {/* Final Decision Overlay */}
+      {showDecisionOverlay && (
+        <div className="decision-overlay-container">
+          <div className="decision-overlay-backdrop" />
+          <div className="decision-overlay-menu">
+            <button className="decision-btn" onClick={() => navigate('/ending/1')}>
+              TURN OFF REACTOR
+            </button>
+            <button className="decision-btn" onClick={() => navigate('/ending/2')}>
+              STABILIZE REACTOR
+            </button>
+            {hasWatch && (
+              <button className="decision-btn" onClick={() => navigate('/ending/3')}>
+                SYNC REACTOR WITH WATCH [SECRET]
+              </button>
+            )}
+          </div>
+        </div>
       )}
 
       {/* Item Obtained Overlay — shown after dialog if there are items */}

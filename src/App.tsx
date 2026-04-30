@@ -8,6 +8,7 @@ import Refinery from './pages/Refinery'
 import IntroRefinery from './pages/IntroRefinery'
 import GhostLab from './pages/GhostLab'
 import IntroGhostLab from './pages/IntroGhostLab'
+import Ending from './pages/Ending'
 import GameOver from './pages/GameOver'
 import './index.css'
 
@@ -32,6 +33,7 @@ export default function App() {
       <Route path="/intro/refinery" element={<IntroRefinery />} />
       <Route path="/ghost-lab" element={<GhostLab />} />
       <Route path="/intro/ghost-lab" element={<IntroGhostLab />} />
+      <Route path="/ending/:id" element={<Ending />} />
       <Route path="/game-over" element={<GameOver />} />
     </Routes>
   )
