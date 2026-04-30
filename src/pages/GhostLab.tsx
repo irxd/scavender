@@ -194,6 +194,12 @@ function DebugOverlay({
   return null
 }
 
+const INTRO_DIALOGS = [
+  { text: "The elevator brought me here...", portrait: "/assets/images/portrait/young-jace-portrait.png", side: 'left' as const },
+  { text: "This place feels... colder. Like the air itself is holding its breath.", portrait: "/assets/images/portrait/young-jace-portrait.png", side: 'left' as const },
+  { text: "I can feel the signal's source nearby. It's close now.", portrait: "/assets/images/portrait/young-jace-portrait.png", side: 'left' as const },
+]
+
 export default function GhostLab() {
   const navigate = useNavigate()
   const keys = useKeyboard()
@@ -251,6 +257,9 @@ export default function GhostLab() {
   const [autoWalkTarget, setAutoWalkTarget] = useState<[number, number, number] | null>(null)
   const [pendingZone, setPendingZone] = useState<InteractiveZone | null>(null)
 
+  const [introDialogIndex, setIntroDialogIndex] = useState<number | null>(null)
+  const introDialogIndexRef = useRef<number | null>(null)
+  const [introCompleted, setIntroCompleted] = useState(false)
 
   // Sequence state
   const [pendingItemsToGive, setPendingItemsToGive] = useState<string[]>([])
@@ -261,6 +270,7 @@ export default function GhostLab() {
   useEffect(() => { activePuzzleZoneRef.current = activePuzzleZone }, [activePuzzleZone])
   useEffect(() => { pendingItemsRef.current = pendingItemsToGive }, [pendingItemsToGive])
   useEffect(() => { inventoryVisibleRef.current = inventoryVisible }, [inventoryVisible])
+  useEffect(() => { introDialogIndexRef.current = introDialogIndex }, [introDialogIndex])
   // Keep close callback ref in sync whenever pending items change
   useEffect(() => {
     if (pendingItemsToGive.length > 0) {
@@ -275,13 +285,19 @@ export default function GhostLab() {
 
   // Use a ref for charPos to prevent callback instability during movement
   const charPosRef = useRef<[number, number, number]>(spawnPos)
-
   // Reset character position state upon level change
   useEffect(() => {
     setCharPos(spawnPos)
     charPosRef.current = spawnPos
     setCharRotation(spawnRot * (Math.PI / 180))
   }, [currentLevelId, previousLevelId, spawnPos, spawnRot])
+
+  // First load: Start intro dialog
+  useEffect(() => {
+    if (previousLevelId === 'default' && !introCompleted) {
+      setIntroDialogIndex(0)
+    }
+  }, [currentLevelId, previousLevelId, introCompleted])
 
   // Sequence effect: trigger transition only after dialog and items are cleared
   useEffect(() => {
@@ -411,6 +427,16 @@ export default function GhostLab() {
   // Capture-phase global click guard — registered ONCE, reads from refs so it's always fresh
   useEffect(() => {
     const handleGlobalClick = (e: MouseEvent) => {
+      if (introDialogIndexRef.current !== null) {
+        setIntroDialogIndex(prev => {
+          if (prev === null) return null
+          if (prev < INTRO_DIALOGS.length - 1) return prev + 1
+          setIntroCompleted(true)
+          return null
+        })
+        e.stopPropagation()
+        return
+      }
       if (activeDialogRef.current) {
         setActiveDialog(null)
         e.stopPropagation()
@@ -580,6 +606,23 @@ export default function GhostLab() {
         <DialogBox zone={activeDialog} onClose={handleCloseDialog} />
       )}
 
+      {/* Intro Dialog */}
+      {introDialogIndex !== null && (
+        <DialogBox
+          text={INTRO_DIALOGS[introDialogIndex].text}
+          portrait={INTRO_DIALOGS[introDialogIndex].portrait}
+          side={INTRO_DIALOGS[introDialogIndex].side}
+          onClose={() => {
+            setIntroDialogIndex(prev => {
+              if (prev === null) return null
+              if (prev < INTRO_DIALOGS.length - 1) return prev + 1
+              setIntroCompleted(true)
+              return null
+            })
+          }}
+        />
+      )}
+
       {/* Item Obtained Overlay — shown after dialog if there are items */}
       {!activeDialog && pendingItemsToGive.length > 0 && ITEMS[pendingItemsToGive[0]] && (
         <ItemObtainedOverlay
@@ -638,10 +681,17 @@ export default function GhostLab() {
         </button>
       </div>
 
+      {/* ─── HUD Layer ────────────────────────────────────────────────── */}
+      <div id="goal-hud">
+        <div className="goal-card">
+          <span className="goal-text">Find the source of the signal</span>
+        </div>
+      </div>
+
       {/* HUD components */}
       <div id="hud">
-        <div className="hud-badge">WASD / ↑↓←→ Move</div>
-        <div className="hud-badge">Shift + Move = Run</div>
+        <div className="hud-badge">WASD / ↑↓←→ Move | Shift + Move = Run</div>
+        <div className="hud-badge">Click Objective to Auto Run to it</div>
       </div>
 
       <button className="bag-button" onClick={() => setInventoryVisible(true)} title="Open Inventory">
