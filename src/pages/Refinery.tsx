@@ -52,7 +52,7 @@ const LEVELS: Record<string, LevelConfig> = {
     },
     boundary: [
       { "x": 0.11764933268229166, "y": 0.2372974537037037 },
-      { "x": 0.20851236979166668, "y": 0.20005063657407407 },
+      { "x": 0.17993570963541666, "y": 0.19114583333333332 },
       { "x": 0.19558308919270834, "y": 0.1265625 },
       { "x": 0.25382893880208335, "y": 0.09578269675925925 },
       { "x": 0.3309855143229167, "y": 0.16288700810185186 },
@@ -70,8 +70,8 @@ const LEVELS: Record<string, LevelConfig> = {
       { "x": 0.3340352376302083, "y": 0.5663519965277778 },
       { "x": 0.3313720703125, "y": 0.4900390625 },
       { "x": 0.32564900716145834, "y": 0.37387152777777777 },
-      { "x": 0.3100382486979167, "y": 0.29066478587962963 },
-      { "x": 0.2664693196614583, "y": 0.2711118344907407 },
+      { "x": 0.30609334309895836, "y": 0.31149088541666664 },
+      { "x": 0.2715677897135417, "y": 0.28922164351851853 },
       { "x": 0.18220011393229166, "y": 0.3331958912037037 }
     ],
     zones: [
@@ -105,17 +105,17 @@ const LEVELS: Record<string, LevelConfig> = {
         "id": "zone-1777012021114",
         "label": "sulfate",
         "polygon": [
-          { "x": 0.218938003508316, "y": 0.3096892866424117 },
-          { "x": 0.27755312215761435, "y": 0.28915995322245325 },
-          { "x": 0.31543197155990127, "y": 0.3231345829002079 },
-          { "x": 0.32152355931652804, "y": 0.5167132276507277 },
-          { "x": 0.265982074697895, "y": 0.5573227975571725 },
-          { "x": 0.2270091606029106, "y": 0.5105411902286903 }
+          { "x": 0.218938003508316, "y": 0.3094975910405598 },
+          { "x": 0.27755312215761435, "y": 0.28896825762060135 },
+          { "x": 0.31543197155990127, "y": 0.322942887298356 },
+          { "x": 0.32152355931652804, "y": 0.5165215320488759 },
+          { "x": 0.265982074697895, "y": 0.5571311019553207 },
+          { "x": 0.2270091606029106, "y": 0.5103494946268383 }
         ],
         "targetPos": [-4.25, 0, -1],
         "items": ["sulfate"],
-        "dialogAfterItemsObtained": "Already got this.",
-        "dialog": "I need this for the main explosion."
+        "dialogAfterItemsObtained": "Already scavenged.",
+        "dialog": "I need this for the main blast."
       },
       {
         "id": "zone-1777019388026",
@@ -129,7 +129,7 @@ const LEVELS: Record<string, LevelConfig> = {
           { "x": 0.3919047037760417, "y": 0.7940972222222222 }
         ],
         "targetPos": [-1.5, 0, 4],
-        "dialog": "It's empty"
+        "dialog": "Rusted and hollow. Nothing here."
       }
     ],
   },
@@ -352,7 +352,7 @@ const INTRO_DIALOGS = [
   { text: "Well, look who finally showed up. You're late, Jace.", portrait: "/assets/images/portrait/old-jace-portrait.png", side: 'right' as const },
   { text: "I had some... complications. Who are you exactly?", portrait: "/assets/images/portrait/young-jace-portrait.png", side: 'left' as const },
   { text: "Someone who knows more than you do. But we don't have time for pleasantries.", portrait: "/assets/images/portrait/old-jace-portrait.png", side: 'right' as const },
-  { text: "Fine. What's the plan?", portrait: "/assets/images/portrait/young-jace-portrait.png", side: 'left' as const },
+  { text: "Wait!", portrait: "/assets/images/portrait/young-jace-portrait.png", side: 'left' as const },
 ]
 
 function DebugOverlay({
@@ -398,6 +398,70 @@ export default function Refinery() {
   useEffect(() => {
     resetWithDefaults(['rebar', 'wrench', 'wire', 'battery'])
   }, [resetWithDefaults])
+
+  const [hintsEnabled, setHintsEnabled] = useState(() => {
+    const saved = localStorage.getItem('scavender_hints_enabled')
+    return saved === null ? false : saved === 'true'
+  })
+
+  // Perist hints setting
+  useEffect(() => {
+    localStorage.setItem('scavender_hints_enabled', hintsEnabled.toString())
+  }, [hintsEnabled])
+
+  const MINI_GOAL_CONFIG: Record<string, string> = {
+    stone: "Find components to make explosive to destroy the stone",
+    sulfate: "Find sulfate box in first tunnel",
+    fuel: "Find fuel in second tunnel",
+    igniter: "Find igniter inside box at the junction",
+  }
+  const MINI_GOAL_ORDER = hintsEnabled ? ['sulfate', 'fuel', 'igniter'] : ['stone']
+  const [activeMiniGoals, setActiveMiniGoals] = useState<string[]>([])
+
+  const { obtainedItems } = useInventoryStore()
+  useEffect(() => {
+    const hasSulfate = obtainedItems.includes('sulfate')
+    const hasFuel = obtainedItems.includes('fuel')
+    const hasIgniter = obtainedItems.includes('igniter')
+
+    setActiveMiniGoals(prev => prev.filter(id => {
+      if (id === 'stone' && (hasSulfate && hasFuel && hasIgniter)) return false
+      if (id === 'sulfate' && hasSulfate) return false
+      if (id === 'fuel' && hasFuel) return false
+      if (id === 'igniter' && hasIgniter) return false
+      return true
+    }))
+  }, [obtainedItems])
+
+  // Sync goals when hints toggled
+  useEffect(() => {
+    const hasSulfate = obtainedItems.includes('sulfate')
+    const hasFuel = obtainedItems.includes('fuel')
+    const hasIgniter = obtainedItems.includes('igniter')
+    const allFound = hasSulfate && hasFuel && hasIgniter
+
+    setActiveMiniGoals(prev => {
+      if (prev.length === 0) return prev
+      
+      if (hintsEnabled) {
+        // Convert 'stone' to individual goals if not all found
+        if (prev.includes('stone') && !allFound) {
+          const next = prev.filter(id => id !== 'stone')
+          if (!hasSulfate) next.push('sulfate')
+          if (!hasFuel) next.push('fuel')
+          if (!hasIgniter) next.push('igniter')
+          return next
+        }
+      } else {
+        // Convert individual goals to 'stone'
+        const hasIndividual = prev.includes('sulfate') || prev.includes('fuel') || prev.includes('igniter')
+        if (hasIndividual && !allFound) {
+          return ['stone']
+        }
+      }
+      return prev
+    })
+  }, [hintsEnabled, obtainedItems])
 
   const level = LEVELS[currentLevelId] || LEVELS['level2.1']
   const spawnData = level.spawns[previousLevelId] || level.spawns['default'] || [0, 0, 0, 0]
@@ -556,12 +620,31 @@ export default function Refinery() {
       setActiveDialog({ ...zone, dialog: finalDialog })
     }
 
+    if (!canSucceed) {
+      if (zone.label === 'stone') {
+        if (hintsEnabled) {
+          const goalsToAdd = ['sulfate', 'fuel', 'igniter'].filter(id => !obtainedItems.includes(id))
+          setActiveMiniGoals(prev => {
+            const next = [...prev]
+            goalsToAdd.forEach(g => {
+              if (!next.includes(g)) next.push(g)
+            })
+            return next
+          })
+        } else {
+          if (!activeMiniGoals.includes('stone')) {
+            setActiveMiniGoals(prev => [...prev, 'stone'])
+          }
+        }
+      }
+    }
+
     // Process success state (giving items, transitioning)
     if (canSucceed) {
       if (unobtainedItems.length > 0) setPendingItemsToGive(unobtainedItems)
       if (zone.transitionTo?.trim()) setPendingTransition(zone.transitionTo.trim())
     }
-  }, [])
+  }, [activeMiniGoals, hintsEnabled, obtainedItems])
 
   // Handlers
   const handleAnimChange = useCallback((anim: string) => {
@@ -715,17 +798,16 @@ export default function Refinery() {
     setActiveDialog(null)
   }, [])
 
-  const [hintsEnabled, setHintsEnabled] = useState(() => {
-    const saved = localStorage.getItem('scavender_hints_enabled')
-    return saved === null ? false : saved === 'true'
-  })
-
-  // Perist hints setting
-  useEffect(() => {
-    localStorage.setItem('scavender_hints_enabled', hintsEnabled.toString())
-  }, [hintsEnabled])
-
   const toggleHints = useCallback(() => setHintsEnabled(v => !v), [])
+
+  const handleGoalClick = useCallback((goalId: string) => {
+    // For now only stone is a goal, but we can expand this
+    const zoneLabel = goalId
+    const zone = zones.find(z => z.label === zoneLabel)
+    if (zone) {
+      handleZoneClick(zone)
+    }
+  }, [zones, handleZoneClick])
 
   const toggleBoundaryEditor = () => setBoundaryEditorVisible(v => !v)
   const toggleZoneEditor = () => setZoneEditorVisible(v => !v)
@@ -880,10 +962,32 @@ export default function Refinery() {
         </button>
       </div>
 
+      {/* ─── HUD Layer ────────────────────────────────────────────────── */}
+      <div id="goal-hud">
+        <div className="goal-card">
+          <span className="goal-text">Go after the mysterious man</span>
+          {MINI_GOAL_ORDER.some(id => activeMiniGoals.includes(id)) && (
+            <div className="goal-sub-list">
+              {MINI_GOAL_ORDER
+                .filter(id => activeMiniGoals.includes(id))
+                .map(id => (
+                  <div
+                    key={id}
+                    className="goal-sub-item clickable"
+                    onClick={() => handleGoalClick(id)}
+                  >
+                    {MINI_GOAL_CONFIG[id]}
+                  </div>
+                ))}
+            </div>
+          )}
+        </div>
+      </div>
+
       {/* HUD components */}
       <div id="hud">
-        <div className="hud-badge">WASD / ↑↓←→ Move</div>
-        <div className="hud-badge">Shift + Move = Run</div>
+        <div className="hud-badge">WASD / ↑↓←→ Move | Shift + Move = Run</div>
+        <div className="hud-badge">Click Objective to Auto Run to it</div>
       </div>
 
       <button className="bag-button" onClick={() => setInventoryVisible(true)} title="Open Inventory">
