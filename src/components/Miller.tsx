@@ -24,26 +24,42 @@ export function Miller({ position, rotation = 0, shouldFade = false, imgW, imgH,
   const { actions, mixer } = useAnimations(animations, group)
 
   const [currentOpacity, setCurrentOpacity] = useState(targetOpacity)
+  
+  // Sync state if prop changes (e.g. between levels)
+  useEffect(() => {
+    setCurrentOpacity(targetOpacity)
+  }, [targetOpacity])
 
-  // Apply opacity to all materials
+  // Apply opacity to all materials and clone them to ensure uniqueness
   useEffect(() => {
     clone.traverse((node) => {
       if ((node as THREE.Mesh).isMesh) {
         const mesh = node as THREE.Mesh
         mesh.castShadow = currentOpacity > 0.1
         mesh.receiveShadow = true
+        
         if (mesh.material) {
-          if (Array.isArray(mesh.material)) {
-            mesh.material.forEach(m => {
-              m.transparent = true
-              m.opacity = currentOpacity
-              m.depthWrite = currentOpacity > 0.9
-            })
-          } else {
-            mesh.material.transparent = true
-            mesh.material.opacity = currentOpacity
-            mesh.material.depthWrite = currentOpacity > 0.9
+          // Clone materials so they don't share state between instances or cache
+          if (!mesh.userData.materialsCloned) {
+            if (Array.isArray(mesh.material)) {
+              mesh.material = mesh.material.map(m => m.clone())
+            } else {
+              mesh.material = mesh.material.clone()
+            }
+            mesh.userData.materialsCloned = true
           }
+
+          const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material]
+          materials.forEach(m => {
+            m.transparent = true
+            m.opacity = currentOpacity
+            m.depthWrite = currentOpacity >= 1.0
+            
+            // If it's a ghost, we might want to tone down emissive if it has any
+            if (currentOpacity < 1.0 && (m as any).emissive) {
+              (m as any).emissive.setScalar(0.5)
+            }
+          })
         }
       }
     })
@@ -76,8 +92,9 @@ export function Miller({ position, rotation = 0, shouldFade = false, imgW, imgH,
     // Handle fading or resetting opacity
     if (shouldFade && currentOpacity > 0) {
       setCurrentOpacity(prev => Math.max(0, prev - delta * 0.5)) // Fade out over ~2 seconds
-    } else if (!shouldFade && currentOpacity < targetOpacity) {
-      setCurrentOpacity(prev => Math.min(targetOpacity, THREE.MathUtils.lerp(prev, targetOpacity, delta * 4)))
+    } else if (!shouldFade && Math.abs(currentOpacity - targetOpacity) > 0.001) {
+      // Lerp towards target (0.7 or 1.0)
+      setCurrentOpacity(prev => THREE.MathUtils.lerp(prev, targetOpacity, delta * 4))
     }
   })
 
