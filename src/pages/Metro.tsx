@@ -430,14 +430,14 @@ export default function Metro() {
   }, [hintsEnabled])
 
   const MINI_GOAL_CONFIG: Record<string, string> = {
-    terminal: hintsEnabled 
-      ? "Find battery inside vending and wire inside chest to jumpstart terminal" 
+    terminal: hintsEnabled
+      ? "Find battery inside vending and wire inside chest to jumpstart terminal"
       : "Find battery and wire to jumpstart terminal",
-    vending: hintsEnabled 
-      ? "Find wrench inside chest to open vending machine bolts" 
+    vending: hintsEnabled
+      ? "Find wrench inside chest to open vending machine bolts"
       : "Find wrench to open vending machine bolts",
-    chest: hintsEnabled 
-      ? "Find rebar in rubble near vending to open chest" 
+    chest: hintsEnabled
+      ? "Find rebar in rubble near vending to open chest"
       : "Find rebar to open chest"
   }
   const MINI_GOAL_ORDER = ['terminal', 'vending', 'chest']
@@ -938,8 +938,8 @@ export default function Metro() {
 
       {/* HUD components */}
       <div id="hud">
-        <div className="hud-badge">WASD / ↑↓←→ Move</div>
-        <div className="hud-badge">Shift + Move = Run</div>
+        <div className="hud-badge">WASD / ↑↓←→ Move | Shift + Move = Run</div>
+        <div className="hud-badge">Click Objective to Auto Run to it</div>
       </div>
 
       <button className="bag-button" onClick={() => setInventoryVisible(true)} title="Open Inventory">
