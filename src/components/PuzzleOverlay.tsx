@@ -7,19 +7,27 @@ interface PuzzleOverlayProps {
 
 // --- VENDING PUZZLE ---
 function VendingPuzzle({ onComplete }: { onComplete: () => void }) {
-  const [isOpen, setIsOpen] = useState(false)
+  const [phase, setPhase] = useState<'closed' | 'flickering_open' | 'open' | 'flickering_closed'>('closed')
   const [clickedCircles, setClickedCircles] = useState<Set<number>>(new Set())
   const circlesRef = useRef(new Set<number>())
 
-  // Toggle open/closed state
-  useEffect(() => {
-    const duration = isOpen ? 1000 : 3000
-    const timeoutId = window.setTimeout(() => {
-      setIsOpen(!isOpen)
-    }, duration)
+  const isOpen = phase === 'open' || phase === 'flickering_closed'
 
-    return () => window.clearTimeout(timeoutId)
-  }, [isOpen])
+  // Cycle: closed -> flickering_open -> open -> flickering_closed -> closed
+  useEffect(() => {
+    let timer: number
+    if (phase === 'closed') {
+      timer = window.setTimeout(() => setPhase('flickering_open'), 1000)
+    } else if (phase === 'flickering_open') {
+      timer = window.setTimeout(() => setPhase('open'), 1200)
+    } else if (phase === 'open') {
+      timer = window.setTimeout(() => setPhase('flickering_closed'), 1500)
+    } else if (phase === 'flickering_closed') {
+      timer = window.setTimeout(() => setPhase('closed'), 1200)
+    }
+
+    return () => window.clearTimeout(timer)
+  }, [phase])
 
   const handleCircleClick = (e: React.MouseEvent, index: number) => {
     e.stopPropagation()
@@ -44,15 +52,30 @@ function VendingPuzzle({ onComplete }: { onComplete: () => void }) {
     { id: 3, top: '65%', left: '70%' },
   ]
 
-  return (
-    <div className="puzzle-content-wrapper">
-      <img
-        src={isOpen ? "/assets/images/puzzle/metro/panel-opened.webp" : "/assets/images/puzzle/metro/panel-closed.webp"}
-        alt="Electrical Panel"
-        className="puzzle-panel-image"
-      />
+  const isFlickering = phase === 'flickering_open' || phase === 'flickering_closed'
 
-      {isOpen && circles.map(circle => (
+  return (
+    <div className={`puzzle-content-wrapper ${phase}`}>
+      <div className={`puzzle-image-container ${isFlickering ? 'flicker-transition' : ''}`}>
+        <img
+          src={isOpen ? "/assets/images/puzzle/metro/panel-opened.webp" : "/assets/images/puzzle/metro/panel-closed.webp"}
+          alt="Electrical Panel"
+          className="puzzle-panel-image"
+        />
+
+        {/* Sparks appear during flickering or just before opening */}
+        {isFlickering && (
+          <>
+            <div className="puzzle-spark spark-1"></div>
+            <div className="puzzle-spark spark-2"></div>
+            <div className="puzzle-spark spark-3"></div>
+            <div className="puzzle-spark spark-4"></div>
+            <div className="puzzle-spark spark-5"></div>
+          </>
+        )}
+      </div>
+
+      {phase === 'open' && circles.map(circle => (
         !clickedCircles.has(circle.id) && (
           <div
             key={circle.id}
@@ -79,17 +102,17 @@ const DEFAULT_PIPE_GRID: PipeTile[] = [
   { type: 'corner', rotation: 180 }, // 1
   { type: 'straight', rotation: 90 }, // 2
   { type: 't', rotation: 0 }, // 3
-  
+
   { type: 'straight', rotation: 0 }, // 4
   { type: 'straight', rotation: 90 }, // 5
   { type: 'corner', rotation: 270 }, // 6
   { type: 'corner', rotation: 0 }, // 7
-  
+
   { type: 'corner', rotation: 180 }, // 8
   { type: 'corner', rotation: 90 }, // 9
   { type: 'corner', rotation: 0 }, // 10
   { type: 'corner', rotation: 270 }, // 11
-  
+
   { type: 't', rotation: 90 }, // 12
   { type: 'corner', rotation: 180 }, // 13
   { type: 'straight', rotation: 0 }, // 14
@@ -104,7 +127,7 @@ function getConnections(type: PipeType, rotation: number): boolean[] {
     cross: [true, true, true, true],
     empty: [false, false, false, false]
   }[type]
-  
+
   const shifts = ((rotation % 360) / 90) % 4
   const result = [...base]
   for (let i = 0; i < shifts; i++) {
@@ -148,7 +171,7 @@ function PipePuzzleVisual({ type, powered }: { type: PipeType, powered: boolean 
 
 function PipePuzzle({ onComplete }: { onComplete: () => void }) {
   // Randomize initial rotations
-  const [tiles, setTiles] = useState<PipeTile[]>(() => 
+  const [tiles, setTiles] = useState<PipeTile[]>(() =>
     DEFAULT_PIPE_GRID.map(t => ({
       ...t,
       rotation: t.rotation + (Math.floor(Math.random() * 4) * 90)
@@ -160,20 +183,20 @@ function PipePuzzle({ onComplete }: { onComplete: () => void }) {
   useEffect(() => {
     const powered = new Set<number>()
     const queue: number[] = []
-    
+
     // Check source: West of cell 8
     const startConns = getConnections(tiles[8].type, tiles[8].rotation)
     if (startConns[3]) {
       powered.add(8)
       queue.push(8)
     }
-    
+
     while (queue.length > 0) {
       const curr = queue.shift()!
       const r = Math.floor(curr / 4)
       const c = curr % 4
       const conns = getConnections(tiles[curr].type, tiles[curr].rotation)
-      
+
       // N
       if (conns[0] && r > 0) {
         const neighbor = curr - 4
@@ -211,9 +234,9 @@ function PipePuzzle({ onComplete }: { onComplete: () => void }) {
         }
       }
     }
-    
+
     setPoweredSet(powered)
-    
+
     // Check win condition
     const endConns = getConnections(tiles[11].type, tiles[11].rotation)
     if (powered.has(11) && endConns[1]) {
@@ -245,7 +268,7 @@ function PipePuzzle({ onComplete }: { onComplete: () => void }) {
       <div className="pipe-puzzle-container">
         {/* Source point on the left of row 2 (index 8) */}
         <div className="pipe-source" />
-        
+
         {tiles.map((tile, i) => (
           <div
             key={i}
@@ -269,10 +292,10 @@ export function PuzzleOverlay({ puzzleId, onComplete }: PuzzleOverlayProps) {
   return (
     <div className="puzzle-overlay-container">
       <div className="puzzle-overlay-backdrop" onClick={(e) => e.stopPropagation()} />
-      
+
       {puzzleId === 'metro-vending' && <VendingPuzzle onComplete={onComplete} />}
       {puzzleId === 'metro-pipe' && <PipePuzzle onComplete={onComplete} />}
-      
+
       {puzzleId !== 'metro-vending' && puzzleId !== 'metro-pipe' && (
         <div className="puzzle-overlay">
           Unknown puzzle: {puzzleId}
