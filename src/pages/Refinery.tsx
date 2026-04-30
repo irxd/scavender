@@ -352,7 +352,7 @@ const INTRO_DIALOGS = [
   { text: "Well, look who finally showed up. You're late, Jace.", portrait: "/assets/images/portrait/old-jace-portrait.png", side: 'right' as const },
   { text: "I had some... complications. Who are you exactly?", portrait: "/assets/images/portrait/young-jace-portrait.png", side: 'left' as const },
   { text: "Someone who knows more than you do. But we don't have time for pleasantries.", portrait: "/assets/images/portrait/old-jace-portrait.png", side: 'right' as const },
-  { text: "Wait!", portrait: "/assets/images/portrait/young-jace-portrait.png", side: 'left' as const },
+  { text: "Wait! Where is he? He's just disappeared!", portrait: "/assets/images/portrait/young-jace-portrait.png", side: 'left' as const },
 ]
 
 function DebugOverlay({
@@ -442,7 +442,7 @@ export default function Refinery() {
 
     setActiveMiniGoals(prev => {
       if (prev.length === 0) return prev
-      
+
       if (hintsEnabled) {
         // Convert 'stone' to individual goals if not all found
         if (prev.includes('stone') && !allFound) {
@@ -554,12 +554,14 @@ export default function Refinery() {
 
   // Use a ref for charPos to prevent callback instability during movement
   const charPosRef = useRef<[number, number, number]>(spawnPos)
+  const charRotationRef = useRef<number>(spawnRot * (Math.PI / 180))
 
-  // Reset character position state upon level change
   useEffect(() => {
     setCharPos(spawnPos)
     charPosRef.current = spawnPos
-    setCharRotation(spawnRot * (Math.PI / 180))
+    const initialRotRad = spawnRot * (Math.PI / 180)
+    setCharRotation(initialRotRad)
+    charRotationRef.current = initialRotRad
   }, [currentLevelId, previousLevelId, spawnPos, spawnRot])
 
   // Sequence effect: trigger transition only after dialog and items are cleared
@@ -659,9 +661,6 @@ export default function Refinery() {
     setCharPos(pos)
     charPosRef.current = pos
 
-    // Log position for debugging spawn points
-    // console.log(`Pos: [${pos[0].toFixed(2)}, ${pos[1].toFixed(2)}, ${pos[2].toFixed(2)}]`)
-
     // If movement is manual (keys pressed), cancel auto-walk
     const isManual = keys.current.forward || keys.current.backward || keys.current.left || keys.current.right
     if (isManual && autoWalkTarget) {
@@ -672,8 +671,7 @@ export default function Refinery() {
 
   const handleRotationChange = useCallback((rot: number) => {
     setCharRotation(rot)
-    // Log rotation in degrees for spawn config
-    console.log(`Rot: ${(rot * (180 / Math.PI)).toFixed(2)}°`)
+    charRotationRef.current = rot
   }, [])
 
   const handleZoneHover = useCallback((zoneId: string | null) => {
@@ -854,6 +852,11 @@ export default function Refinery() {
             charPos={charPos}
             hydraSpawn={activeHydraSpawn || undefined}
             onGameOver={handleGameOver}
+            miller={currentLevelId === 'level2.1' && !introCompleted ? {
+              position: [-5.70, 0, -5.67],
+              rotation: 45,
+              shouldFade: introDialogIndex === 3
+            } : undefined}
           />
         </Canvas>
       </div>

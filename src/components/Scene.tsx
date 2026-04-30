@@ -6,6 +6,7 @@ import * as THREE from 'three'
 import { Character } from './Character'
 import { Hydra } from './Hydra'
 import { Scientist } from './Scientist'
+import { Miller } from './Miller'
 import type { KeyState } from '../hooks/useKeyboard'
 import type { BoundaryPolygon } from '../hooks/useBoundary'
 
@@ -30,6 +31,7 @@ interface SceneProps {
   hydraSpawn?: [number, number, number]
   onGameOver?: () => void
   scientists?: Array<{ id: string; position: [number, number, number]; rotation?: number }>
+  miller?: { position: [number, number, number]; rotation?: number; shouldFade?: boolean }
 }
 
 function Lights() {
@@ -154,6 +156,7 @@ export function Scene({
   hydraSpawn,
   onGameOver,
   scientists,
+  miller,
 }: SceneProps) {
   const { walkSpeed, runSpeed } = useControls('Character', {
     walkSpeed: { value: 1.5, min: 0.5, max: 10, step: 0.1 },
@@ -194,6 +197,9 @@ export function Scene({
         {scientists?.map((npc) => (
           <Scientist key={npc.id} id={npc.id} position={npc.position} rotation={npc.rotation} />
         ))}
+        {miller && (
+          <Miller position={miller.position} rotation={miller.rotation} shouldFade={miller.shouldFade} />
+        )}
       </Suspense>
       <Environment preset="city" />
     </>
