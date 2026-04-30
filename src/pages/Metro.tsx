@@ -354,6 +354,7 @@ export default function Metro() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const { currentLevelId: savedLevelId, setCurrentLevel } = useLevelStore()
+  const { obtainItem, resetWithDefaults } = useInventoryStore()
 
   // Detect portal entry from another game
   const isPortalEntry = useMemo(() => searchParams.get('portal') === 'true', [searchParams])
@@ -368,7 +369,8 @@ export default function Metro() {
   // Reset store to level 1.1 on mount (handles refresh)
   useEffect(() => {
     setCurrentLevel('level1.1')
-  }, []) // Empty dependency array ensures this only runs once on mount
+    resetWithDefaults([])
+  }, [setCurrentLevel, resetWithDefaults]) // Empty dependency array ensures this only runs once on mount
 
   // Handle portal entry store update
   useEffect(() => {
@@ -432,8 +434,6 @@ export default function Metro() {
   // Sequence state
   const [pendingItemsToGive, setPendingItemsToGive] = useState<string[]>([])
   const [pendingTransition, setPendingTransition] = useState<string | null>(null)
-
-  const { obtainItem } = useInventoryStore()
 
   // Keep dialog/puzzle/item refs in sync
   useEffect(() => { activeDialogRef.current = activeDialog }, [activeDialog])

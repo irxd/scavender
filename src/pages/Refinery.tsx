@@ -386,6 +386,7 @@ export default function Refinery() {
   const navigate = useNavigate()
   const keys = useKeyboard()
   const { currentLevelId: savedLevelId, setCurrentLevel } = useLevelStore()
+  const { obtainItem, resetWithDefaults } = useInventoryStore()
 
   // Set default level if entering the stage for the first time
   // Always reset to starting level of this stage on fresh load/refresh
@@ -398,7 +399,8 @@ export default function Refinery() {
   // Reset store to level 2.1 on mount (handles refresh)
   useEffect(() => {
     setCurrentLevel('level2.1')
-  }, [])
+    resetWithDefaults(['rebar', 'wrench', 'wire', 'battery'])
+  }, [setCurrentLevel, resetWithDefaults])
   
   // Sync level state if store changes externally (e.g. reset)
   useEffect(() => {
@@ -485,8 +487,6 @@ export default function Refinery() {
   // Sequence state
   const [pendingItemsToGive, setPendingItemsToGive] = useState<string[]>([])
   const [pendingTransition, setPendingTransition] = useState<string | null>(null)
-
-  const { obtainItem } = useInventoryStore()
 
   // Keep dialog/puzzle/item refs in sync
   useEffect(() => { activeDialogRef.current = activeDialog }, [activeDialog])
