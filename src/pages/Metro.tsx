@@ -96,9 +96,9 @@ const LEVELS: Record<string, LevelConfig> = {
         "targetPos": [-1.59, 0, 1.46],
         "requiredItems": ["rebar"],
         "dialog": "I need something sturdy to pry this open.",
-        "dialogAfterRequiredItems": "Now I can pry this open!",
+        "dialogAfterRequiredItems": "The rebar should do it. Time to pry.",
         "items": ["wrench", "wire"],
-        "dialogAfterItemsObtained": "It's empty."
+        "dialogAfterItemsObtained": "Nothing left but rust."
       },
       {
         "id": "zone-1776490943211",
@@ -112,7 +112,7 @@ const LEVELS: Record<string, LevelConfig> = {
           { "x": 0.46725260416666664, "y": 0.5376772280092592 }
         ],
         "targetPos": [0.53, 0, -0.49],
-        "dialog": "Looks dangerous, I'll go with the left one"
+        "dialog": "Looks dangerous, I'll go with the left one."
       },
       {
         "id": "zone-1776490943212",
@@ -159,7 +159,7 @@ const LEVELS: Record<string, LevelConfig> = {
         "targetPos": [-6.89, 0, 0.17],
         "transitionTo": "https://vibej.am/portal/2026?ref=scavender.mhirsd.com",
         "items": [],
-        "dialog": "Some kind of portal, where this leads?"
+        "dialog": "A flicker in a shape of portal. I wonder where this leads to?"
       }
     ]
   },
@@ -200,6 +200,56 @@ const LEVELS: Record<string, LevelConfig> = {
         ],
         "targetPos": [-1.05, 0, -6.57],
         "transitionTo": "level1.4"
+      },
+      {
+        "id": "zone-1776569979032",
+        "label": "tires",
+        "polygon": [
+          { "x": 0.22962443033854166, "y": 0.6249457465277778 },
+          { "x": 0.2565511067708333, "y": 0.6070855034722222 },
+          { "x": 0.27176106770833336, "y": 0.62939453125 },
+          { "x": 0.265545654296875, "y": 0.6663773148148148 },
+          { "x": 0.2795328776041667, "y": 0.6700231481481481 },
+          { "x": 0.29229736328125, "y": 0.6496383101851851 },
+          { "x": 0.31628214518229164, "y": 0.648195167824074 },
+          { "x": 0.3554768880208333, "y": 0.6940357349537037 },
+          { "x": 0.34828287760416665, "y": 0.7301540798611111 },
+          { "x": 0.24204915364583332, "y": 0.6999457465277777 },
+          { "x": 0.21149495442708338, "y": 0.68720703125 }
+        ],
+        "targetPos": [-7.28, 0, -8.72],
+        "dialog": "Tires? Down here? The surface must have leaked into the depths."
+      },
+      {
+        "id": "zone-1776569979033",
+        "label": "vending",
+        "polygon": [
+          { "x": 0.5383321126302083, "y": 0.3281105324074074 },
+          { "x": 0.6745951334635417, "y": 0.30215928819444443 },
+          { "x": 0.6767862955729167, "y": 0.7988570601851852 },
+          { "x": 0.5386800130208333, "y": 0.7623987268518518 }
+        ],
+        "targetPos": [-3.71, 0, -7.2],
+        "requiredItems": ["wire", "wrench"],
+        "puzzleId": "metro-vending",
+        "dialogAfterRequiredItems": "Wrench fits. Let's get that battery out.",
+        "dialog": "There's a live battery inside, but the bolts are too tight. I need something to open the bolts.",
+        "items": ["battery"],
+        "dialogAfterItemsObtained": "Already scavenged the battery."
+      },
+      {
+        "id": "zone-1776569979034",
+        "label": "trash",
+        "polygon": [
+          { "x": 0.7014689127604167, "y": 0.6525716145833333 },
+          { "x": 0.7279093424479167, "y": 0.5780309606481482 },
+          { "x": 0.8035664876302083, "y": 0.5825484664351852 },
+          { "x": 0.8067057291666667, "y": 0.8177191840277778 },
+          { "x": 0.7773396809895833, "y": 0.846925636574074 },
+          { "x": 0.7001953125, "y": 0.8290364583333333 }
+        ],
+        "targetPos": [-2, 0, -6.83],
+        "dialog": "Empty junk."
       }
     ]
   },
