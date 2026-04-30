@@ -52,7 +52,7 @@ const LEVELS: Record<string, LevelConfig> = {
       'level1.3': [-0.6, 0, 0.11, 57],
       portal: [-6.89, 0, 0.17, 45],
     },
-    boundary: [{"x": 0.0035725911458333332, "y": 0.7931242766203703}, {"x": 0.057725016276041666, "y": 0.73212890625}, {"x": 0.05565592447916667, "y": 0.6397786458333333}, {"x": 0.14862467447916666, "y": 0.6305410879629629}, {"x": 0.19569091796875, "y": 0.6776439525462963}, {"x": 0.22461751302083333, "y": 0.6930808738425925}, {"x": 0.2505615234375, "y": 0.6937102141203704}, {"x": 0.44749552408854165, "y": 0.6488534432870371}, {"x": 0.47005818684895834, "y": 0.6314199942129629}, {"x": 0.5108846028645834, "y": 0.6256293402777777}, {"x": 0.6644673665364583, "y": 0.5900173611111111}, {"x": 0.6895914713541667, "y": 0.5599681712962963}, {"x": 0.7216878255208333, "y": 0.5663230613425926}, {"x": 0.7752583821614584, "y": 0.56767578125}, {"x": 0.8527099609375, "y": 0.5801938657407407}, {"x": 0.917559814453125, "y": 0.582765480324074}, {"x": 0.7836507161458334, "y": 0.6501302083333333}, {"x": 0.11198527018229167, "y": 0.9260669849537037}, {"x": 0.0026529947916666668, "y": 0.9277199074074074}],
+    boundary: [{ "x": 0.0035725911458333332, "y": 0.7931242766203703 }, { "x": 0.057725016276041666, "y": 0.73212890625 }, { "x": 0.05565592447916667, "y": 0.6397786458333333 }, { "x": 0.14862467447916666, "y": 0.6305410879629629 }, { "x": 0.19569091796875, "y": 0.6776439525462963 }, { "x": 0.22461751302083333, "y": 0.6930808738425925 }, { "x": 0.2505615234375, "y": 0.6937102141203704 }, { "x": 0.44749552408854165, "y": 0.6488534432870371 }, { "x": 0.47005818684895834, "y": 0.6314199942129629 }, { "x": 0.5108846028645834, "y": 0.6256293402777777 }, { "x": 0.6644673665364583, "y": 0.5900173611111111 }, { "x": 0.6895914713541667, "y": 0.5599681712962963 }, { "x": 0.7216878255208333, "y": 0.5663230613425926 }, { "x": 0.7752583821614584, "y": 0.56767578125 }, { "x": 0.8527099609375, "y": 0.5801938657407407 }, { "x": 0.917559814453125, "y": 0.582765480324074 }, { "x": 0.7836507161458334, "y": 0.6501302083333333 }, { "x": 0.11198527018229167, "y": 0.9260669849537037 }, { "x": 0.0026529947916666668, "y": 0.9277199074074074 }],
     zones: [
       {
         "id": "zone-1776438025104",
@@ -343,6 +343,12 @@ function DebugOverlay({
   return null
 }
 
+const INTRO_DIALOGS = [
+  { text: "A Flicker Storm is sweeping toward the village.", portrait: "/assets/images/portrait/young-jace-portrait.png", side: 'left' as const },
+  { text: "The signal triggering it is coming from the high upper levels.", portrait: "/assets/images/portrait/young-jace-portrait.png", side: 'left' as const },
+  { text: "I have to find a way up before my home is erased.", portrait: "/assets/images/portrait/young-jace-portrait.png", side: 'left' as const },
+]
+
 export default function Metro() {
   const keys = useKeyboard()
   const navigate = useNavigate()
@@ -398,6 +404,10 @@ export default function Metro() {
   const [activePuzzleZone, setActivePuzzleZone] = useState<InteractiveZone | null>(null)
   const [pendingPuzzleZone, setPendingPuzzleZone] = useState<InteractiveZone | null>(null)
 
+  const [introDialogIndex, setIntroDialogIndex] = useState<number | null>(null)
+  const introDialogIndexRef = useRef<number | null>(null)
+  const [introCompleted, setIntroCompleted] = useState(false)
+
   // Refs to always have fresh dialog/puzzle/item state in event listeners (avoids stale closures)
   const activeDialogRef = useRef<InteractiveZone | null>(null)
   const activePuzzleZoneRef = useRef<InteractiveZone | null>(null)
@@ -422,6 +432,7 @@ export default function Metro() {
   useEffect(() => { activePuzzleZoneRef.current = activePuzzleZone }, [activePuzzleZone])
   useEffect(() => { pendingItemsRef.current = pendingItemsToGive }, [pendingItemsToGive])
   useEffect(() => { inventoryVisibleRef.current = inventoryVisible }, [inventoryVisible])
+  useEffect(() => { introDialogIndexRef.current = introDialogIndex }, [introDialogIndex])
   // Keep close callback ref in sync whenever pending items change
   useEffect(() => {
     if (pendingItemsToGive.length > 0) {
@@ -433,6 +444,13 @@ export default function Metro() {
       closeItemOverlayRef.current = null
     }
   }, [pendingItemsToGive, obtainItem])
+
+  // First load: Start intro dialog
+  useEffect(() => {
+    if (previousLevelId === 'default' && !introCompleted) {
+      setIntroDialogIndex(0)
+    }
+  }, [currentLevelId, previousLevelId, introCompleted])
 
   // Use a ref for charPos to prevent callback instability during movement
   const charPosRef = useRef<[number, number, number]>(spawnPos)
@@ -581,6 +599,16 @@ export default function Metro() {
   // Capture-phase global click guard — registered ONCE, reads from refs so it's always fresh
   useEffect(() => {
     const handleGlobalClick = (e: MouseEvent) => {
+      if (introDialogIndexRef.current !== null) {
+        setIntroDialogIndex(prev => {
+          if (prev === null) return null
+          if (prev < INTRO_DIALOGS.length - 1) return prev + 1
+          setIntroCompleted(true)
+          return null
+        })
+        e.stopPropagation()
+        return
+      }
       if (activeDialogRef.current) {
         setActiveDialog(null)
         e.stopPropagation()
@@ -736,6 +764,23 @@ export default function Metro() {
       {/* Dialog box — shown when player clicks an interactive zone */}
       {activeDialog && (
         <DialogBox zone={activeDialog} onClose={handleCloseDialog} />
+      )}
+
+      {/* Intro Dialog */}
+      {introDialogIndex !== null && (
+        <DialogBox
+          text={INTRO_DIALOGS[introDialogIndex].text}
+          portrait={INTRO_DIALOGS[introDialogIndex].portrait}
+          side={INTRO_DIALOGS[introDialogIndex].side}
+          onClose={() => {
+            setIntroDialogIndex(prev => {
+              if (prev === null) return null
+              if (prev < INTRO_DIALOGS.length - 1) return prev + 1
+              setIntroCompleted(true)
+              return null
+            })
+          }}
+        />
       )}
 
       {/* Item Obtained Overlay — shown after dialog if there are items */}

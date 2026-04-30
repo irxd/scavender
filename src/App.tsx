@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import Home from './pages/Home'
 import Sandbox from './pages/Sandbox'
@@ -11,6 +12,16 @@ import GameOver from './pages/GameOver'
 import './index.css'
 
 export default function App() {
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault()
+      e.returnValue = '' // Modern browsers require this to show the prompt
+    }
+
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload)
+  }, [])
+
   return (
     <Routes>
       <Route path="/" element={<Home />} />
