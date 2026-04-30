@@ -565,10 +565,14 @@ export default function Refinery() {
   // Sequence effect: trigger transition only after dialog and items are cleared
   useEffect(() => {
     if (!activeDialog && !activePuzzleZone && pendingItemsToGive.length === 0 && pendingTransition) {
-      setLevelState({ id: pendingTransition, from: currentLevelId })
+      if (pendingTransition.startsWith('/')) {
+        navigate(pendingTransition)
+      } else {
+        setLevelState({ id: pendingTransition, from: currentLevelId })
+      }
       setPendingTransition(null)
     }
-  }, [activeDialog, activePuzzleZone, pendingItemsToGive.length, pendingTransition, currentLevelId])
+  }, [activeDialog, activePuzzleZone, pendingItemsToGive.length, pendingTransition, currentLevelId, navigate])
 
   // Post-dialog puzzle trigger
   useEffect(() => {
