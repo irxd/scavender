@@ -438,6 +438,30 @@ export default function Metro() {
     }
   }, [savedLevelId, levelState.id, isPortalEntry])
 
+  const MINI_GOAL_CONFIG: Record<string, string> = {
+    terminal: "Find battery and wire to jumpstart terminal",
+    vending: "Find wrench to open vending machine bolts",
+    chest: "Find rebar to open chest"
+  }
+  const MINI_GOAL_ORDER = ['terminal', 'vending', 'chest']
+  const [activeMiniGoals, setActiveMiniGoals] = useState<string[]>([])
+
+  const { obtainedItems } = useInventoryStore()
+  useEffect(() => {
+    const hasBattery = obtainedItems.includes('battery')
+    const hasWire = obtainedItems.includes('wire')
+    const hasWrench = obtainedItems.includes('wrench')
+    const hasRebar = obtainedItems.includes('rebar')
+
+    setActiveMiniGoals(prev => prev.filter(id => {
+      if (id === 'terminal' && (hasBattery && hasWire)) return false
+      if (id === 'vending' && hasWrench) return false
+      if (id === 'chest' && hasRebar) return false
+      return true
+    }))
+  }, [obtainedItems])
+
+
   const level = LEVELS[currentLevelId] || LEVELS['level1.1']
   const spawnData = level.spawns[previousLevelId] || level.spawns['default'] || [0, 0, 0, 0]
 
@@ -584,8 +608,15 @@ export default function Metro() {
     }
 
     if (finalDialog) {
-      // Clone zone with resolved dialog text to pass to DialogBox
       setActiveDialog({ ...zone, dialog: finalDialog })
+    }
+
+    if (!canSucceed) {
+      if (zone.label === 'terminal' || zone.label === 'vending' || zone.label === 'chest') {
+        if (!activeMiniGoals.includes(zone.label)) {
+          setActiveMiniGoals(prev => [...prev, zone.label])
+        }
+      }
     }
 
     // Process success state (giving items, transitioning)
@@ -897,6 +928,24 @@ export default function Metro() {
         >
           ↺ Reset
         </button>
+      </div>
+
+      {/* ─── HUD Layer ────────────────────────────────────────────────── */}
+      <div id="goal-hud">
+        <div className="goal-card">
+          <span className="goal-text">Go to upper level</span>
+          {MINI_GOAL_ORDER.some(id => activeMiniGoals.includes(id)) && (
+            <div className="goal-sub-list">
+              {MINI_GOAL_ORDER
+                .filter(id => activeMiniGoals.includes(id))
+                .map(id => (
+                  <div key={id} className="goal-sub-item">
+                    {MINI_GOAL_CONFIG[id]}
+                  </div>
+                ))}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* HUD components */}

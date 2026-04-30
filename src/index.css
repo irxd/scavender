@@ -458,6 +458,78 @@ html, body, #root {
   100% { transform: translate(-50%, -50%) scale(0.95); opacity: 0.8; }
 }
 
+/* ─── Goal HUD ───────────────────────────────────────────────────── */
+#goal-hud {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+  pointer-events: none;
+}
+
+.goal-card {
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 16px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  animation: goal-slide-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  
+  /* Mask effect matching other UI */
+  mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent), 
+              linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent), 
+                      linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+  mask-composite: intersect;
+  -webkit-mask-composite: source-in;
+}
+
+.goal-text {
+  color: #fff;
+  font-family: 'Quattrocento', serif;
+  font-size: 15px;
+  letter-spacing: 0.05em;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  opacity: 0.95;
+  display: block;
+}
+
+.goal-sub-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.goal-sub-item {
+  color: rgba(255, 255, 255, 0.7);
+  font-family: 'Quattrocento', serif;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  padding-left: 12px;
+  position: relative;
+  animation: goal-slide-in 0.5s ease-out forwards;
+}
+
+.goal-sub-item::before {
+  content: '—';
+  position: absolute;
+  left: 0;
+  opacity: 0.5;
+}
+
+@keyframes goal-slide-in {
+  from { opacity: 0; transform: translateX(-30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
 /* ─── Interactive Dots ───────────────────────────────────────────── */
 .interactive-dot {
   position: absolute;
