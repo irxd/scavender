@@ -40,6 +40,17 @@ export default function Home() {
   const { setItems, resetItems } = useInventoryStore()
   const [screen, setScreen] = useState<Screen>('prompt')
 
+  const [hintsEnabled, setHintsEnabled] = useState(() => {
+    const saved = localStorage.getItem('scavender_hints_enabled')
+    return saved === null ? false : saved === 'true'
+  })
+
+  const handleHintsToggle = () => {
+    const newVal = !hintsEnabled
+    setHintsEnabled(newVal)
+    localStorage.setItem('scavender_hints_enabled', newVal.toString())
+  }
+
   useEffect(() => {
     if (searchParams.get('portal') === 'true') {
       resetItems()
@@ -115,6 +126,23 @@ export default function Home() {
                 >
                   Select Chapter
                 </button>
+
+                <div style={{ marginTop: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem' }}>
+                  <input
+                    type="checkbox"
+                    id="hint-toggle"
+                    checked={hintsEnabled}
+                    onChange={handleHintsToggle}
+                    style={{ cursor: 'pointer', width: '20px', height: '20px', accentColor: '#65bae1' }}
+                  />
+                  <label 
+                    htmlFor="hint-toggle" 
+                    className="start-screen__nav-btn"
+                    style={{ cursor: 'pointer', margin: 0 }}
+                  >
+                    Enable Hints
+                  </label>
+                </div>
               </nav>
             )}
           </div>
