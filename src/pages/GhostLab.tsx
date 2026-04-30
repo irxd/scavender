@@ -293,9 +293,15 @@ const INTRO_DIALOGS = [
 
 const MILLER_DIALOGS = [
   { text: "The console is waiting. One keystroke to change everything.", portrait: "/assets/images/portrait/young-jace-portrait.png", side: 'left' as const },
-  { text: "It shouldn't be touched.", portrait: "/assets/images/portrait/old-jace-portrait.png", side: 'right' as const },
-  { text: "Miller? You're... still here?", portrait: "/assets/images/portrait/young-jace-portrait.png", side: 'left' as const },
-  { text: "Only as a ghost of the machine. The reactor must be stabilized, Jace. Use the console.", portrait: "/assets/images/portrait/old-jace-portrait.png", side: 'right' as const },
+  { text: "Wait!", portrait: "/assets/images/portrait/old-jace-portrait.png", side: 'right' as const },
+  { text: "You again! Who are you really?", portrait: "/assets/images/portrait/young-jace-portrait.png", side: 'left' as const },
+  { text: "No need for introduction. Just listen to me.", portrait: "/assets/images/portrait/old-jace-portrait.png", side: 'right' as const },
+  { text: "You have to stabilize the reactor.", portrait: "/assets/images/portrait/old-jace-portrait.png", side: 'right' as const },
+  { text: "No! I need to make this off to save my people!", portrait: "/assets/images/portrait/young-jace-portrait.png", side: 'left' as const },
+  { text: "Why should I believe you?", portrait: "/assets/images/portrait/young-jace-portrait.png", side: 'left' as const },
+  { text: "I have been through this before.", portrait: "/assets/images/portrait/old-jace-portrait.png", side: 'right' as const },
+  { text: "Many times.", portrait: "/assets/images/portrait/old-jace-portrait.png", side: 'right' as const },
+  { text: "Just shut up, you're just an echo of the past. You're not real.", portrait: "/assets/images/portrait/young-jace-portrait.png", side: 'left' as const },
 ]
 
 export default function GhostLab() {
@@ -698,6 +704,7 @@ export default function GhostLab() {
             miller={currentLevelId === 'level3.3' && millerSpawned ? {
               position: [-3, 0, 0],
               rotation: 80,
+              opacity: 0.7,
             } : undefined}
           />
         </Canvas>

@@ -31,7 +31,7 @@ interface SceneProps {
   hydraSpawn?: [number, number, number]
   onGameOver?: () => void
   scientists?: Array<{ id: string; position: [number, number, number]; rotation?: number }>
-  miller?: { position: [number, number, number]; rotation?: number; shouldFade?: boolean }
+  miller?: { position: [number, number, number]; rotation?: number; shouldFade?: boolean; opacity?: number }
 }
 
 function Lights() {
@@ -204,6 +204,7 @@ export function Scene({
             shouldFade={miller.shouldFade}
             imgW={imgW}
             imgH={imgH}
+            opacity={miller.opacity}
             scale={1.1}
           />
         )}

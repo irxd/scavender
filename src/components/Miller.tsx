@@ -12,9 +12,10 @@ interface MillerProps {
   imgW: number
   imgH: number
   scale?: number
+  opacity?: number
 }
 
-export function Miller({ position, rotation = 0, shouldFade = false, imgW, imgH, scale = 1 }: MillerProps) {
+export function Miller({ position, rotation = 0, shouldFade = false, imgW, imgH, scale = 1, opacity: targetOpacity = 1.0 }: MillerProps) {
   const group = useRef<THREE.Group>(null!)
   const { scene, animations } = useGLTF('/assets/glb/miller.glb')
 
@@ -22,31 +23,31 @@ export function Miller({ position, rotation = 0, shouldFade = false, imgW, imgH,
   const clone = useMemo(() => SkeletonUtils.clone(scene), [scene])
   const { actions, mixer } = useAnimations(animations, group)
 
-  const [opacity, setOpacity] = useState(1)
+  const [currentOpacity, setCurrentOpacity] = useState(targetOpacity)
 
   // Apply opacity to all materials
   useEffect(() => {
     clone.traverse((node) => {
       if ((node as THREE.Mesh).isMesh) {
-        node.castShadow = true
-        node.receiveShadow = true
         const mesh = node as THREE.Mesh
+        mesh.castShadow = currentOpacity > 0.1
+        mesh.receiveShadow = true
         if (mesh.material) {
           if (Array.isArray(mesh.material)) {
             mesh.material.forEach(m => {
               m.transparent = true
-              m.opacity = opacity
-              m.depthWrite = opacity > 0.9
+              m.opacity = currentOpacity
+              m.depthWrite = currentOpacity > 0.9
             })
           } else {
             mesh.material.transparent = true
-            mesh.material.opacity = opacity
-            mesh.material.depthWrite = opacity > 0.9
+            mesh.material.opacity = currentOpacity
+            mesh.material.depthWrite = currentOpacity > 0.9
           }
         }
       }
     })
-  }, [clone, opacity])
+  }, [clone, currentOpacity])
 
   // Play default animation (Idle)
   useEffect(() => {
@@ -73,15 +74,15 @@ export function Miller({ position, rotation = 0, shouldFade = false, imgW, imgH,
     group.current.scale.setScalar(bgScale)
 
     // Handle fading or resetting opacity
-    if (shouldFade && opacity > 0) {
-      setOpacity(prev => Math.max(0, prev - delta * 0.5)) // Fade out over ~2 seconds
-    } else if (!shouldFade && opacity < 1) {
-      setOpacity(prev => Math.min(1, THREE.MathUtils.lerp(prev, 1, delta * 4)))
+    if (shouldFade && currentOpacity > 0) {
+      setCurrentOpacity(prev => Math.max(0, prev - delta * 0.5)) // Fade out over ~2 seconds
+    } else if (!shouldFade && currentOpacity < targetOpacity) {
+      setCurrentOpacity(prev => Math.min(targetOpacity, THREE.MathUtils.lerp(prev, targetOpacity, delta * 4)))
     }
   })
 
   // Completely remove from scene once fully transparent
-  if (opacity <= 0) return null
+  if (currentOpacity <= 0) return null
 
   return (
     <group
@@ -94,7 +95,7 @@ export function Miller({ position, rotation = 0, shouldFade = false, imgW, imgH,
       {/* Soft shadow that also fades */}
       <ContactShadows
         position={[0, 0, 0]}
-        opacity={0.75 * opacity}
+        opacity={0.75 * currentOpacity}
         scale={2.5}
         blur={2.5}
         far={2}
