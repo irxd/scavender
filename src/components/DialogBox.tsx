@@ -20,7 +20,7 @@ export function DialogBox({ zone, text: manualText, portrait, side = 'left', onC
   }, [onClose])
 
   const text = manualText || zone?.dialog?.trim() || '...'
-  const portraitSrc = portrait || "/assets/images/portrait/young-jace-portrait.png"
+  const portraitSrc = portrait || "/assets/images/portrait/young-jace-portrait.webp"
 
   const isRight = side === 'right'
 

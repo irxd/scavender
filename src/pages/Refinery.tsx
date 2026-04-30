@@ -349,10 +349,10 @@ const LEVELS: Record<string, LevelConfig> = {
 }
 
 const INTRO_DIALOGS = [
-  { text: "Well, look who finally showed up. You're late, Jace.", portrait: "/assets/images/portrait/old-jace-portrait.png", side: 'right' as const },
-  { text: "How do you know my name? Who are you exactly?", portrait: "/assets/images/portrait/young-jace-portrait.png", side: 'left' as const },
-  { text: "Someone who knows more than you do. But we don't have time for pleasantries.", portrait: "/assets/images/portrait/old-jace-portrait.png", side: 'right' as const },
-  { text: "Wait! Where is he? He's just disappeared!", portrait: "/assets/images/portrait/young-jace-portrait.png", side: 'left' as const },
+  { text: "Well, look who finally showed up. You're late, Jace.", portrait: "/assets/images/portrait/old-jace-portrait.webp", side: 'right' as const },
+  { text: "How do you know my name? Who are you exactly?", portrait: "/assets/images/portrait/young-jace-portrait.webp", side: 'left' as const },
+  { text: "Someone who knows more than you do. But we don't have time for pleasantries.", portrait: "/assets/images/portrait/old-jace-portrait.webp", side: 'right' as const },
+  { text: "Wait! Where is he? He's just disappeared!", portrait: "/assets/images/portrait/young-jace-portrait.webp", side: 'left' as const },
 ]
 
 function DebugOverlay({

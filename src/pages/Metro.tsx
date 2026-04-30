@@ -393,9 +393,9 @@ function DebugOverlay({
 }
 
 const INTRO_DIALOGS = [
-  { text: "A Flicker Storm is sweeping toward the village.", portrait: "/assets/images/portrait/young-jace-portrait.png", side: 'left' as const },
-  { text: "The signal triggering it is coming from the high upper levels.", portrait: "/assets/images/portrait/young-jace-portrait.png", side: 'left' as const },
-  { text: "I have to find a way up before my home is erased.", portrait: "/assets/images/portrait/young-jace-portrait.png", side: 'left' as const },
+  { text: "A Flicker Storm is sweeping toward the village.", portrait: "/assets/images/portrait/young-jace-portrait.webp", side: 'left' as const },
+  { text: "The signal triggering it is coming from the high upper levels.", portrait: "/assets/images/portrait/young-jace-portrait.webp", side: 'left' as const },
+  { text: "I have to find a way up before my home is erased.", portrait: "/assets/images/portrait/young-jace-portrait.webp", side: 'left' as const },
 ]
 
 export default function Metro() {

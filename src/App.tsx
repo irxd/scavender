@@ -2,7 +2,6 @@ import { useEffect } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import { Leva } from 'leva'
 import Home from './pages/Home'
-import Sandbox from './pages/Sandbox'
 import Metro from './pages/Metro'
 import IntroMetro from './pages/IntroMetro'
 import Refinery from './pages/Refinery'
@@ -29,7 +28,6 @@ export default function App() {
       <Leva hidden={import.meta.env.VITE_ENABLE_DEBUG !== 'true'} />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/sandbox" element={<Sandbox />} />
         <Route path="/metro" element={<Metro />} />
         <Route path="/intro/metro" element={<IntroMetro />} />
         <Route path="/refinery" element={<Refinery />} />

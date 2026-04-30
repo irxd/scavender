@@ -286,22 +286,22 @@ function DebugOverlay({
 }
 
 const INTRO_DIALOGS = [
-  { text: "The elevator brought me here...", portrait: "/assets/images/portrait/young-jace-portrait.png", side: 'left' as const },
-  { text: "This place feels... colder. Like the air itself is holding its breath.", portrait: "/assets/images/portrait/young-jace-portrait.png", side: 'left' as const },
-  { text: "I can feel the signal's source nearby. It's close now.", portrait: "/assets/images/portrait/young-jace-portrait.png", side: 'left' as const },
+  { text: "The elevator brought me here...", portrait: "/assets/images/portrait/young-jace-portrait.webp", side: 'left' as const },
+  { text: "This place feels... colder. Like the air itself is holding its breath.", portrait: "/assets/images/portrait/young-jace-portrait.webp", side: 'left' as const },
+  { text: "I can feel the signal's source nearby. It's close now.", portrait: "/assets/images/portrait/young-jace-portrait.webp", side: 'left' as const },
 ]
 
 const MILLER_DIALOGS = [
-  { text: "The console is waiting. One keystroke to change everything.", portrait: "/assets/images/portrait/young-jace-portrait.png", side: 'left' as const },
-  { text: "Wait!", portrait: "/assets/images/portrait/old-jace-portrait.png", side: 'right' as const },
-  { text: "You again! Who are you really?", portrait: "/assets/images/portrait/young-jace-portrait.png", side: 'left' as const },
-  { text: "No need for introduction. Just listen to me.", portrait: "/assets/images/portrait/old-jace-portrait.png", side: 'right' as const },
-  { text: "You have to stabilize the reactor.", portrait: "/assets/images/portrait/old-jace-portrait.png", side: 'right' as const },
-  { text: "No! I need to make this off to save my people!", portrait: "/assets/images/portrait/young-jace-portrait.png", side: 'left' as const },
-  { text: "Why should I believe you?", portrait: "/assets/images/portrait/young-jace-portrait.png", side: 'left' as const },
-  { text: "I have been through this before.", portrait: "/assets/images/portrait/old-jace-portrait.png", side: 'right' as const },
-  { text: "Many times.", portrait: "/assets/images/portrait/old-jace-portrait.png", side: 'right' as const },
-  { text: "Just shut up, you're just an echo of the past. You're not real.", portrait: "/assets/images/portrait/young-jace-portrait.png", side: 'left' as const },
+  { text: "The console is waiting. One keystroke to change everything.", portrait: "/assets/images/portrait/young-jace-portrait.webp", side: 'left' as const },
+  { text: "Wait!", portrait: "/assets/images/portrait/old-jace-portrait.webp", side: 'right' as const },
+  { text: "You again! Who are you really?", portrait: "/assets/images/portrait/young-jace-portrait.webp", side: 'left' as const },
+  { text: "No need for introduction. Just listen to me.", portrait: "/assets/images/portrait/old-jace-portrait.webp", side: 'right' as const },
+  { text: "You have to stabilize the reactor.", portrait: "/assets/images/portrait/old-jace-portrait.webp", side: 'right' as const },
+  { text: "No! I need to make this off to save my people!", portrait: "/assets/images/portrait/young-jace-portrait.webp", side: 'left' as const },
+  { text: "Why should I believe you?", portrait: "/assets/images/portrait/young-jace-portrait.webp", side: 'left' as const },
+  { text: "I have been through this before.", portrait: "/assets/images/portrait/old-jace-portrait.webp", side: 'right' as const },
+  { text: "Many times.", portrait: "/assets/images/portrait/old-jace-portrait.webp", side: 'right' as const },
+  { text: "Just shut up, you're just an echo of the past. You're not real.", portrait: "/assets/images/portrait/young-jace-portrait.webp", side: 'left' as const },
 ]
 
 export default function GhostLab() {

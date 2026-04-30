@@ -79,7 +79,7 @@ export default function Home() {
         >
           {/* Logo */}
           <img
-            src="/assets/images/logo.png"
+            src="/assets/images/logo.webp"
             alt="Scavender"
             className="start-screen__logo"
             draggable={false}
