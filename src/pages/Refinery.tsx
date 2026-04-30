@@ -146,7 +146,7 @@ const LEVELS: Record<string, LevelConfig> = {
     boundary: [
       { "x": 0.706201171875, "y": 0.21389973958333333 },
       { "x": 0.8286885579427083, "y": 0.2985279224537037 },
-      { "x": 0.7198811848958333, "y": 0.4189923321759259 },
+      { "x": 0.7426900227864583, "y": 0.3831199363425926 },
       { "x": 0.7013264973958333, "y": 0.3754484953703704 },
       { "x": 0.6424845377604167, "y": 0.43879846643518516 },
       { "x": 0.6395609537760417, "y": 0.5109338831018518 },
@@ -209,8 +209,8 @@ const LEVELS: Record<string, LevelConfig> = {
         "targetPos": [2.07, 0, 4.17],
         "requiredItems": [],
         "items": ["fuel"],
-        "dialog": "I need this to enhance the explosion.",
-        "dialogAfterItemsObtained": "Already got this"
+        "dialog": "This will make the blast much stronger.",
+        "dialogAfterItemsObtained": "Already have the fuel."
       }
     ],
   },
@@ -277,14 +277,14 @@ const LEVELS: Record<string, LevelConfig> = {
         "id": "zone-1777018202875",
         "label": "level2.2",
         "polygon": [
-          { "x": 0.9093302408854167, "y": 0.4142795138888889 },
-          { "x": 0.9337076822916667, "y": 0.37503255208333336 },
-          { "x": 0.9590433756510417, "y": 0.38251591435185184 },
-          { "x": 0.979443359375, "y": 0.4374529803240741 },
-          { "x": 0.9781840006510417, "y": 0.5563838252314814 },
-          { "x": 0.9533040364583333, "y": 0.6233796296296297 },
-          { "x": 0.931573486328125, "y": 0.6297019675925926 },
-          { "x": 0.90966796875, "y": 0.5939272280092592 }
+          { "x": 0.9093302408854167, "y": 0.41408781828703706 },
+          { "x": 0.9337076822916667, "y": 0.3748408564814815 },
+          { "x": 0.9590433756510417, "y": 0.38232421875 },
+          { "x": 0.979443359375, "y": 0.43726128472222225 },
+          { "x": 0.9781840006510417, "y": 0.5561921296296296 },
+          { "x": 0.9533040364583333, "y": 0.6231879340277778 },
+          { "x": 0.931573486328125, "y": 0.6295102719907407 },
+          { "x": 0.90966796875, "y": 0.5937355324074074 }
         ],
         "targetPos": [7.57, 0, -0.35],
         "transitionTo": "level2.2"
@@ -300,8 +300,8 @@ const LEVELS: Record<string, LevelConfig> = {
         ],
         "targetPos": [4.3, 0, 1.39],
         "items": ["igniter"],
-        "dialog": "I need this to trigger the expolosion.",
-        "dialogAfterItemsObtained": "Already got this."
+        "dialog": "The trigger. Just what I need to set off the blast.",
+        "dialogAfterItemsObtained": "Already have the igniter."
       },
       {
         "id": "zone-1777018881256",
@@ -342,7 +342,7 @@ const LEVELS: Record<string, LevelConfig> = {
           { "x": 0.4326863606770833, "y": 0.48361183449074074 }
         ],
         "targetPos": [-0.72, 0, -0.33],
-        "dialog": "Nothing can be used here."
+        "dialog": "Nothing but scrap and dust."
       }
     ],
   },
