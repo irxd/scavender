@@ -118,6 +118,15 @@ export default function Home() {
               </nav>
             )}
           </div>
+
+          <a
+            href="https://x.com/_irxd"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="start-screen__credits"
+          >
+            <img src="/assets/icons/x-logo.svg" alt="X logo" className="start-screen__credits-icon" />
+          </a>
         </div>
       )}
 

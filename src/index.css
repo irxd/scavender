@@ -739,6 +739,53 @@ html, body, #root {
   width: 130%;
 }
 
+.start-screen__credits {
+  position: absolute;
+  bottom: 24px;
+  left: 32px;
+  color: rgba(255, 255, 255, 0.4);
+  font-family: 'Quattrocento', serif;
+  font-size: 18px;
+  letter-spacing: 0.15em;
+  text-decoration: none;
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.start-screen__credits-icon {
+  width: 24px;
+  height: 24px;
+  opacity: 1;
+}
+
+.start-screen__credits:hover {
+  color: #fff;
+  text-shadow: 0 0 10px rgba(0, 122, 229, 0.8), 0 0 20px rgba(0, 122, 229, 0.4);
+}
+
+.start-screen__credits::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: #65bae1;
+  transform: translate(-50%, -50%);
+  transition: width 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  pointer-events: none;
+  box-shadow: 0 0 10px rgba(0, 122, 229, 0.6);
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+
+.start-screen__credits:hover::after {
+  width: 110%;
+}
+
 /* ─── Chapter Select Screen ─────────────────────────────────────── */
 .chapter-select {
   position: fixed;
