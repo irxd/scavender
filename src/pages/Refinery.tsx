@@ -388,14 +388,21 @@ export default function Refinery() {
   const { currentLevelId: savedLevelId, setCurrentLevel } = useLevelStore()
 
   // Set default level if entering the stage for the first time
-  const initLevelId = savedLevelId.startsWith('level2.') ? savedLevelId : 'level2.1'
+  // Always reset to starting level of this stage on fresh load/refresh
+  const initLevelId = 'level2.1'
 
   const [levelState, setLevelState] = useState({ id: initLevelId, from: 'default' })
   const currentLevelId = levelState.id
   const previousLevelId = levelState.from
 
+  // Reset store to level 2.1 on mount (handles refresh)
+  useEffect(() => {
+    setCurrentLevel('level2.1')
+  }, [])
+  
   // Sync level state if store changes externally (e.g. reset)
   useEffect(() => {
+    // Only sync from store if the saved level is different AND belongs to this stage
     if (savedLevelId !== levelState.id && savedLevelId.startsWith('level2.')) {
       setLevelState({ id: savedLevelId, from: 'default' })
     }

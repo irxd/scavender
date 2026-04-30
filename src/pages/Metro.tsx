@@ -357,12 +357,18 @@ export default function Metro() {
 
   // Detect portal entry from another game
   const isPortalEntry = useMemo(() => searchParams.get('portal') === 'true', [searchParams])
-  const initialLevelId = isPortalEntry ? 'level1.1' : savedLevelId
+  // Always reset to level 1.1 on fresh load/refresh
+  const initialLevelId = 'level1.1'
   const initialFrom = isPortalEntry ? 'portal' : 'default'
 
   const [levelState, setLevelState] = useState({ id: initialLevelId, from: initialFrom })
   const currentLevelId = levelState.id
   const previousLevelId = levelState.from
+
+  // Reset store to level 1.1 on mount (handles refresh)
+  useEffect(() => {
+    setCurrentLevel('level1.1')
+  }, []) // Empty dependency array ensures this only runs once on mount
 
   // Handle portal entry store update
   useEffect(() => {
@@ -373,7 +379,9 @@ export default function Metro() {
 
   // Sync level state if store changes externally (e.g. reset)
   useEffect(() => {
-    if (savedLevelId !== levelState.id && !isPortalEntry) {
+    // Only sync from store if the saved level is different AND belongs to this stage
+    // AND we are not on the very first mount (to allow the forced reset to win)
+    if (savedLevelId !== levelState.id && savedLevelId.startsWith('level1.') && !isPortalEntry) {
       setLevelState({ id: savedLevelId, from: 'default' })
     }
   }, [savedLevelId, levelState.id, isPortalEntry])
