@@ -92,9 +92,9 @@ function Ground() {
 
       {/* The crisp white grid for aligning perspective */}
       {showGround && (
-        <gridHelper 
-          args={[size, size, '#ffffff', 'rgba(255, 255, 255, 0.4)']} 
-          position={[0, -0.01, 0]} 
+        <gridHelper
+          args={[size, size, '#ffffff', 'rgba(255, 255, 255, 0.4)']}
+          position={[0, -0.01, 0]}
         />
       )}
     </group>
@@ -198,7 +198,14 @@ export function Scene({
           <Scientist key={npc.id} id={npc.id} position={npc.position} rotation={npc.rotation} />
         ))}
         {miller && (
-          <Miller position={miller.position} rotation={miller.rotation} shouldFade={miller.shouldFade} />
+          <Miller
+            position={miller.position}
+            rotation={miller.rotation}
+            shouldFade={miller.shouldFade}
+            imgW={imgW}
+            imgH={imgH}
+            scale={1.1}
+          />
         )}
       </Suspense>
       <Environment preset="city" />

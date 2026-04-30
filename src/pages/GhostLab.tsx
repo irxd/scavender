@@ -569,6 +569,10 @@ export default function GhostLab() {
               { id: 'Scientist3', position: [-2, 0, 15], rotation: 4.6 },
               { id: 'Scientist4', position: [-0.1, 0, 14.1], rotation: 1.5 }
             ] : undefined}
+            miller={currentLevelId === 'level3.3' ? {
+              position: [-3, 0, 0],
+              rotation: 80
+            } : undefined}
           />
         </Canvas>
       </div>

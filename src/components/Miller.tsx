@@ -3,14 +3,18 @@ import { useGLTF, useAnimations, ContactShadows } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { SkeletonUtils } from 'three-stdlib'
+import { getImageRect } from '../utils/imageSpace'
 
 interface MillerProps {
   position: [number, number, number]
   rotation?: number
   shouldFade?: boolean
+  imgW: number
+  imgH: number
+  scale?: number
 }
 
-export function Miller({ position, rotation = 0, shouldFade = false }: MillerProps) {
+export function Miller({ position, rotation = 0, shouldFade = false, imgW, imgH, scale = 1 }: MillerProps) {
   const group = useRef<THREE.Group>(null!)
   const { scene, animations } = useGLTF('/assets/glb/miller.glb')
   
@@ -61,8 +65,15 @@ export function Miller({ position, rotation = 0, shouldFade = false }: MillerPro
     }
   }, [actions, mixer])
 
-  // Fading logic
+  // Fading and scaling logic
   useFrame((_state, delta) => {
+    // Responsive scale
+    const viewW = window.innerWidth
+    const viewH = window.innerHeight
+    const imageRect = getImageRect(viewW, viewH, imgW, imgH)
+    const bgScale = (imageRect.renderH / viewH) * scale
+    group.current.scale.setScalar(bgScale)
+
     if (shouldFade && opacity > 0) {
       setOpacity(prev => Math.max(0, prev - delta * 0.5)) // Fade out over ~2 seconds
     }
