@@ -14,7 +14,6 @@ import { useInteractiveZones } from '../hooks/useInteractiveZones'
 import type { InteractiveZone } from '../hooks/useInteractiveZones'
 import { useControls } from 'leva'
 import { useInventoryStore } from '../store/useInventoryStore'
-import { useLevelStore } from '../store/useLevelStore'
 import { ITEMS } from '../config/items'
 import { ItemObtainedOverlay } from '../components/ItemObtainedOverlay'
 import { InventoryOverlay } from '../components/InventoryOverlay'
@@ -198,7 +197,6 @@ function DebugOverlay({
 export default function GhostLab() {
   const navigate = useNavigate()
   const keys = useKeyboard()
-  const { currentLevelId: savedLevelId, setCurrentLevel } = useLevelStore()
   const { obtainItem, resetWithDefaults } = useInventoryStore()
 
   // Set default level if entering the stage for the first time
@@ -209,26 +207,10 @@ export default function GhostLab() {
   const currentLevelId = levelState.id
   const previousLevelId = levelState.from
 
-  // Reset store to level 3.1 on mount (handles refresh)
+  // Reset inventory on mount (handles refresh)
   useEffect(() => {
-    setCurrentLevel('level3.1')
     resetWithDefaults(['rebar', 'wrench', 'wire', 'battery', 'fuel', 'sulfate', 'igniter'])
-  }, [setCurrentLevel, resetWithDefaults])
-
-  // Sync level state if store changes externally (e.g. reset)
-  useEffect(() => {
-    // Only sync from store if the saved level is different AND belongs to this stage
-    if (savedLevelId !== levelState.id && savedLevelId.startsWith('level3.')) {
-      setLevelState({ id: savedLevelId, from: 'default' })
-    }
-  }, [savedLevelId, levelState.id])
-
-  // Update store when level changes
-  useEffect(() => {
-    if (currentLevelId !== savedLevelId) {
-      setCurrentLevel(currentLevelId)
-    }
-  }, [currentLevelId, savedLevelId, setCurrentLevel])
+  }, [resetWithDefaults])
 
   const level = LEVELS[currentLevelId] || LEVELS['level3.1']
   const spawnData = level.spawns[previousLevelId] || level.spawns['default'] || [0, 0, 0, 0]
@@ -305,10 +287,9 @@ export default function GhostLab() {
   useEffect(() => {
     if (!activeDialog && !activePuzzleZone && pendingItemsToGive.length === 0 && pendingTransition) {
       setLevelState({ id: pendingTransition, from: currentLevelId })
-      setCurrentLevel(pendingTransition)
       setPendingTransition(null)
     }
-  }, [activeDialog, activePuzzleZone, pendingItemsToGive.length, pendingTransition, currentLevelId, setCurrentLevel])
+  }, [activeDialog, activePuzzleZone, pendingItemsToGive.length, pendingTransition, currentLevelId])
 
   // Post-dialog puzzle trigger
   useEffect(() => {

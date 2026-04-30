@@ -14,7 +14,6 @@ import { useInteractiveZones } from '../hooks/useInteractiveZones'
 import type { InteractiveZone } from '../hooks/useInteractiveZones'
 import { useControls } from 'leva'
 import { useInventoryStore } from '../store/useInventoryStore'
-import { useLevelStore } from '../store/useLevelStore'
 import { ITEMS } from '../config/items'
 import { ItemObtainedOverlay } from '../components/ItemObtainedOverlay'
 import { InventoryOverlay } from '../components/InventoryOverlay'
@@ -403,7 +402,6 @@ export default function Metro() {
   const keys = useKeyboard()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
-  const { currentLevelId: savedLevelId, setCurrentLevel } = useLevelStore()
   const { obtainItem, resetWithDefaults } = useInventoryStore()
 
   // Detect portal entry from another game
@@ -416,27 +414,10 @@ export default function Metro() {
   const currentLevelId = levelState.id
   const previousLevelId = levelState.from
 
-  // Reset store to level 1.1 on mount (handles refresh)
+  // Reset inventory on mount (handles refresh)
   useEffect(() => {
-    setCurrentLevel('level1.1')
     resetWithDefaults([])
-  }, [setCurrentLevel, resetWithDefaults]) // Empty dependency array ensures this only runs once on mount
-
-  // Handle portal entry store update
-  useEffect(() => {
-    if (isPortalEntry) {
-      setCurrentLevel('level1.1')
-    }
-  }, [isPortalEntry, setCurrentLevel])
-
-  // Sync level state if store changes externally (e.g. reset)
-  useEffect(() => {
-    // Only sync from store if the saved level is different AND belongs to this stage
-    // AND we are not on the very first mount (to allow the forced reset to win)
-    if (savedLevelId !== levelState.id && savedLevelId.startsWith('level1.') && !isPortalEntry) {
-      setLevelState({ id: savedLevelId, from: 'default' })
-    }
-  }, [savedLevelId, levelState.id, isPortalEntry])
+  }, [resetWithDefaults]) // Empty dependency array ensures this only runs once on mount
 
   const [hintsEnabled, setHintsEnabled] = useState(() => {
     const saved = localStorage.getItem('scavender_hints_enabled')
@@ -569,11 +550,10 @@ export default function Metro() {
         navigate(pendingTransition)
       } else {
         setLevelState({ id: pendingTransition, from: currentLevelId })
-        setCurrentLevel(pendingTransition)
       }
       setPendingTransition(null)
     }
-  }, [activeDialog, activePuzzleZone, pendingItemsToGive.length, pendingTransition, currentLevelId, setCurrentLevel, navigate])
+  }, [activeDialog, activePuzzleZone, pendingItemsToGive.length, pendingTransition, currentLevelId, navigate])
 
   // Post-dialog puzzle trigger
   useEffect(() => {

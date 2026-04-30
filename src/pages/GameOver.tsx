@@ -1,12 +1,10 @@
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useInventoryStore } from '../store/useInventoryStore'
-import { useLevelStore } from '../store/useLevelStore'
 
 export default function GameOver() {
   const navigate = useNavigate()
   const location = useLocation()
   const { resetItems } = useInventoryStore()
-  const { setCurrentLevel } = useLevelStore()
 
   const state = location.state as { returnUrl?: string; levelId?: string } | null
   const returnUrl = state?.returnUrl || '/'
@@ -15,11 +13,7 @@ export default function GameOver() {
     resetItems()
     
     // Reset back to the start of the respective stage
-    if (returnUrl.includes('refinery')) {
-      setCurrentLevel('level2.1')
-    } else if (returnUrl.includes('metro')) {
-      setCurrentLevel('level1.1')
-    }
+    // (Actual reset happens in stage component mount useEffect)
 
     navigate(returnUrl)
   }

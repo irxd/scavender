@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { useLevelStore } from '../store/useLevelStore'
 import { useInventoryStore } from '../store/useInventoryStore'
 
 const chapters = [
@@ -38,17 +37,15 @@ type Screen = 'prompt' | 'menu' | 'chapters'
 export default function Home() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
-  const { setCurrentLevel } = useLevelStore()
   const { setItems, resetItems } = useInventoryStore()
   const [screen, setScreen] = useState<Screen>('prompt')
 
   useEffect(() => {
     if (searchParams.get('portal') === 'true') {
       resetItems()
-      setCurrentLevel('level1.1')
       navigate('/metro?portal=true', { replace: true })
     }
-  }, [searchParams, navigate, setCurrentLevel, resetItems])
+  }, [searchParams, navigate, resetItems])
 
   const [promptFading, setPromptFading] = useState(false)
 
@@ -68,7 +65,6 @@ export default function Home() {
 
   const handlePlay = () => {
     resetItems()
-    setCurrentLevel('level1.1')
     navigate('/intro/metro')
   }
 
@@ -144,7 +140,6 @@ export default function Home() {
               id={`chapter-${ch.id}`}
               onClick={ch.path ? () => {
                 if (ch.initialItems) setItems(ch.initialItems)
-                if (ch.levelId) setCurrentLevel(ch.levelId)
                 navigate(ch.path as string)
               } : undefined}
             >
