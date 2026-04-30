@@ -14,6 +14,7 @@ import { useInteractiveZones } from '../hooks/useInteractiveZones'
 import type { InteractiveZone } from '../hooks/useInteractiveZones'
 import { useControls } from 'leva'
 import { useInventoryStore } from '../store/useInventoryStore'
+import { useLevelStore } from '../store/useLevelStore'
 import { ITEMS } from '../config/items'
 import { ItemObtainedOverlay } from '../components/ItemObtainedOverlay'
 import { InventoryOverlay } from '../components/InventoryOverlay'
@@ -346,7 +347,7 @@ export default function Metro() {
   const keys = useKeyboard()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
-  const { currentLevelId: savedLevelId, setCurrentLevel } = useInventoryStore()
+  const { currentLevelId: savedLevelId, setCurrentLevel } = useLevelStore()
 
   // Detect portal entry from another game
   const isPortalEntry = useMemo(() => searchParams.get('portal') === 'true', [searchParams])

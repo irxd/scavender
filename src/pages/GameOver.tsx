@@ -1,10 +1,12 @@
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useInventoryStore } from '../store/useInventoryStore'
+import { useLevelStore } from '../store/useLevelStore'
 
 export default function GameOver() {
   const navigate = useNavigate()
   const location = useLocation()
-  const { resetItems, setCurrentLevel } = useInventoryStore()
+  const { resetItems } = useInventoryStore()
+  const { setCurrentLevel } = useLevelStore()
 
   const state = location.state as { returnUrl?: string; levelId?: string } | null
   const returnUrl = state?.returnUrl || '/'

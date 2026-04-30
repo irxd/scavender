@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useLevelStore } from '../store/useLevelStore'
 
 const chapters = [
   {
@@ -7,21 +8,24 @@ const chapters = [
     title: 'The Metro',
     image: '/assets/images/background/level1.1.webp',
     subtitle: null,
-    path: '/intro/metro'
+    path: '/intro/metro',
+    levelId: 'level1.1'
   },
   {
     id: 'refinery',
     title: 'The Refinery',
     image: '/assets/images/background/level2.1.webp',
     subtitle: null,
-    path: '/intro/refinery'
+    path: '/intro/refinery',
+    levelId: 'level2.1'
   },
   {
     id: 'ghost-lab',
     title: 'The Ghost Lab',
     image: '/assets/images/background/level3.2.webp',
     subtitle: null,
-    path: '/intro/ghost-lab'
+    path: '/intro/ghost-lab',
+    levelId: 'level3.1'
   },
 ]
 
@@ -30,13 +34,16 @@ type Screen = 'prompt' | 'menu' | 'chapters'
 export default function Home() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
+  const { setCurrentLevel } = useLevelStore()
   const [screen, setScreen] = useState<Screen>('prompt')
 
   useEffect(() => {
     if (searchParams.get('portal') === 'true') {
+      setCurrentLevel('level1.1')
       navigate('/metro?portal=true', { replace: true })
     }
-  }, [searchParams, navigate])
+  }, [searchParams, navigate, setCurrentLevel])
+
   const [promptFading, setPromptFading] = useState(false)
 
   const handlePromptClick = () => {
@@ -54,6 +61,7 @@ export default function Home() {
   }
 
   const handlePlay = () => {
+    setCurrentLevel('level1.1')
     navigate('/intro/metro')
   }
 
@@ -127,7 +135,10 @@ export default function Home() {
               key={ch.id}
               className="chapter-card"
               id={`chapter-${ch.id}`}
-              onClick={ch.path ? () => navigate(ch.path as string) : undefined}
+              onClick={ch.path ? () => {
+                if (ch.levelId) setCurrentLevel(ch.levelId)
+                navigate(ch.path as string)
+              } : undefined}
             >
               <div
                 className="chapter-card__bg"

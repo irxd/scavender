@@ -14,6 +14,7 @@ import { useInteractiveZones } from '../hooks/useInteractiveZones'
 import type { InteractiveZone } from '../hooks/useInteractiveZones'
 import { useControls } from 'leva'
 import { useInventoryStore } from '../store/useInventoryStore'
+import { useLevelStore } from '../store/useLevelStore'
 import { ITEMS } from '../config/items'
 import { ItemObtainedOverlay } from '../components/ItemObtainedOverlay'
 import { InventoryOverlay } from '../components/InventoryOverlay'
@@ -384,7 +385,7 @@ function DebugOverlay({
 export default function Refinery() {
   const navigate = useNavigate()
   const keys = useKeyboard()
-  const { currentLevelId: savedLevelId, setCurrentLevel } = useInventoryStore()
+  const { currentLevelId: savedLevelId, setCurrentLevel } = useLevelStore()
 
   // Set default level if entering the stage for the first time
   const initLevelId = savedLevelId.startsWith('level2.') ? savedLevelId : 'level2.1'
