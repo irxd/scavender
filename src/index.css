@@ -392,6 +392,9 @@ html, body, #root {
   .inventory-card-content p {
     font-size: 13px !important;
   }
+  .pipe-monitor-image {
+    max-height: 70vh !important;
+  }
 }
 
 

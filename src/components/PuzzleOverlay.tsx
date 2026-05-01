@@ -76,18 +76,17 @@ function VendingPuzzle({ onComplete }: { onComplete: () => void }) {
             <div className="puzzle-spark spark-5"></div>
           </>
         )}
+        {phase === 'open' && circles.map(circle => (
+          !clickedCircles.has(circle.id) && (
+            <div
+              key={circle.id}
+              className="puzzle-click-circle"
+              style={{ top: circle.top, left: circle.left }}
+              onClick={(e) => handleCircleClick(e, circle.id)}
+            ></div>
+          )
+        ))}
       </div>
-
-      {phase === 'open' && circles.map(circle => (
-        !clickedCircles.has(circle.id) && (
-          <div
-            key={circle.id}
-            className="puzzle-click-circle"
-            style={{ top: circle.top, left: circle.left }}
-            onClick={(e) => handleCircleClick(e, circle.id)}
-          ></div>
-        )
-      ))}
     </div>
   )
 }
@@ -266,28 +265,30 @@ function PipePuzzle({ onComplete }: { onComplete: () => void }) {
       <div style={{ color: 'rgba(255, 255, 255, 0.9)', fontFamily: '"Quattrocento", serif', fontSize: 'clamp(0.9rem, 4vh, 1.2rem)', textAlign: 'center', width: 'min(600px, 95vw)', textShadow: '0 2px 4px rgba(0,0,0,0.8)', zIndex: 10, pointerEvents: 'none', letterSpacing: '0.05em', marginBottom: 'min(12px, 2vh)' }}>
         Rotate the pipe segments to create an uninterrupted path from the Entrance to the Exit
       </div>
-      <img
-        src="/assets/images/puzzle/metro/monitor-display.webp"
-        alt="Monitor Display"
-        className="puzzle-panel-image pipe-monitor-image"
-      />
-      <div className="pipe-puzzle-container">
-        {/* Source point on the left of row 2 (index 8) */}
-        <div className="pipe-source" />
+      <div style={{ position: 'relative' }}>
+        <img
+          src="/assets/images/puzzle/metro/monitor-display.webp"
+          alt="Monitor Display"
+          className="puzzle-panel-image pipe-monitor-image"
+        />
+        <div className="pipe-puzzle-container">
+          {/* Source point on the left of row 2 (index 8) */}
+          <div className="pipe-source" />
 
-        {tiles.map((tile, i) => (
-          <div
-            key={i}
-            className="pipe-tile"
-            onClick={(e) => handleTileClick(e, i)}
-            style={{ transform: `rotate(${tile.rotation}deg)` }}
-          >
-            <PipePuzzleVisual type={tile.type} powered={poweredSet.has(i)} />
-          </div>
-        ))}
+          {tiles.map((tile, i) => (
+            <div
+              key={i}
+              className="pipe-tile"
+              onClick={(e) => handleTileClick(e, i)}
+              style={{ transform: `rotate(${tile.rotation}deg)` }}
+            >
+              <PipePuzzleVisual type={tile.type} powered={poweredSet.has(i)} />
+            </div>
+          ))}
 
-        {/* Dest point on the right of row 2 (index 11) */}
-        <div className={`pipe-dest ${isComplete ? 'powered' : ''}`} />
+          {/* Dest point on the right of row 2 (index 11) */}
+          <div className={`pipe-dest ${isComplete ? 'powered' : ''}`} />
+        </div>
       </div>
     </div>
   )
