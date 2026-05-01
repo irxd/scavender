@@ -395,6 +395,18 @@ html, body, #root {
   .pipe-monitor-image {
     max-height: 70vh !important;
   }
+  .game-ending-content {
+    max-width: 90% !important;
+    max-height: 90vh !important;
+  }
+  .game-ending-image {
+    max-height: 40vh !important;
+    margin-bottom: 16px !important;
+  }
+  .game-ending-text {
+    font-size: clamp(12px, 3.5vh, 16px) !important;
+    line-height: 1.4 !important;
+  }
 }
 
 
