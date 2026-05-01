@@ -9,7 +9,7 @@ export function HudComponents({ onOpenInventory, hintsEnabled, onToggleHints }: 
     <>
       {/* HUD components */}
       <div id="hud">
-        <div className="hud-badge">WASD / ↑↓←→ Move | Shift + Move = Run</div>
+        <div className="hud-badge desktop-only">MOVE: WASD / ↑↓←→ | RUN: + SHIFT</div>
         <div className="hud-badge">Click Objective to Auto Run to it</div>
       </div>
 
