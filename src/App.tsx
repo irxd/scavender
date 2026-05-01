@@ -12,6 +12,8 @@ import Ending from './pages/Ending'
 import GameOver from './pages/GameOver'
 import './index.css'
 
+import { OrientationGuard } from './components/OrientationGuard'
+
 export default function App() {
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
@@ -26,18 +28,20 @@ export default function App() {
   return (
     <>
       <Leva hidden={import.meta.env.VITE_ENABLE_DEBUG !== 'true'} />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/metro" element={<Metro />} />
-        <Route path="/intro/metro" element={<IntroMetro />} />
-        <Route path="/refinery" element={<Refinery />} />
-        <Route path="/intro/refinery" element={<IntroRefinery />} />
-        <Route path="/ghost-lab" element={<GhostLab />} />
-        <Route path="/intro/ghost-lab" element={<IntroGhostLab />} />
-        <Route path="/ending/:id" element={<Ending />} />
-        <Route path="/truth" element={<Ending />} />
-        <Route path="/game-over" element={<GameOver />} />
-      </Routes>
+      <OrientationGuard>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/metro" element={<Metro />} />
+          <Route path="/intro/metro" element={<IntroMetro />} />
+          <Route path="/refinery" element={<Refinery />} />
+          <Route path="/intro/refinery" element={<IntroRefinery />} />
+          <Route path="/ghost-lab" element={<GhostLab />} />
+          <Route path="/intro/ghost-lab" element={<IntroGhostLab />} />
+          <Route path="/ending/:id" element={<Ending />} />
+          <Route path="/truth" element={<Ending />} />
+          <Route path="/game-over" element={<GameOver />} />
+        </Routes>
+      </OrientationGuard>
     </>
   )
 }

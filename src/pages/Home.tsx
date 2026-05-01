@@ -127,7 +127,7 @@ export default function Home() {
                   Select Chapter
                 </button>
 
-                <div style={{ marginTop: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem' }}>
                   <input
                     type="checkbox"
                     id="hint-toggle"
@@ -135,8 +135,8 @@ export default function Home() {
                     onChange={handleHintsToggle}
                     style={{ cursor: 'pointer', width: '20px', height: '20px', accentColor: '#65bae1' }}
                   />
-                  <label 
-                    htmlFor="hint-toggle" 
+                  <label
+                    htmlFor="hint-toggle"
                     className="start-screen__nav-btn"
                     style={{ cursor: 'pointer', margin: 0 }}
                   >

@@ -23,6 +23,66 @@ html, body, #root {
   overflow: hidden;
 }
 
+/* ─── Orientation Guard ──────────────────────────────────────────── */
+.orientation-guard {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.orientation-guard__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  text-align: center;
+  padding: 32px;
+}
+
+.orientation-guard__icon {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255, 255, 255, 0.8);
+  animation: rotate-hint 2.5s ease-in-out infinite;
+}
+
+.orientation-guard__phone {
+  width: 56px;
+  height: 56px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.orientation-guard__arrow {
+  width: 32px;
+  height: 32px;
+  color: #65bae1;
+}
+
+@keyframes rotate-hint {
+  0%, 100% { transform: rotate(0deg); }
+  40%, 60% { transform: rotate(-15deg); }
+}
+
+.orientation-guard__title {
+  color: #fff;
+  font-family: 'Cinzel', serif;
+  font-size: clamp(18px, 5vw, 26px);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+
+.orientation-guard__subtitle {
+  color: rgba(255, 255, 255, 0.5);
+  font-family: 'Quattrocento', serif;
+  font-size: clamp(13px, 3.5vw, 16px);
+  letter-spacing: 0.05em;
+}
+
 /* ─── Background layer ───────────────────────────────────────────── */
 #bg-layer {
   position: absolute;
