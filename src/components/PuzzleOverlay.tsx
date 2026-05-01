@@ -55,8 +55,8 @@ function VendingPuzzle({ onComplete }: { onComplete: () => void }) {
   const isFlickering = phase === 'flickering_open' || phase === 'flickering_closed'
 
   return (
-    <div className={`puzzle-content-wrapper ${phase}`}>
-      <div style={{ position: 'absolute', top: '-50px', left: '50%', transform: 'translateX(-50%)', color: 'rgba(255, 255, 255, 0.9)', fontFamily: '"Quattrocento", serif', fontSize: '1.2rem', textAlign: 'center', width: '100vw', textShadow: '0 2px 4px rgba(0,0,0,0.8)', zIndex: 10, pointerEvents: 'none', letterSpacing: '0.05em' }}>
+    <div className={`puzzle-content-wrapper ${phase}`} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <div style={{ color: 'rgba(255, 255, 255, 0.9)', fontFamily: '"Quattrocento", serif', fontSize: 'clamp(0.9rem, 4vh, 1.2rem)', textAlign: 'center', width: 'min(600px, 95vw)', textShadow: '0 2px 4px rgba(0,0,0,0.8)', zIndex: 10, pointerEvents: 'none', letterSpacing: '0.05em', marginBottom: 'min(12px, 2vh)' }}>
         The panel is flickering with time static, plug the battery out when panel is opened
       </div>
       <div className={`puzzle-image-container ${isFlickering ? 'flicker-transition' : ''}`}>
@@ -262,8 +262,8 @@ function PipePuzzle({ onComplete }: { onComplete: () => void }) {
   }
 
   return (
-    <div className="puzzle-content-wrapper" onClick={(e) => e.stopPropagation()}>
-      <div style={{ position: 'absolute', top: '-50px', left: '50%', transform: 'translateX(-50%)', color: 'rgba(255, 255, 255, 0.9)', fontFamily: '"Quattrocento", serif', fontSize: '1.2rem', textAlign: 'center', width: '100vw', textShadow: '0 2px 4px rgba(0,0,0,0.8)', zIndex: 10, pointerEvents: 'none', letterSpacing: '0.05em' }}>
+    <div className="puzzle-content-wrapper" onClick={(e) => e.stopPropagation()} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <div style={{ color: 'rgba(255, 255, 255, 0.9)', fontFamily: '"Quattrocento", serif', fontSize: 'clamp(0.9rem, 4vh, 1.2rem)', textAlign: 'center', width: 'min(600px, 95vw)', textShadow: '0 2px 4px rgba(0,0,0,0.8)', zIndex: 10, pointerEvents: 'none', letterSpacing: '0.05em', marginBottom: 'min(12px, 2vh)' }}>
         Rotate the pipe segments to create an uninterrupted path from the Entrance to the Exit
       </div>
       <img
