@@ -319,30 +319,30 @@ html, body, #root {
     padding-bottom: 16px;
   }
   #hud {
-    bottom: 12px;
-    left: 12px;
-    gap: 4px;
+    bottom: 12px !important;
+    left: 12px !important;
+    gap: 4px !important;
   }
   .hud-badge {
-    padding: 6px 12px;
-    font-size: 10px;
-    letter-spacing: 0.1em;
+    padding: 6px 12px !important;
+    font-size: 10px !important;
+    letter-spacing: 0.1em !important;
   }
   .bag-button {
-    top: 12px;
-    right: 12px;
+    top: 12px !important;
+    right: 12px !important;
   }
   .bag-button img {
-    width: 54px;
-    height: 54px;
+    width: 44px !important;
+    height: 44px !important;
   }
   .hint-button {
-    top: 12px;
-    right: 76px;
+    top: 12px !important;
+    right: 68px !important;
   }
   .hint-button img {
-    width: 50px;
-    height: 50px;
+    width: 42px !important;
+    height: 42px !important;
   }
   #goal-hud {
     top: 12px !important;
