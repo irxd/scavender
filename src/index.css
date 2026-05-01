@@ -896,16 +896,18 @@ html, body, #root {
 /* Logo */
 .start-screen__logo {
   width: clamp(350px, 65vw, 900px);
+  max-height: 45vh;
+  object-fit: contain;
   user-select: none;
   pointer-events: none;
   filter: drop-shadow(0 0 40px rgba(50, 140, 220, 0.15));
-  margin-bottom: 30px;
+  margin-bottom: clamp(10px, 4vh, 30px);
 }
 
 /* Menu area below logo */
 .start-screen__menu-area {
   position: relative;
-  min-height: 100px;
+  min-height: 150px;
   display: flex;
   flex-direction: column;
   align-items: center;
