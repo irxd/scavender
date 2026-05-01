@@ -44,8 +44,6 @@ export function StageIntro({ slides, onComplete }: Props) {
 
   const currentSlide = slides[slideIdx]
   const currentText = currentSlide.texts[textIdx]
-  const isLastText = textIdx === currentSlide.texts.length - 1
-  const isLastSlide = slideIdx === slides.length - 1
 
   return (
     <div

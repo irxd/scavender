@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useInventoryStore } from '../store/useInventoryStore'
 
 const chapters = [
@@ -36,7 +36,6 @@ type Screen = 'prompt' | 'menu' | 'chapters'
 
 export default function Home() {
   const navigate = useNavigate()
-  const [searchParams] = useSearchParams()
   const { setItems, resetItems } = useInventoryStore()
   const [screen, setScreen] = useState<Screen>('prompt')
 
