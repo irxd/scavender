@@ -214,7 +214,116 @@ html, body, #root {
 
 /* (old hint-toggle removed) */
 
+/* ─── Dialog Box ─────────────────────────────────────────────────── */
+.dialog-container {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 48px;
+  cursor: default;
+  user-select: none;
+  --portrait-w: 320px;
+  --portrait-mt: -120px;
+  --portrait-mb: -48px;
+  --text-overlap: 160px;
+  --text-size: 24px;
+}
+
+.dialog-content {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  width: min(860px, 90vw);
+  min-height: 160px;
+}
+
+.dialog-content.is-right {
+  flex-direction: row-reverse;
+}
+
+.dialog-portrait {
+  position: relative;
+  flex-shrink: 0;
+  width: var(--portrait-w);
+  margin-bottom: var(--portrait-mb);
+  z-index: 2;
+  margin-top: var(--portrait-mt);
+  align-self: flex-end;
+  transition: all 0.3s ease;
+}
+
+.dialog-portrait img {
+  width: 100%;
+  display: block;
+  object-fit: contain;
+  object-position: bottom;
+  filter: drop-shadow(0 4px 16px rgba(0,0,0,0.6));
+}
+
+.dialog-text-panel {
+  flex: 1;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 1;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent), 
+              linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent), 
+                      linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  mask-composite: intersect;
+  -webkit-mask-composite: source-in;
+  padding: 28px 32px 28px var(--text-overlap);
+  margin-left: calc(-1 * var(--text-overlap));
+  text-align: left;
+}
+
+.dialog-content.is-right .dialog-text-panel {
+  padding: 28px var(--text-overlap) 28px 32px;
+  margin-left: 0;
+  margin-right: calc(-1 * var(--text-overlap));
+  text-align: right;
+}
+
+.dialog-text-content {
+  margin: 0;
+  font-size: var(--text-size);
+  line-height: 1.6;
+  color: #ffffff;
+  font-family: 'Quattrocento', serif;
+  font-weight: 400;
+  transition: font-size 0.3s ease;
+}
+
+@media (max-width: 1024px), (max-height: 500px) {
+  .dialog-container {
+    padding-bottom: 16px;
+    --portrait-w: 180px;
+    --portrait-mt: -60px;
+    --portrait-mb: -24px;
+    --text-overlap: 90px;
+    --text-size: 16px;
+  }
+  .dialog-container .dialog-content {
+    width: 65vw;
+    min-height: 100px;
+  }
+  .dialog-container .dialog-text-panel {
+    padding-top: 16px;
+    padding-bottom: 16px;
+  }
+}
+
+
+
 /* ─── Toolbar ────────────────────────────────────────────────────── */
+
 #toolbar {
   position: absolute;
   top: 16px;

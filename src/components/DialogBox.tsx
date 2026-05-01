@@ -25,89 +25,21 @@ export function DialogBox({ zone, text: manualText, portrait, side = 'left', onC
   const isRight = side === 'right'
 
   return (
-    <div
-      onClick={onClose}
-      style={{
-        position: 'absolute',
-        inset: 0,
-        zIndex: 50,
-        display: 'flex',
-        alignItems: 'flex-end',
-        justifyContent: 'center',
-        paddingBottom: '48px',
-        cursor: 'default',
-        userSelect: 'none',
-      }}
-    >
+    <div onClick={onClose} className="dialog-container">
       {/* Dialog container */}
-      <div
-        style={{
-          position: 'relative',
-          display: 'flex',
-          flexDirection: isRight ? 'row-reverse' : 'row',
-          alignItems: 'flex-end',
-          width: 'min(860px, 90vw)',
-          minHeight: '160px',
-        }}
-      >
+      <div className={`dialog-content ${isRight ? 'is-right' : ''}`}>
         {/* Portrait — overlaps above the text box */}
-        <div
-          style={{
-            position: 'relative',
-            flexShrink: 0,
-            width: '320px',
-            marginBottom: '-48px',
-            zIndex: 2,
-            // Pull portrait up so it sticks above the box
-            marginTop: '-120px',
-            alignSelf: 'flex-end',
-          }}
-        >
+        <div className="dialog-portrait">
           <img
             src={portraitSrc}
             alt="Character portrait"
             draggable="false"
-            style={{
-              width: '100%',
-              display: 'block',
-              objectFit: 'contain',
-              objectPosition: 'bottom',
-              filter: 'drop-shadow(0 4px 16px rgba(0,0,0,0.6))',
-            }}
           />
         </div>
 
         {/* Text panel */}
-        <div
-          style={{
-            flex: 1,
-            background: 'rgba(0, 0, 0, 0.5)',
-            backdropFilter: 'blur(4px)',
-            padding: isRight ? '28px 180px 28px 32px' : '28px 32px 28px 180px',
-            marginLeft: isRight ? '0' : '-160px',
-            marginRight: isRight ? '-160px' : '0',
-            zIndex: 1,
-            minHeight: '120px',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            maskImage: 'linear-gradient(to bottom, transparent, black 10%, black 90%, transparent), linear-gradient(to right, transparent, black 10%, black 90%, transparent)',
-            WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 10%, black 90%, transparent), linear-gradient(to right, transparent, black 10%, black 90%, transparent)',
-            maskComposite: 'intersect',
-            WebkitMaskComposite: 'source-in',
-            textAlign: isRight ? 'right' : 'left',
-          }}
-        >
-          <p
-            style={{
-              margin: 0,
-              fontSize: '24px',
-              lineHeight: 1.6,
-              color: '#ffffff',
-              fontFamily: "'Quattrocento', serif",
-              fontWeight: 400,
-            }}
-          >
+        <div className="dialog-text-panel">
+          <p className="dialog-text-content">
             {text}
           </p>
         </div>
