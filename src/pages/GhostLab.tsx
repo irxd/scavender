@@ -19,6 +19,8 @@ import { ITEMS } from '../config/items'
 import { ItemObtainedOverlay } from '../components/ItemObtainedOverlay'
 import { InventoryOverlay } from '../components/InventoryOverlay'
 import { PuzzleOverlay } from '../components/PuzzleOverlay'
+import { HudComponents } from '../components/HudComponents'
+
 
 type LevelConfig = {
   background: string
@@ -869,26 +871,11 @@ export default function GhostLab() {
         </div>
       </div>
 
-      {/* HUD components */}
-      <div id="hud">
-        <div className="hud-badge">WASD / ↑↓←→ Move | Shift + Move = Run</div>
-        <div className="hud-badge">Click Objective to Auto Run to it</div>
-      </div>
-
-      <button className="bag-button" onClick={() => setInventoryVisible(true)} title="Open Inventory">
-        <img src="/assets/icons/backpack-icon.webp" alt="Inventory" />
-      </button>
-
-      <button
-        className="hint-button"
-        onClick={toggleHints}
-        title={hintsEnabled ? 'Turn Hints Off' : 'Turn Hints On'}
-      >
-        <img
-          src={hintsEnabled ? "/assets/icons/hint-on-icon.webp" : "/assets/icons/hint-off-icon.webp"}
-          alt="Toggle Hints"
-        />
-      </button>
+      <HudComponents
+        onOpenInventory={() => setInventoryVisible(true)}
+        hintsEnabled={hintsEnabled}
+        onToggleHints={toggleHints}
+      />
     </div>
   )
 }
