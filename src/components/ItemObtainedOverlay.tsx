@@ -31,6 +31,10 @@ export function ItemObtainedOverlay({
 
   return (
     <div
+      className="item-obtained-overlay-container"
+      onClick={(e) => e.stopPropagation()}
+      onTouchStart={(e) => e.stopPropagation()}
+      onTouchEnd={(e) => e.stopPropagation()}
       style={{
         position: 'absolute',
         inset: 0,
@@ -61,6 +65,8 @@ export function ItemObtainedOverlay({
           WebkitMaskComposite: 'source-in',
         }}
         onClick={e => e.stopPropagation()}
+        onTouchStart={(e) => e.stopPropagation()}
+        onTouchEnd={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div style={{

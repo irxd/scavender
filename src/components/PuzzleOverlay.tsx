@@ -296,8 +296,18 @@ function PipePuzzle({ onComplete }: { onComplete: () => void }) {
 // --- OVERLAY CONTAINER ---
 export function PuzzleOverlay({ puzzleId, onComplete }: PuzzleOverlayProps) {
   return (
-    <div className="puzzle-overlay-container">
-      <div className="puzzle-overlay-backdrop" onClick={(e) => e.stopPropagation()} />
+    <div
+      className="puzzle-overlay-container"
+      onClick={(e) => e.stopPropagation()}
+      onTouchStart={(e) => e.stopPropagation()}
+      onTouchEnd={(e) => e.stopPropagation()}
+    >
+      <div
+        className="puzzle-overlay-backdrop"
+        onClick={(e) => e.stopPropagation()}
+        onTouchStart={(e) => e.stopPropagation()}
+        onTouchEnd={(e) => e.stopPropagation()}
+      />
 
       {puzzleId === 'metro-vending' && <VendingPuzzle onComplete={onComplete} />}
       {puzzleId === 'metro-pipe' && <PipePuzzle onComplete={onComplete} />}

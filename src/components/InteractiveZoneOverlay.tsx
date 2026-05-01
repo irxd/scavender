@@ -64,13 +64,19 @@ export function InteractiveZoneOverlay({
       }
     }
 
+    const isOverlayActive = () => {
+      return !!document.querySelector(
+        '.inventory-overlay-container, .puzzle-overlay-container, .decision-overlay-container, .dialog-container, .item-obtained-overlay-container'
+      )
+    }
+
     const onMove = (e: MouseEvent) => {
-      if (editorOpen) return
+      if (editorOpen || isOverlayActive()) return
       checkHit(e.clientX, e.clientY)
     }
 
     const onClick = (e: MouseEvent) => {
-      if (editorOpen) return
+      if (editorOpen || isOverlayActive()) return
       const { x: fx, y: fy } = clientToImage(e.clientX, e.clientY)
 
       for (const zone of zones) {
@@ -83,13 +89,13 @@ export function InteractiveZoneOverlay({
 
     // Touch support — treat first touch as mouse equivalent
     const onTouchMove = (e: TouchEvent) => {
-      if (editorOpen) return
+      if (editorOpen || isOverlayActive()) return
       const t = e.touches[0]
       checkHit(t.clientX, t.clientY)
     }
 
     const onTouchEnd = (e: TouchEvent) => {
-      if (editorOpen) return
+      if (editorOpen || isOverlayActive()) return
       const t = e.changedTouches[0]
       const { x: fx, y: fy } = clientToImage(t.clientX, t.clientY)
 
