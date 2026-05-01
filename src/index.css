@@ -799,6 +799,7 @@ html, body, #root {
   width: 130%;
 }
 
+
 .start-screen__credits {
   position: absolute;
   bottom: 24px;
@@ -824,6 +825,59 @@ html, body, #root {
 .start-screen__credits:hover {
   color: #fff;
   text-shadow: 0 0 10px rgba(0, 122, 229, 0.8), 0 0 20px rgba(0, 122, 229, 0.4);
+}
+
+/* Mobile Landscape Optimizations */
+@media (max-height: 500px) {
+  .start-screen {
+    flex-direction: row;
+    gap: 40px;
+    padding: 0 40px;
+  }
+
+  .start-screen__logo {
+    width: clamp(200px, 40vw, 450px);
+    margin-bottom: 0;
+  }
+
+  .start-screen__menu-area {
+    min-height: auto;
+    flex: 1;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .start-screen__prompt {
+    font-size: clamp(12px, 1.8vw, 16px);
+    letter-spacing: 0.25em;
+  }
+
+  .start-screen__nav {
+    position: static;
+    transform: none;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .start-screen__nav.visible {
+    transform: none;
+  }
+
+  .start-screen__nav-btn {
+    font-size: clamp(14px, 2vw, 20px);
+    letter-spacing: 0.2em;
+    padding: 6px 0;
+  }
+  
+  .start-screen__credits {
+    bottom: 16px;
+    left: 16px;
+  }
+  
+  .start-screen__credits-icon {
+    width: 20px;
+    height: 20px;
+  }
 }
 
 .start-screen__credits::after {
@@ -1156,25 +1210,6 @@ html, body, #root {
   from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-
-/* Hint in bottom right */
-.stage-intro__hint {
-  position: absolute;
-  bottom: 40px;
-  right: 60px;
-  z-index: 10;
-  color: rgba(255, 255, 255, 0.5);
-  font-family: 'Cinzel', serif;
-  font-size: 13px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  pointer-events: none;
-}
-
-.stage-intro__hint--pulse {
-  animation: prompt-pulse 2.5s ease-in-out infinite;
-}
-
 
 /* ─── Game Over ──────────────────────────────────────────────────── */
 .game-over-title {

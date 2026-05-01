@@ -83,11 +83,6 @@ export function StageIntro({ slides, onComplete }: Props) {
           {currentText}
         </p>
       </div>
-
-      {/* Hint — strictly bottom right */}
-      <span className={`stage-intro__hint${isLastText && isLastSlide ? ' stage-intro__hint--pulse' : ''}`}>
-        CLICK ANYWHERE TO CONTINUE
-      </span>
     </div>
   )
 }
