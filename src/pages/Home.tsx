@@ -51,12 +51,6 @@ export default function Home() {
     localStorage.setItem('scavender_hints_enabled', newVal.toString())
   }
 
-  useEffect(() => {
-    if (searchParams.get('portal') === 'true') {
-      resetItems()
-      navigate('/metro?portal=true', { replace: true })
-    }
-  }, [searchParams, navigate, resetItems])
 
   const [promptFading, setPromptFading] = useState(false)
 
