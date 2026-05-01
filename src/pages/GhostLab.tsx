@@ -20,6 +20,8 @@ import { ItemObtainedOverlay } from '../components/ItemObtainedOverlay'
 import { InventoryOverlay } from '../components/InventoryOverlay'
 import { PuzzleOverlay } from '../components/PuzzleOverlay'
 import { HudComponents } from '../components/HudComponents'
+import { GoalHud } from '../components/GoalHud'
+
 
 
 type LevelConfig = {
@@ -864,12 +866,10 @@ export default function GhostLab() {
         </div>
       )}
 
-      {/* ─── HUD Layer ────────────────────────────────────────────────── */}
-      <div id="goal-hud">
-        <div className="goal-card">
-          <span className="goal-text">Find the source of the signal</span>
-        </div>
-      </div>
+      <GoalHud
+        mainGoalText="Find the source of the signal"
+      />
+
 
       <HudComponents
         onOpenInventory={() => setInventoryVisible(true)}

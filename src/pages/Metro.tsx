@@ -20,6 +20,8 @@ import { ItemObtainedOverlay } from '../components/ItemObtainedOverlay'
 import { InventoryOverlay } from '../components/InventoryOverlay'
 import { PuzzleOverlay } from '../components/PuzzleOverlay'
 import { HudComponents } from '../components/HudComponents'
+import { GoalHud } from '../components/GoalHud'
+
 
 
 type LevelConfig = {
@@ -902,23 +904,13 @@ export default function Metro() {
         </div>
       )}
 
-      {/* ─── HUD Layer ────────────────────────────────────────────────── */}
-      <div id="goal-hud">
-        <div className="goal-card">
-          <span className="goal-text">Go to upper level</span>
-          {MINI_GOAL_ORDER.some(id => activeMiniGoals.includes(id)) && (
-            <div className="goal-sub-list">
-              {MINI_GOAL_ORDER
-                .filter(id => activeMiniGoals.includes(id))
-                .map(id => (
-                  <div key={id} className="goal-sub-item">
-                    {MINI_GOAL_CONFIG[id]}
-                  </div>
-                ))}
-            </div>
-          )}
-        </div>
-      </div>
+      <GoalHud
+        mainGoalText="Go to upper level"
+        miniGoalsOrder={MINI_GOAL_ORDER}
+        activeMiniGoals={activeMiniGoals}
+        miniGoalConfig={MINI_GOAL_CONFIG}
+      />
+
 
       <HudComponents
         onOpenInventory={() => setInventoryVisible(true)}

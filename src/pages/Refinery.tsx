@@ -20,6 +20,8 @@ import { ItemObtainedOverlay } from '../components/ItemObtainedOverlay'
 import { InventoryOverlay } from '../components/InventoryOverlay'
 import { PuzzleOverlay } from '../components/PuzzleOverlay'
 import { HudComponents } from '../components/HudComponents'
+import { GoalHud } from '../components/GoalHud'
+
 
 
 type LevelConfig = {
@@ -975,27 +977,14 @@ export default function Refinery() {
         </div>
       )}
 
-      {/* ─── HUD Layer ────────────────────────────────────────────────── */}
-      <div id="goal-hud">
-        <div className="goal-card">
-          <span className="goal-text">Go after the mysterious man</span>
-          {MINI_GOAL_ORDER.some(id => activeMiniGoals.includes(id)) && (
-            <div className="goal-sub-list">
-              {MINI_GOAL_ORDER
-                .filter(id => activeMiniGoals.includes(id))
-                .map(id => (
-                  <div
-                    key={id}
-                    className="goal-sub-item clickable"
-                    onClick={() => handleGoalClick(id)}
-                  >
-                    {MINI_GOAL_CONFIG[id]}
-                  </div>
-                ))}
-            </div>
-          )}
-        </div>
-      </div>
+      <GoalHud
+        mainGoalText="Go after the mysterious man"
+        miniGoalsOrder={MINI_GOAL_ORDER}
+        activeMiniGoals={activeMiniGoals}
+        miniGoalConfig={MINI_GOAL_CONFIG}
+        onGoalClick={handleGoalClick}
+      />
+
 
       <HudComponents
         onOpenInventory={() => setInventoryVisible(true)}
