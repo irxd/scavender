@@ -105,13 +105,14 @@ export function useKeyboard(): React.MutableRefObject<KeyState> {
 
       manager.on('move', (_evt: any, data: any) => {
         if (!data.direction) return
-        const { angle } = data
+        const { angle, distance } = data
         const deg = angle.degree
 
         keys.current.forward = false
         keys.current.backward = false
         keys.current.left = false
         keys.current.right = false
+        keys.current.run = distance >= 25
 
         if (deg >= 22.5 && deg <= 157.5) keys.current.forward = true
         if (deg >= 202.5 && deg <= 337.5) keys.current.backward = true
@@ -124,6 +125,7 @@ export function useKeyboard(): React.MutableRefObject<KeyState> {
         keys.current.backward = false
         keys.current.left = false
         keys.current.right = false
+        keys.current.run = false
       })
     }
 
