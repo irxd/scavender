@@ -540,7 +540,13 @@ export default function Refinery() {
   const [pendingTransition, setPendingTransition] = useState<string | null>(null)
 
   // Keep dialog/puzzle/item refs in sync
-  useEffect(() => { activeDialogRef.current = activeDialog }, [activeDialog])
+  const lastDialogOpenTimeRef = useRef(0)
+  useEffect(() => {
+    activeDialogRef.current = activeDialog
+    if (activeDialog) {
+      lastDialogOpenTimeRef.current = Date.now()
+    }
+  }, [activeDialog])
   useEffect(() => { activePuzzleZoneRef.current = activePuzzleZone }, [activePuzzleZone])
   useEffect(() => { pendingItemsRef.current = pendingItemsToGive }, [pendingItemsToGive])
   useEffect(() => { inventoryVisibleRef.current = inventoryVisible }, [inventoryVisible])
@@ -732,6 +738,9 @@ export default function Refinery() {
         return
       }
       if (activeDialogRef.current) {
+        if (Date.now() - lastDialogOpenTimeRef.current < 300) {
+          return
+        }
         setActiveDialog(null)
         e.stopPropagation()
         return

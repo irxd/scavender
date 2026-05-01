@@ -101,6 +101,7 @@ export function InteractiveZoneOverlay({
 
       for (const zone of zones) {
         if (isPointInPolygon(fx, fy, zone.polygon)) {
+          e.preventDefault()
           onZoneClick(zone)
           break
         }

@@ -490,7 +490,13 @@ export default function Metro() {
   const [pendingTransition, setPendingTransition] = useState<string | null>(null)
 
   // Keep dialog/puzzle/item refs in sync
-  useEffect(() => { activeDialogRef.current = activeDialog }, [activeDialog])
+  const lastDialogOpenTimeRef = useRef(0)
+  useEffect(() => {
+    activeDialogRef.current = activeDialog
+    if (activeDialog) {
+      lastDialogOpenTimeRef.current = Date.now()
+    }
+  }, [activeDialog])
   useEffect(() => { activePuzzleZoneRef.current = activePuzzleZone }, [activePuzzleZone])
   useEffect(() => { pendingItemsRef.current = pendingItemsToGive }, [pendingItemsToGive])
   useEffect(() => { inventoryVisibleRef.current = inventoryVisible }, [inventoryVisible])
@@ -677,11 +683,14 @@ export default function Metro() {
         e.stopPropagation()
         return
       }
-      if (activeDialogRef.current) {
-        setActiveDialog(null)
-        e.stopPropagation()
-        return
-      }
+       if (activeDialogRef.current) {
+         if (Date.now() - lastDialogOpenTimeRef.current < 300) {
+           return
+         }
+         setActiveDialog(null)
+         e.stopPropagation()
+         return
+       }
       if (activePuzzleZoneRef.current) {
         // Allow clicks INSIDE the puzzle overlay through; only block outside clicks
         const target = e.target as Element
