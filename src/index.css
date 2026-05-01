@@ -358,6 +358,41 @@ html, body, #root {
   .goal-sub-item {
     font-size: 11px !important;
   }
+  .inventory-overlay {
+    width: min(800px, 95vw);
+    max-height: 90vh;
+  }
+  .inventory-header {
+    padding: 12px 20px;
+  }
+  .inventory-header h2 {
+    font-size: 16px;
+  }
+  .inventory-header input {
+    padding: 6px 12px;
+    font-size: 12px;
+    width: 140px;
+  }
+  .inventory-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 20px;
+  }
+  .inventory-card {
+    padding: 12px;
+  }
+  .inventory-card-image {
+    width: 60px;
+    height: 60px;
+    margin-right: 16px;
+  }
+  .inventory-card-content h3 {
+    font-size: 15px;
+    margin-bottom: 4px;
+  }
+  .inventory-card-content p {
+    font-size: 13px;
+  }
 }
 
 

@@ -46,14 +46,15 @@ export function ItemObtainedOverlay({
     >
       <div
         style={{
-          width: '500px',
+          width: 'min(500px, 90vw)',
+          maxHeight: '90vh',
           background: 'rgba(0, 0, 0, 0.1)',
           backdropFilter: 'blur(8px)',
           WebkitBackdropFilter: 'blur(8px)',
           display: 'flex',
           flexDirection: 'column',
           position: 'relative',
-          padding: '40px 50px',
+          padding: 'min(24px, 4vh) min(32px, 5vw)',
           maskImage: 'linear-gradient(to bottom, transparent, black 10%, black 90%, transparent), linear-gradient(to right, transparent, black 10%, black 90%, transparent)',
           WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 10%, black 90%, transparent), linear-gradient(to right, transparent, black 10%, black 90%, transparent)',
           maskComposite: 'intersect',
@@ -64,28 +65,28 @@ export function ItemObtainedOverlay({
         {/* Header */}
         <div style={{
           textAlign: 'center',
-          fontSize: '20px',
+          fontSize: 'clamp(12px, 3vh, 16px)',
           fontWeight: 400,
           letterSpacing: '0.2em',
           color: '#fff',
           textTransform: 'uppercase',
-          marginBottom: '20px',
+          marginBottom: 'min(12px, 2vh)',
           fontFamily: "'Cinzel', serif",
         }}>
           Item Obtained
         </div>
 
         {/* Separator */}
-        <div style={{ width: '100%', height: '1px', background: 'rgba(255,255,255,0.15)', marginBottom: '32px' }} />
+        <div style={{ width: '100%', height: '1px', background: 'rgba(255,255,255,0.15)', marginBottom: 'min(16px, 3vh)' }} />
 
         {/* Item Title */}
         <div style={{
-          fontSize: '28px',
+          fontSize: 'clamp(18px, 4vh, 26px)',
           fontWeight: 400,
           letterSpacing: '0.05em',
           color: '#65bae1',
           textTransform: 'uppercase',
-          marginBottom: '32px',
+          marginBottom: 'min(16px, 3vh)',
           textAlign: 'center',
           fontFamily: "'Cinzel', serif",
         }}>
@@ -95,11 +96,11 @@ export function ItemObtainedOverlay({
         {/* Item Image */}
         <div style={{
           width: '100%',
-          height: '240px',
+          height: 'min(140px, 30vh)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          marginBottom: '32px',
+          marginBottom: 'min(16px, 3vh)',
           filter: 'drop-shadow(0px 10px 20px rgba(0,0,0,0.6))',
         }}>
           <img
@@ -116,8 +117,8 @@ export function ItemObtainedOverlay({
 
         {/* Description */}
         <div style={{
-          fontSize: '18px',
-          lineHeight: 1.6,
+          fontSize: 'clamp(13px, 3.5vh, 16px)',
+          lineHeight: 1.4,
           color: '#fff',
           textAlign: 'center',
           fontFamily: "'Quattrocento', serif",
