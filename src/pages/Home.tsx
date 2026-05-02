@@ -76,8 +76,20 @@ export default function Home() {
 
   const [promptFading, setPromptFading] = useState(false)
 
-  const handlePromptClick = () => {
+  const handlePromptClick = async () => {
     if (screen !== 'prompt') return
+    
+    // Force full screen for mobile devices
+    if (window.innerWidth <= 1024) {
+      try {
+        if (document.documentElement.requestFullscreen) {
+          await document.documentElement.requestFullscreen()
+        }
+      } catch (err) {
+        console.warn('Error attempting to enable fullscreen:', err)
+      }
+    }
+
     setPromptFading(true)
     setTimeout(() => setScreen('menu'), 600)
   }
