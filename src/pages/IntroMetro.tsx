@@ -31,10 +31,26 @@ export default function IntroMetro() {
 
   useEffect(() => {
     preloadImages([
+      // Metro backgrounds
       '/assets/images/background/level1.1.webp',
       '/assets/images/background/level1.2.webp',
       '/assets/images/background/level1.3.webp',
       '/assets/images/background/level1.4.webp',
+
+      // Metro items
+      '/assets/images/item/rebar.webp',
+      '/assets/images/item/wire.webp',
+      '/assets/images/item/wrench.webp',
+      '/assets/images/item/watch.webp',
+      '/assets/images/item/battery.webp',
+
+      // Portrait assets
+      '/assets/images/portrait/young-jace-portrait.webp',
+
+      // Puzzle assets on Metro
+      '/assets/images/puzzle/metro/panel-opened.webp',
+      '/assets/images/puzzle/metro/panel-closed.webp',
+      '/assets/images/puzzle/metro/monitor-display.webp',
     ])
   }, [])
 

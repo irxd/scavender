@@ -22,6 +22,20 @@ export default function IntroRefinery() {
       '/assets/images/background/level2.1.webp',
       '/assets/images/background/level2.2.webp',
       '/assets/images/background/level2.3.webp',
+
+      // All items
+      '/assets/images/item/rebar.webp',
+      '/assets/images/item/wire.webp',
+      '/assets/images/item/wrench.webp',
+      '/assets/images/item/watch.webp',
+      '/assets/images/item/battery.webp',
+      '/assets/images/item/fuel.webp',
+      '/assets/images/item/igniter.webp',
+      '/assets/images/item/sulfate.webp',
+
+      // Portrait assets
+      '/assets/images/portrait/young-jace-portrait.webp',
+      '/assets/images/portrait/old-jace-portrait.webp',
     ])
   }, [])
 
