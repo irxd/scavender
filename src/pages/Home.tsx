@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useInventoryStore } from '../store/useInventoryStore'
+import { preloadImages, preloadGLBs } from '../utils/preload'
 
 const chapters = [
   {
@@ -39,10 +40,32 @@ export default function Home() {
   const { setItems, resetItems } = useInventoryStore()
   const [screen, setScreen] = useState<Screen>('prompt')
 
+  useEffect(() => {
+    preloadImages([
+      // Intro images
+      '/assets/images/intro/intro1.1.webp',
+      '/assets/images/intro/intro1.2.webp',
+      '/assets/images/intro/intro1.3.webp',
+      '/assets/images/intro/intro2.1.webp',
+      '/assets/images/intro/intro3.1.webp',
+      // Chapter backgrounds for quick transition
+      '/assets/images/background/level1.1.webp',
+      '/assets/images/background/level2.1.webp',
+      '/assets/images/background/level3.2.webp',
+    ])
+    preloadGLBs([
+      '/assets/glb/jace.glb',
+      '/assets/glb/miller.glb',
+      '/assets/glb/hydra.glb',
+      '/assets/glb/scientist.glb',
+    ])
+  }, [])
+
   const [hintsEnabled, setHintsEnabled] = useState(() => {
     const saved = localStorage.getItem('scavender_hints_enabled')
     return saved === null ? false : saved === 'true'
   })
+
 
   const handleHintsToggle = () => {
     const newVal = !hintsEnabled

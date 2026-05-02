@@ -1,6 +1,8 @@
+import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { StageIntro } from '../components/StageIntro'
 import type { IntroSlide } from '../components/StageIntro'
+import { preloadImages } from '../utils/preload'
 
 const METRO_INTRO_SLIDES: IntroSlide[] = [
   {
@@ -27,6 +29,15 @@ const METRO_INTRO_SLIDES: IntroSlide[] = [
 export default function IntroMetro() {
   const navigate = useNavigate()
 
+  useEffect(() => {
+    preloadImages([
+      '/assets/images/background/level1.1.webp',
+      '/assets/images/background/level1.2.webp',
+      '/assets/images/background/level1.3.webp',
+      '/assets/images/background/level1.4.webp',
+    ])
+  }, [])
+
   return (
     <div className="intro-page">
       <StageIntro
@@ -36,3 +47,4 @@ export default function IntroMetro() {
     </div>
   )
 }
+

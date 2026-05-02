@@ -21,6 +21,8 @@ import { InventoryOverlay } from '../components/InventoryOverlay'
 import { PuzzleOverlay } from '../components/PuzzleOverlay'
 import { HudComponents } from '../components/HudComponents'
 import { GoalHud } from '../components/GoalHud'
+import { preloadImages } from '../utils/preload'
+
 
 
 
@@ -402,12 +404,23 @@ export default function Refinery() {
   // Reset inventory on mount (handles refresh)
   useEffect(() => {
     resetWithDefaults(['rebar', 'wrench', 'wire', 'battery'])
+    preloadImages([
+      '/assets/images/background/level2.1.webp',
+      '/assets/images/background/level2.2.webp',
+      '/assets/images/background/level2.3.webp',
+    ])
   }, [resetWithDefaults])
 
   const [hintsEnabled, setHintsEnabled] = useState(() => {
     const saved = localStorage.getItem('scavender_hints_enabled')
     return saved === null ? false : saved === 'true'
   })
+
+  const [isReady, setIsReady] = useState(false)
+  useEffect(() => {
+    const t = setTimeout(() => setIsReady(true), 250)
+    return () => clearTimeout(t)
+  }, [])
 
   // Perist hints setting
   useEffect(() => {
@@ -833,7 +846,7 @@ export default function Refinery() {
   }, [navigate, currentLevelId])
 
   return (
-    <div id="game-root" ref={gameRootRef}>
+    <div id="game-root" ref={gameRootRef} style={{ opacity: isReady ? 1 : 0, transition: 'opacity 0.25s ease-in-out' }}>
       <BackgroundAudio src="/assets/audio/refinery.ogg" />
       {/* 
         This is a real stage.

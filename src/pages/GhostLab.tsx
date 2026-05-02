@@ -21,6 +21,7 @@ import { InventoryOverlay } from '../components/InventoryOverlay'
 import { PuzzleOverlay } from '../components/PuzzleOverlay'
 import { HudComponents } from '../components/HudComponents'
 import { GoalHud } from '../components/GoalHud'
+import { preloadImages } from '../utils/preload'
 
 
 
@@ -370,6 +371,11 @@ export default function GhostLab() {
   // Reset inventory on mount (handles refresh)
   useEffect(() => {
     resetWithDefaults(['rebar', 'wrench', 'wire', 'battery', 'fuel', 'sulfate', 'igniter'])
+    preloadImages([
+      '/assets/images/background/level3.1.webp',
+      '/assets/images/background/level3.2.webp',
+      '/assets/images/background/level3.3.webp',
+    ])
   }, [resetWithDefaults])
 
   const level = LEVELS[currentLevelId] || LEVELS['level3.1']
@@ -709,6 +715,12 @@ export default function GhostLab() {
     return saved === null ? false : saved === 'true'
   })
 
+  const [isReady, setIsReady] = useState(false)
+  useEffect(() => {
+    const t = setTimeout(() => setIsReady(true), 250)
+    return () => clearTimeout(t)
+  }, [])
+
   // Perist hints setting
   useEffect(() => {
     localStorage.setItem('scavender_hints_enabled', hintsEnabled.toString())
@@ -724,7 +736,7 @@ export default function GhostLab() {
   }, [navigate, currentLevelId])
 
   return (
-    <div id="game-root" ref={gameRootRef}>
+    <div id="game-root" ref={gameRootRef} style={{ opacity: isReady ? 1 : 0, transition: 'opacity 0.25s ease-in-out' }}>
       <BackgroundAudio src="/assets/audio/ghost-lab.ogg" />
       {/* 
         This is a real stage.

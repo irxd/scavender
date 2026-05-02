@@ -1,6 +1,8 @@
+import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { StageIntro } from '../components/StageIntro'
 import type { IntroSlide } from '../components/StageIntro'
+import { preloadImages } from '../utils/preload'
 
 const GHOST_LAB_INTRO_SLIDES: IntroSlide[] = [
   {
@@ -16,6 +18,14 @@ const GHOST_LAB_INTRO_SLIDES: IntroSlide[] = [
 export default function IntroGhostLab() {
   const navigate = useNavigate()
 
+  useEffect(() => {
+    preloadImages([
+      '/assets/images/background/level3.1.webp',
+      '/assets/images/background/level3.2.webp',
+      '/assets/images/background/level3.3.webp',
+    ])
+  }, [])
+
   return (
     <div className="intro-page">
       <StageIntro
@@ -25,3 +35,4 @@ export default function IntroGhostLab() {
     </div>
   )
 }
+
