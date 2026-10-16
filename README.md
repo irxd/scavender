@@ -115,6 +115,10 @@ public/assets/
 └── audio/        # Per-chapter ambient tracks
 ```
 
+## ✦ License
+
+Released under the [MIT License](./LICENSE). This covers both the code and the game assets (art, models, audio and story).
+
 ---
 
 <div align="center">
