@@ -6,7 +6,7 @@
 
 *Built with React Three Fiber, rendered in the browser.*
 
-🏆 **Ranked #81 at [Vibe Jam 2026](https://vibejam.com/)**
+🏆 **Ranked #81 out of 945 submissions at [Vibe Jam 2026](https://vibejam.com/)**
 
 ![Scavender: Jace explores the derelict Metro](./scavender.png)
 
